@@ -1,0 +1,172 @@
+import SwiftUI
+
+/// The whole app: the device's address book, listed alphabetically with a search bar. Tapping
+/// a row places a `*99` collect call (so the receiving end shows the wrapped caller ID that
+/// CallerIDExtension unwraps back to the contact's real name); swiping reveals a `#31#` hidden
+/// caller-ID call as a second option.
+struct ContactsListView: View {
+    @State private var service = ContactsService()
+    @State private var searchText = ""
+    @Environment(\.scenePhase) private var scenePhase
+
+    private var entries: [ContactListEntry] {
+        service.contacts.flatMap { contact in
+            contact.numbers.map { ContactListEntry(contact: contact, number: $0) }
+        }
+    }
+
+    private var filteredEntries: [ContactListEntry] {
+        guard !searchText.isEmpty else { return entries }
+        return entries.filter { entry in
+            entry.contact.name.localizedCaseInsensitiveContains(searchText)
+                || entry.number.number.localizedCaseInsensitiveContains(searchText)
+        }
+    }
+
+    private var groupedEntries: [(letter: String, entries: [ContactListEntry])] {
+        let groups = Dictionary(grouping: filteredEntries) { entry in
+            String(entry.contact.name.prefix(1)).uppercased()
+        }
+        return groups.keys.sorted().map { letter in
+            (letter, groups[letter]!.sorted {
+                $0.contact.name.localizedCaseInsensitiveCompare($1.contact.name) == .orderedAscending
+            })
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if service.isDenied {
+                    ContentUnavailableView {
+                        Label("Sin Acceso a Contactos", systemImage: "person.crop.circle.badge.exclamationmark")
+                    } description: {
+                        Text("Activa el permiso de Contactos para poder llamarlos directamente desde la app.")
+                    } actions: {
+                        Button("Permitir Acceso") { service.requestAccess() }
+                            .buttonStyle(.borderedProminent)
+                    }
+                } else if !service.isLoaded {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if service.contacts.isEmpty {
+                    ContentUnavailableView(
+                        "Sin Contactos Cubanos",
+                        systemImage: "person.crop.circle.badge.questionmark",
+                        description: Text("No se encontró ningún contacto con número cubano (+53, 8 dígitos).")
+                    )
+                } else {
+                    List {
+                        ForEach(groupedEntries, id: \.letter) { group in
+                            Section(group.letter) {
+                                ForEach(group.entries) { entry in
+                                    ContactCallRowView(entry: entry)
+                                }
+                            }
+                        }
+                    }
+                    .listStyle(.plain)
+                    .searchable(text: $searchText, prompt: "Buscar")
+                }
+            }
+            .navigationTitle("Contactos")
+        }
+        .onAppear { service.reload() }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                service.reload()
+            }
+        }
+    }
+}
+
+/// One contact + one of its Cuban numbers — a contact with several lines yields several entries.
+private struct ContactListEntry: Identifiable, Hashable {
+    let contact: DeviceContact
+    let number: ContactPhoneNumber
+
+    var id: String { "\(contact.id)-\(number.number)" }
+}
+
+/// One row per contact number: photo, name + labeled number. Tapping dials a `*99` collect
+/// call; swiping trailing offers the same, leading offers a `#31#` hidden-caller-ID call.
+private struct ContactCallRowView: View {
+    let entry: ContactListEntry
+
+    private var number: String { entry.number.number }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ContactAvatarView(contact: entry.contact)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(entry.contact.name)
+                    .font(.body.weight(.medium))
+                (Text(number)
+                    + Text(entry.contact.numbers.count > 1 ? " (\(entry.number.label))" : "")
+                        .font(.caption)
+                        .italic())
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Image(systemName: "phone.fill")
+                .foregroundStyle(.tint)
+        }
+        .padding(.vertical, 2)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            DialService.dial("*99\(number)")
+        }
+        .swipeActions(edge: .leading) {
+            Button {
+                DialService.dial("#31#\(number)")
+            } label: {
+                Label("Anónimo", systemImage: "shield.lefthalf.filled")
+            }
+            .tint(.gray)
+        }
+    }
+}
+
+/// Round contact photo pulled from the device address book, falling back to the contact's
+/// initials on a tinted circle when there's no photo.
+private struct ContactAvatarView: View {
+    let contact: DeviceContact
+    var size: CGFloat = 40
+
+    @State private var uiImage: UIImage?
+
+    private var initials: String {
+        let words = contact.name.split(separator: " ")
+        let letters = words.prefix(2).compactMap { $0.first }
+        return letters.isEmpty ? "?" : String(letters).uppercased()
+    }
+
+    var body: some View {
+        Group {
+            if let uiImage {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                ZStack {
+                    Color.accentColor.opacity(0.2)
+                    Text(initials)
+                        .font(.system(size: size * 0.4, weight: .semibold))
+                        .foregroundStyle(Color.accentColor)
+                }
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(Circle())
+        .task(id: contact.id) {
+            uiImage = await ContactThumbnailLoader.thumbnail(forContactID: contact.id)
+        }
+    }
+}
+
+#Preview {
+    ContactsListView()
+}
