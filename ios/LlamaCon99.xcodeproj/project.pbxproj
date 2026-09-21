@@ -15,6 +15,7 @@
 		CB694C40C69F0FB44954C8AD /* CallDirectoryHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B38DDDAD7439DBCE9E013B /* CallDirectoryHandler.swift */; };
 		CF3307A0D3FF91027920479E /* CallerIDExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E07B916A8AE2F1EE0C255E7C /* LlamaCon99App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E99AFDE2D0D1B3DB57E1A73 /* LlamaCon99App.swift */; };
+		EA639252CF5BBA8BCE845C5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26B3A32A02FBD711E2ED4E1D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 /* Begin PBXFileReference section */
 		1E99AFDE2D0D1B3DB57E1A73 /* LlamaCon99App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LlamaCon99App.swift; sourceTree = "<group>"; };
 		22DA10ADB78C07BEE5AEA218 /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
+		26B3A32A02FBD711E2ED4E1D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4E3DA7C54F8E4ED50ABFAFA4 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		54085BA8DEC5A8A3921C2A3C /* CallerIDExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CallerIDExtension.entitlements; sourceTree = "<group>"; };
 		56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CallerIDExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +91,7 @@
 		93BCE2191A6F7BAEBF4F7DD8 /* LlamaCon99App */ = {
 			isa = PBXGroup;
 			children = (
+				26B3A32A02FBD711E2ED4E1D /* Assets.xcassets */,
 				8BB465652231AAF363005A39 /* Info.plist */,
 				6312573D37464F6362B0A33D /* LlamaCon99App.entitlements */,
 				1E99AFDE2D0D1B3DB57E1A73 /* LlamaCon99App.swift */,
@@ -132,6 +135,7 @@
 			buildConfigurationList = 9677D7A74DBB1E6931D3D567 /* Build configuration list for PBXNativeTarget "LlamaCon99App" */;
 			buildPhases = (
 				3AFD0F0C24D4FEE1A00F5CE7 /* Sources */,
+				A3BB53A6A527E82FDC8F79B7 /* Resources */,
 				FA2C5EE0B7734279D57F2F09 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -174,6 +178,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A3BB53A6A527E82FDC8F79B7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA639252CF5BBA8BCE845C5F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3AFD0F0C24D4FEE1A00F5CE7 /* Sources */ = {
