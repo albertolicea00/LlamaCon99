@@ -46,13 +46,13 @@
 		22DA10ADB78C07BEE5AEA218 /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
 		4E3DA7C54F8E4ED50ABFAFA4 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		54085BA8DEC5A8A3921C2A3C /* CallerIDExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CallerIDExtension.entitlements; sourceTree = "<group>"; };
-		56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = CallerIDExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CallerIDExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6312573D37464F6362B0A33D /* LlamaCon99App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LlamaCon99App.entitlements; sourceTree = "<group>"; };
 		65B38DDDAD7439DBCE9E013B /* CallDirectoryHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDirectoryHandler.swift; sourceTree = "<group>"; };
 		8BB465652231AAF363005A39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ADDC413511AC9894D1D60BF7 /* CallerIDStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallerIDStore.swift; sourceTree = "<group>"; };
 		C08E55F8B010E94F9B6FF9A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		E04342082462663F1648468D /* LlamaCon99App.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LlamaCon99App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E04342082462663F1648468D /* LlamaCon99App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LlamaCon99App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4F3F2BFC87B3AF2E670811A /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -154,8 +154,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = A6CEB6718E90AE1D6D6B58D3 /* Build configuration list for PBXProject "LlamaCon99" */;
 			developmentRegion = en;
@@ -218,6 +216,7 @@
 				CODE_SIGN_ENTITLEMENTS = LlamaCon99App/LlamaCon99App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				INFOPLIST_FILE = LlamaCon99App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -299,6 +298,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CallerIDExtension/CallerIDExtension.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				INFOPLIST_FILE = CallerIDExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -319,6 +319,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CallerIDExtension/CallerIDExtension.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				INFOPLIST_FILE = CallerIDExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -398,6 +399,7 @@
 				CODE_SIGN_ENTITLEMENTS = LlamaCon99App/LlamaCon99App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				INFOPLIST_FILE = LlamaCon99App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
