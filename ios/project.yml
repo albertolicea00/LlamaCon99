@@ -1,4 +1,4 @@
-name: LlamaCon99App
+name: LlamaCon99
 options:
   bundleIdPrefix: com
   deploymentTarget:
@@ -15,7 +15,7 @@ targets:
     info:
       path: LlamaCon99App/Info.plist
       properties:
-        CFBundleDisplayName: LlamaCon99
+        CFBundleDisplayName: Llama Con 99
         CFBundleShortVersionString: 1.0.0
         CFBundleVersion: "1"
         UILaunchScreen: {}

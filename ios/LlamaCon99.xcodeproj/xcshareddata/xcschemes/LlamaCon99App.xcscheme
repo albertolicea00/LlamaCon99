@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "152863E3754A6B395FC365EF"
+               BlueprintIdentifier = "63C0303D330F49195E0319EE"
                BuildableName = "LlamaCon99App.app"
                BlueprintName = "LlamaCon99App"
-               ReferencedContainer = "container:LlamaCon99App.xcodeproj">
+               ReferencedContainer = "container:LlamaCon99.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "152863E3754A6B395FC365EF"
+            BlueprintIdentifier = "63C0303D330F49195E0319EE"
             BuildableName = "LlamaCon99App.app"
             BlueprintName = "LlamaCon99App"
-            ReferencedContainer = "container:LlamaCon99App.xcodeproj">
+            ReferencedContainer = "container:LlamaCon99.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -57,10 +57,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "152863E3754A6B395FC365EF"
+            BlueprintIdentifier = "63C0303D330F49195E0319EE"
             BuildableName = "LlamaCon99App.app"
             BlueprintName = "LlamaCon99App"
-            ReferencedContainer = "container:LlamaCon99App.xcodeproj">
+            ReferencedContainer = "container:LlamaCon99.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -76,10 +76,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "152863E3754A6B395FC365EF"
+            BlueprintIdentifier = "63C0303D330F49195E0319EE"
             BuildableName = "LlamaCon99App.app"
             BlueprintName = "LlamaCon99App"
-            ReferencedContainer = "container:LlamaCon99App.xcodeproj">
+            ReferencedContainer = "container:LlamaCon99.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
