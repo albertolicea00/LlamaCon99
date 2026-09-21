@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct ContactsApp: App {
+struct LlamaCon99App: App {
     var body: some Scene {
         WindowGroup {
             ContactsListView()

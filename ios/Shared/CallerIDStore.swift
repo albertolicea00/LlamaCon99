@@ -12,8 +12,8 @@ struct CallerIDEntry: Codable {
 /// an App Group container — a Call Directory Extension runs in its own sandboxed process and
 /// has no Contacts access of its own.
 enum CallerIDStore {
-    static let appGroupID = "group.com.llamacon.contactsapp.shared"
-    static let extensionBundleID = "com.llamacon.contactsapp.CallerIDExtension"
+    static let appGroupID = "group.com.llamacon99.shared"
+    static let extensionBundleID = "com.llamacon99.CallerIDExtension"
 
     private static let fileName = "caller-id-entries.json"
 
