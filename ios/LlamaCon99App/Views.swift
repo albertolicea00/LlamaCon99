@@ -256,6 +256,16 @@ private struct InstallGuideView: View {
                         .padding(.vertical, 4)
                     }
                 }
+
+                Section {
+                    Link(destination: URL(string: "https://github.com/albertolicea00")!) {
+                        Text("@albertolicea00")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .listRowBackground(Color.clear)
+                }
             }
             .navigationTitle("Cómo Activar")
             .navigationBarTitleDisplayMode(.inline)
