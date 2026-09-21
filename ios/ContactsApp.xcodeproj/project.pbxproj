@@ -42,12 +42,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		18EEA312B6FB797802D36876 /* CallerIDExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = CallerIDExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		18EEA312B6FB797802D36876 /* CallerIDExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CallerIDExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		24CFC3AC5DED84CA632A29CF /* CallerIDStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallerIDStore.swift; sourceTree = "<group>"; };
 		3B8B76F737358E50C3F1C8E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3EB34F9A2B83688E70B2D69E /* CallDirectoryHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDirectoryHandler.swift; sourceTree = "<group>"; };
 		51030DC024A7B1FE9F0F84DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		5C95980D81856C8EB0DD4B56 /* ContactsApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ContactsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C95980D81856C8EB0DD4B56 /* ContactsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ContactsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2FD3F70B78584C5C4A914C4 /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 		BA606DFD0EEF02153113887E /* ContactsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsApp.swift; sourceTree = "<group>"; };
 		D5DB499DB785B9E94D57A05E /* CallerIDExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CallerIDExtension.entitlements; sourceTree = "<group>"; };
@@ -154,8 +154,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = F8F4B9C16C8FBDBB5C65139D /* Build configuration list for PBXProject "ContactsApp" */;
 			developmentRegion = en;
@@ -218,6 +216,7 @@
 				CODE_SIGN_ENTITLEMENTS = Contacts/Contacts.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				INFOPLIST_FILE = Contacts/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -295,6 +294,7 @@
 				CODE_SIGN_ENTITLEMENTS = Contacts/Contacts.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				INFOPLIST_FILE = Contacts/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -313,6 +313,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CallerIDExtension/CallerIDExtension.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				INFOPLIST_FILE = CallerIDExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -396,6 +397,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CallerIDExtension/CallerIDExtension.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				INFOPLIST_FILE = CallerIDExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
