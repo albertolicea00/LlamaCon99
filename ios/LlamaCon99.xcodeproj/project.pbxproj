@@ -12,6 +12,7 @@
 		49EBE7778CA1B631ADE5EAE9 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DA10ADB78C07BEE5AEA218 /* Views.swift */; };
 		6E97F0D85CD0D8EC245423DB /* CallerIDStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC413511AC9894D1D60BF7 /* CallerIDStore.swift */; };
 		81EDC1CD3FD7E7A6EF91786D /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F3F2BFC87B3AF2E670811A /* Services.swift */; };
+		AD6C370A0ABCE4F4E6CD9CFB /* AppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D107CC27FC1957BFC12783 /* AppIntents.swift */; };
 		CB694C40C69F0FB44954C8AD /* CallDirectoryHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B38DDDAD7439DBCE9E013B /* CallDirectoryHandler.swift */; };
 		CF3307A0D3FF91027920479E /* CallerIDExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E07B916A8AE2F1EE0C255E7C /* LlamaCon99App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E99AFDE2D0D1B3DB57E1A73 /* LlamaCon99App.swift */; };
@@ -52,6 +53,7 @@
 		6312573D37464F6362B0A33D /* LlamaCon99App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LlamaCon99App.entitlements; sourceTree = "<group>"; };
 		65B38DDDAD7439DBCE9E013B /* CallDirectoryHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDirectoryHandler.swift; sourceTree = "<group>"; };
 		8BB465652231AAF363005A39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A1D107CC27FC1957BFC12783 /* AppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntents.swift; sourceTree = "<group>"; };
 		ADDC413511AC9894D1D60BF7 /* CallerIDStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallerIDStore.swift; sourceTree = "<group>"; };
 		C08E55F8B010E94F9B6FF9A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E04342082462663F1648468D /* LlamaCon99App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LlamaCon99App.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,6 +93,7 @@
 		93BCE2191A6F7BAEBF4F7DD8 /* LlamaCon99App */ = {
 			isa = PBXGroup;
 			children = (
+				A1D107CC27FC1957BFC12783 /* AppIntents.swift */,
 				26B3A32A02FBD711E2ED4E1D /* Assets.xcassets */,
 				8BB465652231AAF363005A39 /* Info.plist */,
 				6312573D37464F6362B0A33D /* LlamaCon99App.entitlements */,
@@ -195,6 +198,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD6C370A0ABCE4F4E6CD9CFB /* AppIntents.swift in Sources */,
 				33EF71423B0809B786C7BE44 /* CallerIDStore.swift in Sources */,
 				E07B916A8AE2F1EE0C255E7C /* LlamaCon99App.swift in Sources */,
 				3533EE8CA8ADDE6C5B425034 /* Models.swift in Sources */,
