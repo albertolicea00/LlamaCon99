@@ -309,10 +309,14 @@ private struct InstallGuideView: View {
 
     private func checkStatus() {
         isChecking = true
-        CXCallDirectoryManager.sharedInstance.getEnabledStatusForExtension(withIdentifier: CallerIDStore.extensionBundleID) { newStatus, _ in
-            DispatchQueue.main.async {
-                self.status = newStatus
-                self.isChecking = false
+        // Off the SwiftUI/Swift-concurrency call site: CallKit's XPC bridging otherwise logs
+        // "unsafeForcedSync called from Swift Concurrent context" when invoked from onAppear.
+        DispatchQueue.global(qos: .userInitiated).async {
+            CXCallDirectoryManager.sharedInstance.getEnabledStatusForExtension(withIdentifier: CallerIDStore.extensionBundleID) { newStatus, _ in
+                DispatchQueue.main.async {
+                    self.status = newStatus
+                    self.isChecking = false
+                }
             }
         }
     }
