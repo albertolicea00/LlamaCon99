@@ -7,6 +7,7 @@ import SwiftUI
 struct ContactsListView: View {
     @State private var service = ContactsService()
     @State private var searchText = ""
+    @State private var showingInstallGuide = false
     @Environment(\.scenePhase) private var scenePhase
 
     private var entries: [ContactListEntry] {
@@ -70,6 +71,20 @@ struct ContactsListView: View {
                 }
             }
             .navigationTitle("Contactos")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showingInstallGuide = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showingInstallGuide) {
+            InstallGuideView()
         }
         .onAppear { service.reload() }
         .onChange(of: scenePhase) { _, newPhase in
@@ -164,6 +179,56 @@ private struct ContactAvatarView: View {
         .task(id: contact.id) {
             uiImage = await ContactThumbnailLoader.thumbnail(forContactID: contact.id)
         }
+    }
+}
+
+/// Bottom-sheet walkthrough for the one step iOS never lets an app do for itself: enabling the
+/// CallerID Call Directory Extension under Settings > Phone.
+private struct InstallGuideView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    private let steps: [(icon: String, title: String, detail: String)] = [
+        ("gear", "Abre Ajustes", "Ve a la app de Ajustes de tu iPhone."),
+        ("phone.fill", "Entra a Teléfono", "Baja hasta encontrar Teléfono y tócalo."),
+        ("person.crop.circle.badge.checkmark", "Identificación y bloqueo de llamadas",
+         "Dentro de Teléfono, entra a esta sección."),
+        ("switch.2", "Activa CallerID", "Enciende el interruptor junto a CallerID, la extensión de esta app."),
+        ("checkmark.seal.fill", "Listo", "Ya verás el nombre real del contacto en llamadas entrantes desde números cubanos guardados."),
+    ]
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Text("Para que la identificación de llamadas funcione, iOS requiere activar la extensión manualmente una sola vez.")
+                        .foregroundStyle(.secondary)
+                }
+                ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("\(index + 1). \(step.title)")
+                                .font(.body.weight(.semibold))
+                            Text(step.detail)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: step.icon)
+                            .foregroundStyle(.tint)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+            .navigationTitle("Cómo Activar")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Listo") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
     }
 }
 
