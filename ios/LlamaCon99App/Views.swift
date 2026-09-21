@@ -216,56 +216,10 @@ private struct InstallGuideView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Estado de la Extensión") {
-                    HStack(spacing: 12) {
-                        Image(systemName: statusIcon)
-                            .font(.title3)
-                            .foregroundStyle(statusColor)
-
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(statusTitle)
-                                .font(.subheadline.weight(.semibold))
-                            Text(statusSubtitle)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        Spacer()
-
-                        if isChecking {
-                            ProgressView()
-                        }
-                    }
-                    .padding(.vertical, 4)
-                }
-
-                Section(status == .enabled ? "Cómo Desactivarla" : "Cómo Activarla") {
-                    ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
-                        Label {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("\(index + 1). \(step.title)")
-                                    .font(.body.weight(.semibold))
-                                Text(step.detail)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                        } icon: {
-                            Image(systemName: step.icon)
-                                .foregroundStyle(.tint)
-                        }
-                        .padding(.vertical, 4)
-                    }
-                }
-
-                Section {
-                    Link(destination: URL(string: "https://github.com/albertolicea00")!) {
-                        Text("@albertolicea00")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .listRowBackground(Color.clear)
-                }
+                extensionStatusSection
+                stepsSection
+                siriSection
+                developerSection
             }
             .navigationTitle("Cómo Activar")
             .navigationBarTitleDisplayMode(.inline)
@@ -282,6 +236,97 @@ private struct InstallGuideView: View {
             if newPhase == .active {
                 checkStatus()
             }
+        }
+    }
+
+    @ViewBuilder
+    private var extensionStatusSection: some View {
+        Section("Estado de la Extensión") {
+            HStack(spacing: 12) {
+                Image(systemName: statusIcon)
+                    .font(.title3)
+                    .foregroundStyle(statusColor)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(statusTitle)
+                        .font(.subheadline.weight(.semibold))
+                    Text(statusSubtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                if isChecking {
+                    ProgressView()
+                }
+            }
+            .padding(.vertical, 4)
+        }
+    }
+
+    @ViewBuilder
+    private var stepsSection: some View {
+        Section(status == .enabled ? "Cómo Desactivarla" : "Cómo Activarla") {
+            ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
+                Label {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(index + 1). \(step.title)")
+                            .font(.body.weight(.semibold))
+                        Text(step.detail)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: step.icon)
+                        .foregroundStyle(.tint)
+                }
+                .padding(.vertical, 4)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var siriSection: some View {
+        Section {
+            Label {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Llama con solo tu voz")
+                        .font(.body.weight(.semibold))
+                    Text("Dile a Siri: «Llama Con 99 a [contacto]».")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            } icon: {
+                Image(systemName: "mic.fill")
+                    .foregroundStyle(.tint)
+            }
+            .padding(.vertical, 4)
+
+            Button {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
+                Label("Activar en Ajustes › Siri y Buscar", systemImage: "arrow.up.right.square")
+            }
+        } header: {
+            Text("Comandos de Siri")
+        } footer: {
+            Text("Si no te reconoce el comando, entra a esta pantalla y activa \"Usar con Ask Siri\".")
+        }
+    }
+
+    @ViewBuilder
+    private var developerSection: some View {
+        Section {
+            Link(destination: URL(string: "https://github.com/albertolicea00")!) {
+                Text("@albertolicea00")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.clear)
         }
     }
 
