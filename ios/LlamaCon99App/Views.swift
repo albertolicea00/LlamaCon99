@@ -203,11 +203,12 @@ private struct ContactListEntry: Identifiable, Hashable {
     var id: String { "\(contact.id)-\(number.number)" }
 }
 
-/// One row per contact number: photo, name + labeled number. Tapping dials a `*99` collect
-/// call; swiping trailing offers the same, leading offers a `#31#` hidden-caller-ID call.
+/// One row per contact number: photo, name + labeled number. Tapping always dials a `*99`
+/// collect call; swiping right reveals a `#31#` hidden-caller-ID call, but only when the
+/// "Activar llamar con anónimo" setting is on.
 private struct ContactCallRowView: View {
     let entry: ContactListEntry
-    @AppStorage("anonymousCallDefault") private var anonymousCallDefault = false
+    @AppStorage("anonymousSwipeEnabled") private var anonymousSwipeEnabled = false
 
     private var number: String { entry.number.number }
 
@@ -233,16 +234,17 @@ private struct ContactCallRowView: View {
         .padding(.vertical, 2)
         .contentShape(Rectangle())
         .onTapGesture {
-            DialService.dial(anonymousCallDefault ? "#31#\(number)" : "*99\(number)")
+            DialService.dial("*99\(number)")
         }
         .swipeActions(edge: .leading) {
-            Button {
-                DialService.dial(anonymousCallDefault ? "*99\(number)" : "#31#\(number)")
-            } label: {
-                Label(anonymousCallDefault ? "Normal" : "Anónimo",
-                      systemImage: "shield.lefthalf.filled")
+            if anonymousSwipeEnabled {
+                Button {
+                    DialService.dial("#31#\(number)")
+                } label: {
+                    Label("Anónimo", systemImage: "shield.lefthalf.filled")
+                }
+                .tint(.gray)
             }
-            .tint(.gray)
         }
     }
 }
@@ -291,7 +293,7 @@ private struct InstallGuideView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var status: CXCallDirectoryManager.EnabledStatus = .unknown
     @State private var isChecking = true
-    @AppStorage("anonymousCallDefault") private var anonymousCallDefault = false
+    @AppStorage("anonymousSwipeEnabled") private var anonymousSwipeEnabled = false
 
     private let enableSteps: [(icon: String, title: String, detail: String)] = [
         ("gear", "Abre Ajustes", "Ve a la app de Ajustes de tu iPhone."),
@@ -424,9 +426,9 @@ private struct InstallGuideView: View {
     @ViewBuilder
     private var anonymousCallSection: some View {
         Section {
-            Toggle("Llamar anónimo por defecto", isOn: $anonymousCallDefault)
+            Toggle("Activar llamar con anónimo", isOn: $anonymousSwipeEnabled)
         } footer: {
-            Text("Al tocar un contacto se llamará oculto (#31#) en vez de *99. Desactivado por defecto.")
+            Text("Esto activa llamar con anónimo dándole swipe a la derecha a un contacto (los demás comportamientos no se ven afectados).")
         }
     }
 
