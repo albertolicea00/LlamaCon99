@@ -1,0 +1,115 @@
+# Llama con 99 [iOS]
+
+Two targets, one App Group, no backend.
+
+```
+LlamaCon99App/          Main app (SwiftUI)
+CallerIDExtension/       CallKit Call Directory Extension
+Shared/                  Code + storage both targets use
+```
+
+## Why two targets
+
+iOS only lets a *Call Directory Extension* label incoming calls with a name.
+That extension runs sandboxed, on its own, with no Contacts access — Apple
+starts it independently of the host app and won't grant it entitlements the
+app has. So the split is forced:
+
+- **LlamaCon99App** has Contacts access. It reads the address book, filters
+  Cuban numbers, and writes an identification list to disk.
+- **CallerIDExtension** has none. It only reads that list back and hands it
+  to CallKit.
+
+They talk through one shared file, not IPC — `Shared/CallerIDStore.swift`,
+written to an App Group container (`group.com.llamacon99.shared`) both
+targets can see.
+
+## The `*99` scheme
+
+ETECSA's `*99` collect-call service wraps the caller's number: dial
+`*99<8-digit local number>`, and the receiving end sees a synthesized ID —
+`99` + country code (`53`) + the 8 digits + `99` again (e.g. `51234567` →
+`99535123456799`). `CallerIDStore.wrappedNumber(forLocalNumber:)` builds that
+wrapped ID; `CallDirectoryHandler` registers it with CallKit mapped to the
+real contact name, so `*99` calls from saved numbers show up identified
+instead of as a raw wrapped digit string.
+
+A parallel `#31#<number>` prefix places a plain hidden-caller-ID call
+instead — no wrapping, nothing to identify. That path is opt-in (see
+Settings below) and doesn't touch `CallerIDStore` at all.
+
+## Data flow
+
+```
+ContactsService.reload()
+  → CNContactStore fetch (Contacts.framework)
+  → CubanPhoneNumber.normalize() filters to +53 mobile numbers
+  → CallerIDStore.write(entries)                 [App Group file]
+  → CXCallDirectoryManager.reloadExtension(...)   [tells iOS to re-run the extension]
+
+CallDirectoryHandler.beginRequest(...)  (runs later, in the extension process)
+  → CallerIDStore.read()
+  → context.addIdentificationEntry(...) per entry, ascending order (CallKit requirement)
+```
+
+`ContactsService` re-syncs on `onAppear` and whenever the app returns to
+`.active` — there's no push/observer wiring to the address book, so a
+contact edited while the app is backgrounded is picked up on next
+foreground, not live.
+
+## Main app structure (`Views.swift`)
+
+- `ContactsListView` — root. Owns `ContactsService`, the search text, and
+  the two sheets below. Handles the Contacts permission states
+  (`.isDenied` / `!.isLoaded` / empty) before ever showing the list.
+- `WelcomeView` — a sheet, not a screen. Two states share one view:
+  first-launch ("Bienvenido a…") and a weekly nag ("Aún falta activar el
+  identificador") shown only while the CallerID extension is still
+  disabled — `maybeShowWelcome()` checks `CXCallDirectoryManager`'s live
+  status before presenting it, and only after
+  `service.isLoaded` flips true, so it never stacks on top of the system
+  Contacts permission prompt. Persisted via `@AppStorage("lastWelcomeShownAt")`.
+- `ContactCallRowView` — one row. Tap always dials `*99`; a leading
+  swipe action for `#31#` only appears when `@AppStorage("anonymousSwipeEnabled")`
+  is on (off by default) — set from `InstallGuideView`.
+- `InstallGuideView` — the "i" toolbar button's sheet. Live extension
+  status via `CXCallDirectoryManager.getEnabledStatusForExtension`, numbered
+  steps to turn it on/off in Settings › Phone, the Siri-command blurb, and
+  the anonymous-call toggle. A commented-out `developerSection` (GitHub
+  link) stays in source as a disabled feature, not deleted.
+
+## Siri / App Intents (`AppIntents.swift`)
+
+`CallWith99Intent` exposes the same `*99` dial as a Shortcuts/Siri action.
+`DialableContactQuery` re-queries `CNContactStore` directly rather than
+reusing `ContactsService`, since App Intents run outside the app's own
+view-model lifecycle. `LlamaCon99Shortcuts` registers the Spanish phrases
+("Llama Con 99 a…", "…pagando a…") CallKit's Siri integration matches
+against — these are not localized, unlike the rest of the UI (see below).
+
+## Localization
+
+UI strings live in `LlamaCon99App/Localizable.xcstrings` (String Catalog),
+source language Spanish, English as the added translation — the app
+follows the device's language automatically. Two things opt out of that
+by construction, not oversight:
+
+- Values that are plain `String` (tuple fields, computed properties) don't
+  auto-localize like `Text("literal")` does — those are wrapped explicitly
+  in `String(localized:)` at the point they're built (see `enableSteps`/
+  `disableSteps` and `statusTitle`/`statusSubtitle` in `InstallGuideView`).
+- Siri's App Shortcut phrases are Spanish-only; there's no equivalent
+  mechanism to localize matched voice phrases through the String Catalog.
+
+`InfoPlist.xcstrings` covers `NSContactsUsageDescription`.
+
+## Project file
+
+`LlamaCon99.xcodeproj` is generated by [XcodeGen](https://github.com/yonaskolb/XcodeGen)
+from `project.yml` — don't hand-edit the `.xcodeproj`, it gets clobbered on
+the next `xcodegen generate`. Both targets' `sources` are folder references
+(`LlamaCon99App`, `CallerIDExtension`, `Shared`), so a new file dropped into
+one of those directories is picked up automatically on regen; project-wide
+settings that live outside `sources` — `developmentLanguage`,
+`NSContactsUsageDescription`, entitlements, bundle IDs — must be set in
+`project.yml`, not in the `.xcodeproj`, or a regen silently reverts them.

@@ -438,19 +438,18 @@ private struct InstallGuideView: View {
         }
     }
 
-    // Hidden feature — kept for a possible future re-enable, not shown to users.
-    // @ViewBuilder
-    // private var developerSection: some View {
-    //     Section {
-    //         Link(destination: URL(string: "https://github.com/albertolicea00")!) {
-    //             Text("@albertolicea00")
-    //                 .font(.caption)
-    //                 .foregroundStyle(.secondary)
-    //         }
-    //         .frame(maxWidth: .infinity)
-    //         .listRowBackground(Color.clear)
-    //     }
-    // }
+    @ViewBuilder
+    private var developerSection: some View {
+        Section {
+            Link(destination: URL(string: "https://github.com/albertolicea00")!) {
+                Text("@albertolicea00")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.clear)
+        }
+    }
 
     private var statusTitle: String {
         switch status {
