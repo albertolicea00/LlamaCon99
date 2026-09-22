@@ -18,8 +18,13 @@ struct ContactsListView: View {
     @State private var searchText = ""
     @State private var showingInstallGuide = false
     @State private var showingWelcome = false
-    @AppStorage("hasSeenWelcome") private var hasSeenWelcome = false
+    @State private var welcomeIsFirstTime = false
+    @AppStorage("lastWelcomeShownAt") private var lastWelcomeShownAt: Double = 0
     @Environment(\.scenePhase) private var scenePhase
+
+    /// Re-show the welcome sheet at most once a week, and only until the user has enabled the
+    /// CallerID extension — once it's on, the reminder has nothing left to ask for.
+    private static let welcomeReminderInterval: TimeInterval = 7 * 24 * 60 * 60
 
     private var entries: [ContactListEntry] {
         service.contacts.flatMap { contact in
@@ -81,7 +86,7 @@ struct ContactsListView: View {
                     .searchable(text: $searchText, prompt: "Buscar")
                 }
             }
-            .navigationTitle("contactos.cu")
+            .navigationTitle("Contactos")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -98,7 +103,7 @@ struct ContactsListView: View {
             InstallGuideView()
         }
         .sheet(isPresented: $showingWelcome) {
-            WelcomeView {
+            WelcomeView(isFirstTime: welcomeIsFirstTime) {
                 showingWelcome = false
                 showingInstallGuide = true
             }
@@ -106,21 +111,43 @@ struct ContactsListView: View {
         }
         .onAppear {
             service.reload()
-            if !hasSeenWelcome {
-                hasSeenWelcome = true
-                showingWelcome = true
-            }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 service.reload()
             }
         }
+        .onChange(of: service.isLoaded) { _, isLoaded in
+            // Wait until the Contacts permission prompt (if any) has been resolved, so the
+            // welcome sheet never stacks on top of it.
+            if isLoaded {
+                maybeShowWelcome()
+            }
+        }
+    }
+
+    private func maybeShowWelcome() {
+        let dueForReminder = Date().timeIntervalSince1970 - lastWelcomeShownAt
+            > Self.welcomeReminderInterval
+        guard dueForReminder else { return }
+
+        CXCallDirectoryManager.sharedInstance.getEnabledStatusForExtension(
+            withIdentifier: CallerIDStore.extensionBundleID
+        ) { status, _ in
+            DispatchQueue.main.async {
+                guard status != .enabled else { return }
+                welcomeIsFirstTime = lastWelcomeShownAt == 0
+                lastWelcomeShownAt = Date().timeIntervalSince1970
+                showingWelcome = true
+            }
+        }
     }
 }
 
-/// First-launch-only modal explaining what the app does, shown once before the install guide.
+/// Explains what the app does and nudges the user to enable the CallerID extension. Shown once
+/// on first launch, then re-shown weekly (with different copy) until the extension is enabled.
 private struct WelcomeView: View {
+    let isFirstTime: Bool
     let onContinue: () -> Void
 
     var body: some View {
@@ -130,8 +157,10 @@ private struct WelcomeView: View {
                 .foregroundStyle(.tint)
                 .padding(.top, 32)
 
-            Text("Bienvenido a \(Bundle.main.appDisplayName)")
+            Text(isFirstTime ? "Bienvenido a \(Bundle.main.appDisplayName)" : "Aún falta activar el identificador")
                 .font(.title2.weight(.bold))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
 
             Text("Esta app te deja llamar a tus contactos cubanos con un solo toque, envolviendo la llamada en el formato *99 para que veas el nombre real de quien llama, incluso desde números cubanos.")
                 .font(.body)
@@ -139,7 +168,13 @@ private struct WelcomeView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
 
-            Text("Para que funcione necesitas activar la extensión CallerID en Ajustes › Teléfono. Es la que traduce el número *99 al nombre real del contacto.")
+            Text("Te pedimos acceso a tus Contactos para poder identificar quién te llama: solo así la extensión CallerID puede reconocer el número *99 y mostrarte el nombre real en vez de un número desconocido.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            Text("Para activar el identificador necesitas encender la extensión CallerID en Ajustes › Teléfono.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
