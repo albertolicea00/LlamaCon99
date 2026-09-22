@@ -7,22 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		195712D70DC91E675B1C52DD /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = EAC5F9291220E547120F1C95 /* Localizable.xcstrings */; };
-		23A0DD593BF2A053E86D6B2A /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C3E2CB1B829802D25BC62D19 /* InfoPlist.xcstrings */; };
-		33EF71423B0809B786C7BE44 /* CallerIDStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC413511AC9894D1D60BF7 /* CallerIDStore.swift */; };
-		3533EE8CA8ADDE6C5B425034 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3DA7C54F8E4ED50ABFAFA4 /* Models.swift */; };
-		49EBE7778CA1B631ADE5EAE9 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DA10ADB78C07BEE5AEA218 /* Views.swift */; };
+		197A641DD70ED22A13E31256 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84F328E4FD1C6ED1B57E677 /* Models.swift */; };
+		1D73CA2647A6E7B77BE4F3FB /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = E270990D69E6B8D11DA2E78C /* Views.swift */; };
+		4A8061B7D800E5015E4C9D68 /* CallerIDExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		52E993E589736AD679302E0A /* CallerIDStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC413511AC9894D1D60BF7 /* CallerIDStore.swift */; };
 		6E97F0D85CD0D8EC245423DB /* CallerIDStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC413511AC9894D1D60BF7 /* CallerIDStore.swift */; };
-		81EDC1CD3FD7E7A6EF91786D /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F3F2BFC87B3AF2E670811A /* Services.swift */; };
-		AD6C370A0ABCE4F4E6CD9CFB /* AppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D107CC27FC1957BFC12783 /* AppIntents.swift */; };
+		7EE6E4F2BD07FF95B19314B1 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC3F7FB931AAE2149C6D8FD /* Services.swift */; };
+		8594964C329D37081AC63A7D /* AppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCAE32E7C0103CA9FA7AFA7 /* AppIntents.swift */; };
+		98F567EA4E4138E184D9996F /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFE364F605D4C96BA5E00E9B /* InfoPlist.xcstrings */; };
+		B1F33228E4163B416CF3E40C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = DCCDB1E7E100E40E1B60192B /* Localizable.xcstrings */; };
 		CB694C40C69F0FB44954C8AD /* CallDirectoryHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B38DDDAD7439DBCE9E013B /* CallDirectoryHandler.swift */; };
-		CF3307A0D3FF91027920479E /* CallerIDExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E07B916A8AE2F1EE0C255E7C /* LlamaCon99App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E99AFDE2D0D1B3DB57E1A73 /* LlamaCon99App.swift */; };
-		EA639252CF5BBA8BCE845C5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26B3A32A02FBD711E2ED4E1D /* Assets.xcassets */; };
+		DBD3758089CA1E50FFD7EB04 /* LlamaCon99App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C2FBCDBCFA6578358749ACA /* LlamaCon99App.swift */; };
+		EAAC03686C0AB289187F2EAC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30050DAF41619B36FB628588 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		262762191E13C9E4653E2601 /* PBXContainerItemProxy */ = {
+		B3518E4EC62C92E113E87669 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 52F4669FF35845038B8FA049 /* Project object */;
 			proxyType = 1;
@@ -32,13 +32,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		FA2C5EE0B7734279D57F2F09 /* Embed Foundation Extensions */ = {
+		448A7CE897F9938A5639BCD9 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				CF3307A0D3FF91027920479E /* CallerIDExtension.appex in Embed Foundation Extensions */,
+				4A8061B7D800E5015E4C9D68 /* CallerIDExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -46,22 +46,22 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1E99AFDE2D0D1B3DB57E1A73 /* LlamaCon99App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LlamaCon99App.swift; sourceTree = "<group>"; };
-		22DA10ADB78C07BEE5AEA218 /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
-		26B3A32A02FBD711E2ED4E1D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4E3DA7C54F8E4ED50ABFAFA4 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		0D87EAEF2F8EEAEB6F0A8F1E /* LlamaCon99.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LlamaCon99.entitlements; sourceTree = "<group>"; };
+		30050DAF41619B36FB628588 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		54085BA8DEC5A8A3921C2A3C /* CallerIDExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CallerIDExtension.entitlements; sourceTree = "<group>"; };
 		56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CallerIDExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		6312573D37464F6362B0A33D /* LlamaCon99App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LlamaCon99App.entitlements; sourceTree = "<group>"; };
+		5C2FBCDBCFA6578358749ACA /* LlamaCon99App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LlamaCon99App.swift; sourceTree = "<group>"; };
 		65B38DDDAD7439DBCE9E013B /* CallDirectoryHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDirectoryHandler.swift; sourceTree = "<group>"; };
-		8BB465652231AAF363005A39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		A1D107CC27FC1957BFC12783 /* AppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntents.swift; sourceTree = "<group>"; };
+		6DA8767C0625F5CD7FCA8825 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		9643F973CF744F0F562E1A65 /* LlamaCon99.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LlamaCon99.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADDC413511AC9894D1D60BF7 /* CallerIDStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallerIDStore.swift; sourceTree = "<group>"; };
 		C08E55F8B010E94F9B6FF9A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		C3E2CB1B829802D25BC62D19 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
-		E04342082462663F1648468D /* LlamaCon99App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LlamaCon99App.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E4F3F2BFC87B3AF2E670811A /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
-		EAC5F9291220E547120F1C95 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		CDCAE32E7C0103CA9FA7AFA7 /* AppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntents.swift; sourceTree = "<group>"; };
+		CFE364F605D4C96BA5E00E9B /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		DCCDB1E7E100E40E1B60192B /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		DDC3F7FB931AAE2149C6D8FD /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
+		E270990D69E6B8D11DA2E78C /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
+		E84F328E4FD1C6ED1B57E677 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -69,7 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				49FCD3A90551150E11E10AB3 /* CallerIDExtension */,
-				93BCE2191A6F7BAEBF4F7DD8 /* LlamaCon99App */,
+				A454BE9CC587E300EC9F2F5B /* LlamaCon99 */,
 				DC7503FF41A794634F3B6D76 /* Shared */,
 				7B2C4742630A903F2E521161 /* Products */,
 			);
@@ -89,26 +89,26 @@
 			isa = PBXGroup;
 			children = (
 				56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */,
-				E04342082462663F1648468D /* LlamaCon99App.app */,
+				9643F973CF744F0F562E1A65 /* LlamaCon99.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		93BCE2191A6F7BAEBF4F7DD8 /* LlamaCon99App */ = {
+		A454BE9CC587E300EC9F2F5B /* LlamaCon99 */ = {
 			isa = PBXGroup;
 			children = (
-				A1D107CC27FC1957BFC12783 /* AppIntents.swift */,
-				26B3A32A02FBD711E2ED4E1D /* Assets.xcassets */,
-				8BB465652231AAF363005A39 /* Info.plist */,
-				C3E2CB1B829802D25BC62D19 /* InfoPlist.xcstrings */,
-				6312573D37464F6362B0A33D /* LlamaCon99App.entitlements */,
-				1E99AFDE2D0D1B3DB57E1A73 /* LlamaCon99App.swift */,
-				EAC5F9291220E547120F1C95 /* Localizable.xcstrings */,
-				4E3DA7C54F8E4ED50ABFAFA4 /* Models.swift */,
-				E4F3F2BFC87B3AF2E670811A /* Services.swift */,
-				22DA10ADB78C07BEE5AEA218 /* Views.swift */,
+				CDCAE32E7C0103CA9FA7AFA7 /* AppIntents.swift */,
+				30050DAF41619B36FB628588 /* Assets.xcassets */,
+				6DA8767C0625F5CD7FCA8825 /* Info.plist */,
+				CFE364F605D4C96BA5E00E9B /* InfoPlist.xcstrings */,
+				0D87EAEF2F8EEAEB6F0A8F1E /* LlamaCon99.entitlements */,
+				5C2FBCDBCFA6578358749ACA /* LlamaCon99App.swift */,
+				DCCDB1E7E100E40E1B60192B /* Localizable.xcstrings */,
+				E84F328E4FD1C6ED1B57E677 /* Models.swift */,
+				DDC3F7FB931AAE2149C6D8FD /* Services.swift */,
+				E270990D69E6B8D11DA2E78C /* Views.swift */,
 			);
-			path = LlamaCon99App;
+			path = LlamaCon99;
 			sourceTree = "<group>";
 		};
 		DC7503FF41A794634F3B6D76 /* Shared */ = {
@@ -139,24 +139,24 @@
 			productReference = 56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		63C0303D330F49195E0319EE /* LlamaCon99App */ = {
+		8EF22876BB25193180DAA5D3 /* LlamaCon99 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9677D7A74DBB1E6931D3D567 /* Build configuration list for PBXNativeTarget "LlamaCon99App" */;
+			buildConfigurationList = 98A3775B4CE307020717B5A0 /* Build configuration list for PBXNativeTarget "LlamaCon99" */;
 			buildPhases = (
-				3AFD0F0C24D4FEE1A00F5CE7 /* Sources */,
-				A3BB53A6A527E82FDC8F79B7 /* Resources */,
-				FA2C5EE0B7734279D57F2F09 /* Embed Foundation Extensions */,
+				4AA275A0170C8F28AA70EF8B /* Sources */,
+				096427DABF9802F056CC8568 /* Resources */,
+				448A7CE897F9938A5639BCD9 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				83D7C9F04865E8E303F315C9 /* PBXTargetDependency */,
+				A657123479B395E0403B4994 /* PBXTargetDependency */,
 			);
-			name = LlamaCon99App;
+			name = LlamaCon99;
 			packageProductDependencies = (
 			);
-			productName = LlamaCon99App;
-			productReference = E04342082462663F1648468D /* LlamaCon99App.app */;
+			productName = LlamaCon99;
+			productReference = 9643F973CF744F0F562E1A65 /* LlamaCon99.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -173,8 +173,8 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
-				es,
 				en,
+				es,
 			);
 			mainGroup = 00A22BD1C7FEC3CD32BC8AB1;
 			minimizedProjectReferenceProxies = 1;
@@ -184,35 +184,35 @@
 			projectRoot = "";
 			targets = (
 				0B01001CC210DAFBF81C3223 /* CallerIDExtension */,
-				63C0303D330F49195E0319EE /* LlamaCon99App */,
+				8EF22876BB25193180DAA5D3 /* LlamaCon99 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A3BB53A6A527E82FDC8F79B7 /* Resources */ = {
+		096427DABF9802F056CC8568 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EA639252CF5BBA8BCE845C5F /* Assets.xcassets in Resources */,
-				195712D70DC91E675B1C52DD /* Localizable.xcstrings in Resources */,
-				23A0DD593BF2A053E86D6B2A /* InfoPlist.xcstrings in Resources */,
+				EAAC03686C0AB289187F2EAC /* Assets.xcassets in Resources */,
+				98F567EA4E4138E184D9996F /* InfoPlist.xcstrings in Resources */,
+				B1F33228E4163B416CF3E40C /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3AFD0F0C24D4FEE1A00F5CE7 /* Sources */ = {
+		4AA275A0170C8F28AA70EF8B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD6C370A0ABCE4F4E6CD9CFB /* AppIntents.swift in Sources */,
-				33EF71423B0809B786C7BE44 /* CallerIDStore.swift in Sources */,
-				E07B916A8AE2F1EE0C255E7C /* LlamaCon99App.swift in Sources */,
-				3533EE8CA8ADDE6C5B425034 /* Models.swift in Sources */,
-				81EDC1CD3FD7E7A6EF91786D /* Services.swift in Sources */,
-				49EBE7778CA1B631ADE5EAE9 /* Views.swift in Sources */,
+				8594964C329D37081AC63A7D /* AppIntents.swift in Sources */,
+				52E993E589736AD679302E0A /* CallerIDStore.swift in Sources */,
+				DBD3758089CA1E50FFD7EB04 /* LlamaCon99App.swift in Sources */,
+				197A641DD70ED22A13E31256 /* Models.swift in Sources */,
+				7EE6E4F2BD07FF95B19314B1 /* Services.swift in Sources */,
+				1D73CA2647A6E7B77BE4F3FB /* Views.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,23 +228,24 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		83D7C9F04865E8E303F315C9 /* PBXTargetDependency */ = {
+		A657123479B395E0403B4994 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0B01001CC210DAFBF81C3223 /* CallerIDExtension */;
-			targetProxy = 262762191E13C9E4653E2601 /* PBXContainerItemProxy */;
+			targetProxy = B3518E4EC62C92E113E87669 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		2BECBA3CC7292BFBD4C59ABF /* Debug */ = {
+		30E06BA83BF61EFAC3A0ABB6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = LlamaCon99App/LlamaCon99App.entitlements;
+				CODE_SIGN_ENTITLEMENTS = LlamaCon99/LlamaCon99.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = LlamaCon99App/Info.plist;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
+				INFOPLIST_FILE = LlamaCon99/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -255,7 +256,7 @@
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
-			name = Debug;
+			name = Release;
 		};
 		4D460CBFCE2734E19C4115E3 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -293,8 +294,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_LANGUAGE = es;
-				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -330,6 +329,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CallerIDExtension/CallerIDExtension.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				INFOPLIST_FILE = CallerIDExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -345,11 +345,34 @@
 			};
 			name = Debug;
 		};
+		6F649EF12D1A0DE2A67C8F68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = LlamaCon99/LlamaCon99.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
+				INFOPLIST_FILE = LlamaCon99/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.llamacon99;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
 		86F9D7A0481851001A4D75AF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CallerIDExtension/CallerIDExtension.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				INFOPLIST_FILE = CallerIDExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -401,8 +424,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_LANGUAGE = es;
-				DEVELOPMENT_TEAM = 7W3D3JL6PV;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -426,27 +447,6 @@
 			};
 			name = Release;
 		};
-		EA7BB0B3C8F4AE5E08B9AD68 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = LlamaCon99App/LlamaCon99App.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = LlamaCon99App/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.llamacon99;
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.9;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -459,11 +459,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		9677D7A74DBB1E6931D3D567 /* Build configuration list for PBXNativeTarget "LlamaCon99App" */ = {
+		98A3775B4CE307020717B5A0 /* Build configuration list for PBXNativeTarget "LlamaCon99" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2BECBA3CC7292BFBD4C59ABF /* Debug */,
-				EA7BB0B3C8F4AE5E08B9AD68 /* Release */,
+				6F649EF12D1A0DE2A67C8F68 /* Debug */,
+				30E06BA83BF61EFAC3A0ABB6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -7,14 +7,14 @@ options:
   developmentLanguage: es
 
 targets:
-  LlamaCon99App:
+  LlamaCon99:
     type: application
     platform: iOS
     sources:
-      - LlamaCon99App
+      - LlamaCon99
       - Shared
     info:
-      path: LlamaCon99App/Info.plist
+      path: LlamaCon99/Info.plist
       properties:
         CFBundleDisplayName: Llama Con 99
         CFBundleShortVersionString: 1.0.1
@@ -36,7 +36,7 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
     entitlements:
-      path: LlamaCon99App/LlamaCon99App.entitlements
+      path: LlamaCon99/LlamaCon99.entitlements
       properties:
         com.apple.security.application-groups:
           - group.com.llamacon99.shared
