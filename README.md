@@ -15,10 +15,10 @@ Lists the device's contacts and identifies incoming calls from them, showing the
 
 ### iOS
 
-- `ContactsApp` — SwiftUI app listing contacts with a Cuban number (+53, 8 digits), grouped alphabetically with search. Tapping a contact dials a `*99` collect call; swiping offers a `#31#` hidden-caller-ID call.
+- `ContactsApp` — SwiftUI app listing contacts with a Cuban number (+53, 8 digits), grouped alphabetically with search. Tapping a contact dials a `*99` collect call; a `#31#` hidden-caller-ID swipe action can be enabled from Settings (off by default). Follows the device's language (Spanish source, English translation).
 - `CallerIDExtension` — a CallKit Call Directory Extension that labels incoming `*99` collect calls with the real contact name, read from a list the main app writes via an App Group.
 
-See [`ios/README.md`](ios/README.md) for build instructions.
+See [`ios/ARCHITECTURE.md`](ios/ARCHITECTURE.md) for build instructions and architecture.
 
 ### Android
 

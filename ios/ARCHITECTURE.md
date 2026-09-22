@@ -1,5 +1,23 @@
 # Llama con 99 [iOS]
 
+## Build
+
+Requires Xcode 15+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen)
+(`brew install xcodegen`) — the `.xcodeproj` is generated, not committed by
+hand, so generate (or regenerate, after editing `project.yml`) it before
+opening:
+
+```sh
+cd ios
+xcodegen generate
+open LlamaCon99.xcodeproj
+```
+
+Run the `LlamaCon99App` scheme; `CallerIDExtension` embeds automatically,
+you don't run it directly. The CallKit Call Directory Extension only
+verifies as enabled on a physical device (Settings › Phone) — the
+simulator can't check its status.
+
 Two targets, one App Group, no backend.
 
 ```

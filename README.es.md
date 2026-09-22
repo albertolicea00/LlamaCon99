@@ -15,10 +15,10 @@ Muestra los contactos del dispositivo e identifica las llamadas entrantes de eso
 
 ### iOS
 
-- `ContactsApp` — app en SwiftUI que lista los contactos con número cubano (+53, 8 dígitos), agrupados alfabéticamente con buscador. Al tocar un contacto se marca una llamada por cobrar (`*99`); deslizando se ofrece una llamada con identificador oculto (`#31#`).
+- `ContactsApp` — app en SwiftUI que lista los contactos con número cubano (+53, 8 dígitos), agrupados alfabéticamente con buscador. Al tocar un contacto se marca una llamada por cobrar (`*99`); la opción de deslizar para llamar con identificador oculto (`#31#`) se activa desde Ajustes (desactivada por defecto). Sigue el idioma del dispositivo (fuente en español, traducida al inglés).
 - `CallerIDExtension` — una Call Directory Extension de CallKit que identifica las llamadas entrantes `*99` con el nombre real del contacto, leyendo una lista que la app principal escribe vía un App Group.
 
-Instrucciones de compilación en [`ios/README.md`](ios/README.md).
+Instrucciones de compilación y arquitectura en [`ios/ARCHITECTURE.md`](ios/ARCHITECTURE.md).
 
 ### Android
 
