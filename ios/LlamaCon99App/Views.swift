@@ -330,8 +330,7 @@ private struct InstallGuideView: View {
                 stepsSection
                 siriSection
                 anonymousCallSection
-                // developerSection — hidden feature, keep commented out.
-                // developerSection
+                developerSection
             }
             .navigationTitle("Cómo Activar")
             .navigationBarTitleDisplayMode(.inline)
@@ -442,7 +441,7 @@ private struct InstallGuideView: View {
     private var developerSection: some View {
         Section {
             Link(destination: URL(string: "https://github.com/albertolicea00")!) {
-                Text("@albertolicea00")
+                Text("by @albertolicea00")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
