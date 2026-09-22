@@ -157,10 +157,16 @@ private struct WelcomeView: View {
                 .foregroundStyle(.tint)
                 .padding(.top, 32)
 
-            Text(isFirstTime ? "Bienvenido a \(Bundle.main.appDisplayName)" : "Aún falta activar el identificador")
-                .font(.title2.weight(.bold))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 24)
+            Group {
+                if isFirstTime {
+                    Text("Bienvenido a \(Bundle.main.appDisplayName)")
+                } else {
+                    Text("Aún falta activar el identificador")
+                }
+            }
+            .font(.title2.weight(.bold))
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 24)
 
             Text("Esta app te deja llamar a tus contactos cubanos con un solo toque, envolviendo la llamada en el formato *99 para que veas el nombre real de quien llama, incluso desde números cubanos.")
                 .font(.body)
@@ -296,21 +302,21 @@ private struct InstallGuideView: View {
     @AppStorage("anonymousSwipeEnabled") private var anonymousSwipeEnabled = false
 
     private let enableSteps: [(icon: String, title: String, detail: String)] = [
-        ("gear", "Abre Ajustes", "Ve a la app de Ajustes de tu iPhone."),
-        ("phone.fill", "Entra a Teléfono", "Baja hasta encontrar Teléfono y tócalo."),
-        ("person.crop.circle.badge.checkmark", "Identificación y bloqueo de llamadas",
-         "Dentro de Teléfono, entra a esta sección."),
-        ("switch.2", "Activa CallerID", "Enciende el interruptor junto a CallerID, la extensión de esta app."),
-        ("checkmark.seal.fill", "Listo", "Ya verás el nombre real del contacto en llamadas entrantes desde números cubanos guardados."),
+        ("gear", String(localized: "Abre Ajustes"), String(localized: "Ve a la app de Ajustes de tu iPhone.")),
+        ("phone.fill", String(localized: "Entra a Teléfono"), String(localized: "Baja hasta encontrar Teléfono y tócalo.")),
+        ("person.crop.circle.badge.checkmark", String(localized: "Identificación y bloqueo de llamadas"),
+         String(localized: "Dentro de Teléfono, entra a esta sección.")),
+        ("switch.2", String(localized: "Activa CallerID"), String(localized: "Enciende el interruptor junto a CallerID, la extensión de esta app.")),
+        ("checkmark.seal.fill", String(localized: "Listo"), String(localized: "Ya verás el nombre real del contacto en llamadas entrantes desde números cubanos guardados.")),
     ]
 
     private let disableSteps: [(icon: String, title: String, detail: String)] = [
-        ("gear", "Abre Ajustes", "Ve a la app de Ajustes de tu iPhone."),
-        ("phone.fill", "Entra a Teléfono", "Baja hasta encontrar Teléfono y tócalo."),
-        ("person.crop.circle.badge.checkmark", "Identificación y bloqueo de llamadas",
-         "Dentro de Teléfono, entra a esta sección."),
-        ("switch.2", "Apaga CallerID", "Apaga el interruptor junto a CallerID, la extensión de esta app."),
-        ("checkmark.seal.fill", "Listo", "Dejarás de ver el nombre del contacto en llamadas *99, solo el número envuelto."),
+        ("gear", String(localized: "Abre Ajustes"), String(localized: "Ve a la app de Ajustes de tu iPhone.")),
+        ("phone.fill", String(localized: "Entra a Teléfono"), String(localized: "Baja hasta encontrar Teléfono y tócalo.")),
+        ("person.crop.circle.badge.checkmark", String(localized: "Identificación y bloqueo de llamadas"),
+         String(localized: "Dentro de Teléfono, entra a esta sección.")),
+        ("switch.2", String(localized: "Apaga CallerID"), String(localized: "Apaga el interruptor junto a CallerID, la extensión de esta app.")),
+        ("checkmark.seal.fill", String(localized: "Listo"), String(localized: "Dejarás de ver el nombre del contacto en llamadas *99, solo el número envuelto.")),
     ]
 
     private var steps: [(icon: String, title: String, detail: String)] {
@@ -448,17 +454,17 @@ private struct InstallGuideView: View {
 
     private var statusTitle: String {
         switch status {
-        case .enabled: return "Extensión Activada"
-        case .disabled: return "Extensión Desactivada"
-        default: return "Estado No Disponible"
+        case .enabled: return String(localized: "Extensión Activada")
+        case .disabled: return String(localized: "Extensión Desactivada")
+        default: return String(localized: "Estado No Disponible")
         }
     }
 
     private var statusSubtitle: String {
         switch status {
-        case .enabled: return "Las llamadas *99 mostrarán el nombre de tu contacto."
-        case .disabled: return "Actívala en Ajustes › Teléfono para que funcione."
-        default: return "Solo verificable en un iPhone físico real."
+        case .enabled: return String(localized: "Las llamadas *99 mostrarán el nombre de tu contacto.")
+        case .disabled: return String(localized: "Actívala en Ajustes › Teléfono para que funcione.")
+        default: return String(localized: "Solo verificable en un iPhone físico real.")
         }
     }
 

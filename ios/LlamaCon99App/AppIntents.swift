@@ -46,7 +46,7 @@ struct DialableContactQuery: EntityQuery, EntityStringQuery {
                 .compactMap({ CubanPhoneNumber.normalize($0.value.stringValue) })
                 .first
             else { return }
-            let name = CNContactFormatter.string(from: contact, style: .fullName) ?? "Sin nombre"
+            let name = CNContactFormatter.string(from: contact, style: .fullName) ?? String(localized: "Sin nombre")
             results.append(DialableContactEntity(id: contact.identifier, name: name, number: number))
         }
         return results

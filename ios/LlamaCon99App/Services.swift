@@ -125,7 +125,7 @@ final class ContactsService {
                     return ContactPhoneNumber(label: label, number: normalized)
                 }
                 guard !cubanNumbers.isEmpty else { return }
-                let name = CNContactFormatter.string(from: contact, style: .fullName) ?? "Sin nombre"
+                let name = CNContactFormatter.string(from: contact, style: .fullName) ?? String(localized: "Sin nombre")
                 results.append(DeviceContact(
                     id: contact.identifier,
                     name: name,

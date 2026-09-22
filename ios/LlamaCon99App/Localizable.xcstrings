@@ -1,0 +1,543 @@
+{
+  "sourceLanguage" : "es",
+  "strings" : {
+    "%@. %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@"
+          }
+        }
+      }
+    },
+    "Abre Ajustes" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
+    "Activa CallerID" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on CallerID"
+          }
+        }
+      }
+    },
+    "Activa el permiso de Contactos para poder llamarlos directamente desde la app." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Contacts access to call them directly from the app."
+          }
+        }
+      }
+    },
+    "Actívala en Ajustes › Teléfono para que funcione." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable it in Settings › Phone for it to work."
+          }
+        }
+      }
+    },
+    "Activar en Ajustes › Siri y Buscar" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable in Settings › Siri & Search"
+          }
+        }
+      }
+    },
+    "Activar llamar con anónimo" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable calling anonymously"
+          }
+        }
+      }
+    },
+    "Anónimo" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anonymous"
+          }
+        }
+      }
+    },
+    "Apaga CallerID" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off CallerID"
+          }
+        }
+      }
+    },
+    "Apaga el interruptor junto a CallerID, la extensión de esta app." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off the switch next to CallerID, this app's extension."
+          }
+        }
+      }
+    },
+    "Aún falta activar el identificador" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You still need to enable the caller ID"
+          }
+        }
+      }
+    },
+    "Baja hasta encontrar Teléfono y tócalo." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scroll down until you find Phone and tap it."
+          }
+        }
+      }
+    },
+    "Bienvenido a %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to %@"
+          }
+        }
+      }
+    },
+    "Buscar" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        }
+      }
+    },
+    "Comandos de Siri" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri Commands"
+          }
+        }
+      }
+    },
+    "Cómo Activar" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to Enable It"
+          }
+        }
+      }
+    },
+    "Cómo Activarla" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to Enable It"
+          }
+        }
+      }
+    },
+    "Cómo Desactivarla" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to Disable It"
+          }
+        }
+      }
+    },
+    "Contacto" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact"
+          }
+        }
+      }
+    },
+    "Contactos" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contacts"
+          }
+        }
+      }
+    },
+    "Dejarás de ver el nombre del contacto en llamadas *99, solo el número envuelto." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You'll stop seeing the contact name on *99 calls, only the wrapped number."
+          }
+        }
+      }
+    },
+    "Dentro de Teléfono, entra a esta sección." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inside Phone, go to this section."
+          }
+        }
+      }
+    },
+    "Dile a Siri: «Llama Con 99 a [contacto]»." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tell Siri: “Llama Con 99 to [contact]”."
+          }
+        }
+      }
+    },
+    "Enciende el interruptor junto a CallerID, la extensión de esta app." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on the switch next to CallerID, this app's extension."
+          }
+        }
+      }
+    },
+    "Entra a Teléfono" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to Phone"
+          }
+        }
+      }
+    },
+    "Esta app te deja llamar a tus contactos cubanos con un solo toque, envolviendo la llamada en el formato *99 para que veas el nombre real de quien llama, incluso desde números cubanos." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app lets you call your Cuban contacts with a single tap, wrapping the call in the *99 format so you see the caller's real name, even for Cuban numbers."
+          }
+        }
+      }
+    },
+    "Estado de la Extensión" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extension Status"
+          }
+        }
+      }
+    },
+    "Estado No Disponible" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status Unavailable"
+          }
+        }
+      }
+    },
+    "Esto activa llamar con anónimo dándole swipe a la derecha a un contacto (los demás comportamientos no se ven afectados)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This enables calling anonymously by swiping right on a contact (all other behavior stays the same)."
+          }
+        }
+      }
+    },
+    "Extensión Activada" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extension Enabled"
+          }
+        }
+      }
+    },
+    "Extensión Desactivada" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extension Disabled"
+          }
+        }
+      }
+    },
+    "Identificación y bloqueo de llamadas" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Call Blocking & Identification"
+          }
+        }
+      }
+    },
+    "Las llamadas *99 mostrarán el nombre de tu contacto." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "*99 calls will show your contact's name."
+          }
+        }
+      }
+    },
+    "Listo" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "Llama con solo tu voz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Call with just your voice"
+          }
+        }
+      }
+    },
+    "Llamar con 99" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Call with 99"
+          }
+        }
+      }
+    },
+    "Marca *99 seguido del número de un contacto para hacer una llamada por cobrar identificada." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dials *99 followed by a contact's number to place an identified collect call."
+          }
+        }
+      }
+    },
+    "No se encontró ningún contacto con número cubano (+53, 8 dígitos)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No contact with a Cuban number (+53, 8 digits) was found."
+          }
+        }
+      }
+    },
+    "No se pudo iniciar la llamada." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't start the call."
+          }
+        }
+      }
+    },
+    "Para activar el identificador necesitas encender la extensión CallerID en Ajustes › Teléfono." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To turn on the caller ID you need to enable the CallerID extension in Settings › Phone."
+          }
+        }
+      }
+    },
+    "Permitir Acceso" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Access"
+          }
+        }
+      }
+    },
+    "Si no te reconoce el comando, entra a esta pantalla y activa \"Usar con Ask Siri\"." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If Siri doesn't recognize the command, open this screen and turn on “Use with Ask Siri”."
+          }
+        }
+      }
+    },
+    "Sin Acceso a Contactos" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Contacts Access"
+          }
+        }
+      }
+    },
+    "Sin Contactos Cubanos" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Cuban Contacts"
+          }
+        }
+      }
+    },
+    "Sin nombre" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No name"
+          }
+        }
+      }
+    },
+    "Solo verificable en un iPhone físico real." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only verifiable on a real physical iPhone."
+          }
+        }
+      }
+    },
+    "Te pedimos acceso a tus Contactos para poder identificar quién te llama: solo así la extensión CallerID puede reconocer el número *99 y mostrarte el nombre real en vez de un número desconocido." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We ask for access to your Contacts so we can identify who's calling you: only then can the CallerID extension recognize the *99 number and show you the real name instead of an unknown number."
+          }
+        }
+      }
+    },
+    "Ve a la app de Ajustes de tu iPhone." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to your iPhone's Settings app."
+          }
+        }
+      }
+    },
+    "Ver cómo activar la extensión" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See how to enable the extension"
+          }
+        }
+      }
+    },
+    "Ya verás el nombre real del contacto en llamadas entrantes desde números cubanos guardados." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You'll now see the real contact name on incoming calls from saved Cuban numbers."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

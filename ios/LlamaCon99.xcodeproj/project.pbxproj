@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		195712D70DC91E675B1C52DD /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = EAC5F9291220E547120F1C95 /* Localizable.xcstrings */; };
+		23A0DD593BF2A053E86D6B2A /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C3E2CB1B829802D25BC62D19 /* InfoPlist.xcstrings */; };
 		33EF71423B0809B786C7BE44 /* CallerIDStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC413511AC9894D1D60BF7 /* CallerIDStore.swift */; };
 		3533EE8CA8ADDE6C5B425034 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3DA7C54F8E4ED50ABFAFA4 /* Models.swift */; };
 		49EBE7778CA1B631ADE5EAE9 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DA10ADB78C07BEE5AEA218 /* Views.swift */; };
@@ -48,6 +50,8 @@
 		22DA10ADB78C07BEE5AEA218 /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
 		26B3A32A02FBD711E2ED4E1D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4E3DA7C54F8E4ED50ABFAFA4 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		C3E2CB1B829802D25BC62D19 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		EAC5F9291220E547120F1C95 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		54085BA8DEC5A8A3921C2A3C /* CallerIDExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CallerIDExtension.entitlements; sourceTree = "<group>"; };
 		56B054B551DFD67FB2615A1B /* CallerIDExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CallerIDExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6312573D37464F6362B0A33D /* LlamaCon99App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LlamaCon99App.entitlements; sourceTree = "<group>"; };
@@ -96,8 +100,10 @@
 				A1D107CC27FC1957BFC12783 /* AppIntents.swift */,
 				26B3A32A02FBD711E2ED4E1D /* Assets.xcassets */,
 				8BB465652231AAF363005A39 /* Info.plist */,
+				C3E2CB1B829802D25BC62D19 /* InfoPlist.xcstrings */,
 				6312573D37464F6362B0A33D /* LlamaCon99App.entitlements */,
 				1E99AFDE2D0D1B3DB57E1A73 /* LlamaCon99App.swift */,
+				EAC5F9291220E547120F1C95 /* Localizable.xcstrings */,
 				4E3DA7C54F8E4ED50ABFAFA4 /* Models.swift */,
 				E4F3F2BFC87B3AF2E670811A /* Services.swift */,
 				22DA10ADB78C07BEE5AEA218 /* Views.swift */,
@@ -163,10 +169,11 @@
 				LastUpgradeCheck = 1430;
 			};
 			buildConfigurationList = A6CEB6718E90AE1D6D6B58D3 /* Build configuration list for PBXProject "LlamaCon99" */;
-			developmentRegion = en;
+			developmentRegion = es;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
+				es,
 				en,
 			);
 			mainGroup = 00A22BD1C7FEC3CD32BC8AB1;
@@ -188,6 +195,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA639252CF5BBA8BCE845C5F /* Assets.xcassets in Resources */,
+				195712D70DC91E675B1C52DD /* Localizable.xcstrings in Resources */,
+				23A0DD593BF2A053E86D6B2A /* InfoPlist.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,6 +293,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_LANGUAGE = es;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -389,6 +399,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_LANGUAGE = es;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
