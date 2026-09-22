@@ -1,6 +1,14 @@
 import CallKit
 import SwiftUI
 
+private extension Bundle {
+    var appDisplayName: String {
+        (object(forInfoDictionaryKey: "CFBundleDisplayName") as? String)
+            ?? (object(forInfoDictionaryKey: "CFBundleName") as? String)
+            ?? "LlamaCon99"
+    }
+}
+
 /// The whole app: the device's address book, listed alphabetically with a search bar. Tapping
 /// a row places a `*99` collect call (so the receiving end shows the wrapped caller ID that
 /// CallerIDExtension unwraps back to the contact's real name); swiping reveals a `#31#` hidden
@@ -9,6 +17,8 @@ struct ContactsListView: View {
     @State private var service = ContactsService()
     @State private var searchText = ""
     @State private var showingInstallGuide = false
+    @State private var showingWelcome = false
+    @AppStorage("hasSeenWelcome") private var hasSeenWelcome = false
     @Environment(\.scenePhase) private var scenePhase
 
     private var entries: [ContactListEntry] {
@@ -71,7 +81,7 @@ struct ContactsListView: View {
                     .searchable(text: $searchText, prompt: "Buscar")
                 }
             }
-            .navigationTitle("Contactos")
+            .navigationTitle("contactos.cu")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -87,12 +97,66 @@ struct ContactsListView: View {
         .sheet(isPresented: $showingInstallGuide) {
             InstallGuideView()
         }
-        .onAppear { service.reload() }
+        .sheet(isPresented: $showingWelcome) {
+            WelcomeView {
+                showingWelcome = false
+                showingInstallGuide = true
+            }
+            .interactiveDismissDisabled()
+        }
+        .onAppear {
+            service.reload()
+            if !hasSeenWelcome {
+                hasSeenWelcome = true
+                showingWelcome = true
+            }
+        }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 service.reload()
             }
         }
+    }
+}
+
+/// First-launch-only modal explaining what the app does, shown once before the install guide.
+private struct WelcomeView: View {
+    let onContinue: () -> Void
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "phone.badge.checkmark")
+                .font(.system(size: 48))
+                .foregroundStyle(.tint)
+                .padding(.top, 32)
+
+            Text("Bienvenido a \(Bundle.main.appDisplayName)")
+                .font(.title2.weight(.bold))
+
+            Text("Esta app te deja llamar a tus contactos cubanos con un solo toque, envolviendo la llamada en el formato *99 para que veas el nombre real de quien llama, incluso desde números cubanos.")
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            Text("Para que funcione necesitas activar la extensión CallerID en Ajustes › Teléfono. Es la que traduce el número *99 al nombre real del contacto.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            Spacer()
+
+            Button("Ver cómo activar la extensión") {
+                onContinue()
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 32)
+        }
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.hidden)
     }
 }
 
@@ -108,6 +172,7 @@ private struct ContactListEntry: Identifiable, Hashable {
 /// call; swiping trailing offers the same, leading offers a `#31#` hidden-caller-ID call.
 private struct ContactCallRowView: View {
     let entry: ContactListEntry
+    @AppStorage("anonymousCallDefault") private var anonymousCallDefault = false
 
     private var number: String { entry.number.number }
 
@@ -133,13 +198,14 @@ private struct ContactCallRowView: View {
         .padding(.vertical, 2)
         .contentShape(Rectangle())
         .onTapGesture {
-            DialService.dial("*99\(number)")
+            DialService.dial(anonymousCallDefault ? "#31#\(number)" : "*99\(number)")
         }
         .swipeActions(edge: .leading) {
             Button {
-                DialService.dial("#31#\(number)")
+                DialService.dial(anonymousCallDefault ? "*99\(number)" : "#31#\(number)")
             } label: {
-                Label("Anónimo", systemImage: "shield.lefthalf.filled")
+                Label(anonymousCallDefault ? "Normal" : "Anónimo",
+                      systemImage: "shield.lefthalf.filled")
             }
             .tint(.gray)
         }
@@ -190,6 +256,7 @@ private struct InstallGuideView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var status: CXCallDirectoryManager.EnabledStatus = .unknown
     @State private var isChecking = true
+    @AppStorage("anonymousCallDefault") private var anonymousCallDefault = false
 
     private let enableSteps: [(icon: String, title: String, detail: String)] = [
         ("gear", "Abre Ajustes", "Ve a la app de Ajustes de tu iPhone."),
@@ -219,7 +286,9 @@ private struct InstallGuideView: View {
                 extensionStatusSection
                 stepsSection
                 siriSection
-                developerSection
+                anonymousCallSection
+                // developerSection — hidden feature, keep commented out.
+                // developerSection
             }
             .navigationTitle("Cómo Activar")
             .navigationBarTitleDisplayMode(.inline)
@@ -318,17 +387,27 @@ private struct InstallGuideView: View {
     }
 
     @ViewBuilder
-    private var developerSection: some View {
+    private var anonymousCallSection: some View {
         Section {
-            Link(destination: URL(string: "https://github.com/albertolicea00")!) {
-                Text("@albertolicea00")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity)
-            .listRowBackground(Color.clear)
+            Toggle("Llamar anónimo por defecto", isOn: $anonymousCallDefault)
+        } footer: {
+            Text("Al tocar un contacto se llamará oculto (#31#) en vez de *99. Desactivado por defecto.")
         }
     }
+
+    // Hidden feature — kept for a possible future re-enable, not shown to users.
+    // @ViewBuilder
+    // private var developerSection: some View {
+    //     Section {
+    //         Link(destination: URL(string: "https://github.com/albertolicea00")!) {
+    //             Text("@albertolicea00")
+    //                 .font(.caption)
+    //                 .foregroundStyle(.secondary)
+    //         }
+    //         .frame(maxWidth: .infinity)
+    //         .listRowBackground(Color.clear)
+    //     }
+    // }
 
     private var statusTitle: String {
         switch status {
