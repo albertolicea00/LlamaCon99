@@ -443,8 +443,8 @@ private struct InstallGuideView: View {
             Link(destination: URL(string: "https://github.com/albertolicea00")!) {
                 Text("by @albertolicea00")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
             }
+            .tint(.secondary)
             .frame(maxWidth: .infinity)
             .listRowBackground(Color.clear)
         }
