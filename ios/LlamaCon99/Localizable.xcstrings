@@ -530,6 +530,16 @@
         }
       }
     },
+    "Versión %@ (%@)" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Versión %1$@ (%2$@)"
+          }
+        }
+      }
+    },
     "Ya verás el nombre real del contacto en llamadas entrantes desde números cubanos guardados." : {
       "extractionState" : "stale",
       "localizations" : {

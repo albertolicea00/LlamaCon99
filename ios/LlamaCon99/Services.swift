@@ -3,6 +3,9 @@ import Contacts
 import Foundation
 import UIKit
 
+let AppVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+let AppBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+
 /// Loads one contact's thumbnail at a time, on demand, so scrolling doesn't hold every photo's
 /// `Data` in memory at once. Results are cached so scrolling back to a row doesn't re-fetch it.
 enum ContactThumbnailLoader {

@@ -440,11 +440,17 @@ private struct InstallGuideView: View {
     @ViewBuilder
     private var developerSection: some View {
         Section {
-            Link(destination: URL(string: "https://github.com/albertolicea00")!) {
-                Text("by @albertolicea00")
+            VStack(spacing: 4) {
+                Text("Versión \(AppVersion) (\(AppBuild))")
                     .font(.caption)
+
+                Link(destination: URL(string: "https://github.com/albertolicea00")!) {
+                    Text("by @albertolicea00")
+                        .font(.caption)
+                }
+                .tint(.secondary)
             }
-            .tint(.secondary)
+            .foregroundStyle(.secondary)
             .frame(maxWidth: .infinity)
             .listRowBackground(Color.clear)
         }
