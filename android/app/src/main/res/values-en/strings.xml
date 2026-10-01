@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Llama con 99</string>
+
+    <!-- contacts_list -->
+    <string name="contacts_list_title">Contacts</string>
+    <string name="contacts_list_search_hint">Search</string>
+    <string name="contacts_list_empty_title">No Cuban Contacts</string>
+    <string name="contacts_list_empty_subtitle">Contacts with a +53 number will show up here.</string>
+
+    <!-- welcome -->
+    <string name="welcome_title">Welcome to %1$s</string>
+    <string name="welcome_body">Turn on caller ID to know who\'s really calling, even when the number shown looks odd.</string>
+    <string name="welcome_cta">Set up</string>
+
+    <!-- settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_dialing">When dialing</string>
+    <string name="settings_dial_mode_prefill">Open my phone app with the number already entered</string>
+    <string name="settings_dial_mode_direct">Call directly from here</string>
+    <string name="settings_anonymous_swipe_title">Anonymous call on swipe</string>
+    <string name="settings_anonymous_swipe_subtitle">Swipe a contact left to dial with #31# (hides your number)</string>
+    <string name="settings_section_caller_id">Caller ID</string>
+    <string name="settings_caller_id_explanation">When ETECSA calls you back for a collect call, the number shown isn\'t the real one. Turning this on shows you a notification with who\'s really calling.</string>
+    <string name="settings_grant_call_monitor_permission">Grant permission to identify calls</string>
+    <string name="settings_call_monitor_title">Identify incoming calls</string>
+    <string name="settings_call_monitor_subtitle">Shows a notification with the real name of who\'s calling</string>
+    <string name="settings_monitor_from_boot_title">Keep active after restart</string>
+    <string name="settings_monitor_from_boot_subtitle">Automatically restarts monitoring after the phone turns back on</string>
+    <string name="settings_section_developer">Developer</string>
+    <string name="settings_app_version">App version</string>
+
+    <!-- notifications -->
+    <string name="notification_channel_foreground_name">Call monitoring</string>
+    <string name="notification_channel_incoming_call_name">Incoming call identification</string>
+    <string name="notification_foreground_title">Identifying incoming calls</string>
+    <string name="notification_incoming_call_title">%1$s is calling</string>
+    <string name="notification_incoming_call_text">Collect call identified by Llama con 99</string>
+</resources>

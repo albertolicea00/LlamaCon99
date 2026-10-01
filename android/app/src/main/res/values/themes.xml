@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Compose owns all real theming (see ui/theme/Theme.kt) — this just sets the window
+         background before Compose's first frame draws, avoiding a flash of the wrong color. -->
+    <style name="Theme.LlamaCon99" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/background_light</item>
+    </style>
+</resources>
