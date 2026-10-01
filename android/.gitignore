@@ -1,0 +1,35 @@
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Keystores and secrets — never commit real signing/API keys
+keys/*.jks
+keys/*.keystore
+keys/*.p12
+keys/*.pem
+keys/google-services.json
+keys/*.properties
+*.keystore
+*.jks
+
+# Generated / IDE noise
+.navigation
+/*/build/
+*.hprof
+.cxx/
+freeline.py
+freeline/
+freeline_project_description.json
+
+# Log Files
+*.log
+
+# Android Profiling
+*.hprof
