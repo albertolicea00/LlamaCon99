@@ -9,6 +9,7 @@ data class DeviceContact(
     val id: String,
     val name: String,
     val numbers: List<ContactPhoneNumber>,
+    val photoUri: String? = null,
 ) {
     /** Primary number shown by default — first one found on the contact. */
     val phoneNumber: String get() = numbers[0].number
