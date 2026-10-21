@@ -29,6 +29,7 @@ class SettingsRepository @Inject constructor(
         val callMonitorEnabled = booleanPreferencesKey("call_monitor_enabled")
         val monitorFromBootEnabled = booleanPreferencesKey("monitor_from_boot_enabled")
         val lastWelcomeShownAtMillis = longPreferencesKey("last_welcome_shown_at_millis")
+        val lastUpdateCheckAtMillis = longPreferencesKey("last_update_check_at_millis")
     }
 
     /** Default is [DialMode.PREFILL]: no extra permission, and the user confirms the call themselves. */
@@ -62,5 +63,11 @@ class SettingsRepository @Inject constructor(
 
     suspend fun setLastWelcomeShownAtMillis(millis: Long) {
         dataStore.edit { it[Keys.lastWelcomeShownAtMillis] = millis }
+    }
+
+    val lastUpdateCheckAtMillis: Flow<Long?> = dataStore.data.map { it[Keys.lastUpdateCheckAtMillis] }
+
+    suspend fun setLastUpdateCheckAtMillis(millis: Long) {
+        dataStore.edit { it[Keys.lastUpdateCheckAtMillis] = millis }
     }
 }

@@ -47,6 +47,7 @@
     <string name="settings_section_about">Acerca de</string>
     <string name="settings_check_updates">Buscar actualizaciones</string>
     <string name="settings_app_version">Versión de la app</string>
+    <string name="settings_legal_links">Información legal</string>
     <string name="settings_privacy_policy">Política de privacidad</string>
     <string name="settings_terms">Términos y condiciones</string>
     <string name="settings_eula">Licencia de uso</string>
@@ -56,6 +57,15 @@
     <string name="shortcut_call_99_long">Llamar por cobrar con *99</string>
     <string name="shortcut_anonymous_short">Llamar anónimo</string>
     <string name="shortcut_anonymous_long">Llamar con número oculto (#31#)</string>
+
+    <!-- updates -->
+    <string name="update_available_title">Actualización disponible</string>
+    <string name="update_available_desc">Estás en la versión %1$s. La versión %2$s ya está disponible.</string>
+    <string name="update_download">Descargar</string>
+    <string name="update_not_now">Ahora no</string>
+    <string name="update_checking">Buscando actualizaciones…</string>
+    <string name="update_up_to_date">Ya tienes la última versión</string>
+    <string name="update_check_failed">No se pudo buscar actualizaciones</string>
 
     <!-- notifications -->
     <string name="notification_channel_foreground_name">Monitoreo de llamadas</string>

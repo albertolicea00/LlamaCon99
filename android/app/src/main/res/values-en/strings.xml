@@ -47,6 +47,7 @@
     <string name="settings_section_about">About</string>
     <string name="settings_check_updates">Check for updates</string>
     <string name="settings_app_version">App version</string>
+    <string name="settings_legal_links">Legal information</string>
     <string name="settings_privacy_policy">Privacy policy</string>
     <string name="settings_terms">Terms and conditions</string>
     <string name="settings_eula">End user license agreement</string>
@@ -56,6 +57,15 @@
     <string name="shortcut_call_99_long">Make a collect call with *99</string>
     <string name="shortcut_anonymous_short">Anonymous call</string>
     <string name="shortcut_anonymous_long">Call with hidden number (#31#)</string>
+
+    <!-- updates -->
+    <string name="update_available_title">Update available</string>
+    <string name="update_available_desc">You\'re on version %1$s. Version %2$s is now available.</string>
+    <string name="update_download">Download</string>
+    <string name="update_not_now">Not now</string>
+    <string name="update_checking">Checking for updates…</string>
+    <string name="update_up_to_date">You\'re on the latest version</string>
+    <string name="update_check_failed">Could not check for updates</string>
 
     <!-- notifications -->
     <string name="notification_channel_foreground_name">Call monitoring</string>
