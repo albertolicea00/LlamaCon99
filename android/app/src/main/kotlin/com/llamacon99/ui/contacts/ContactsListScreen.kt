@@ -43,6 +43,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.PersonOff
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -67,6 +68,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -140,9 +142,12 @@ fun ContactsListScreen(
                             .padding(start = 36.dp, end = 88.dp, top = 12.dp, bottom = 20.dp),
                     )
                 }
-                if (uiState.isEmpty) {
+                if (uiState.isEmpty || (query.isNotBlank() && uiState.groups.isEmpty())) {
                     item(key = "empty_contacts") {
-                        EmptyContactsState(modifier = Modifier.fillParentMaxHeight(0.75f))
+                        EmptyContactsState(
+                            isSearch = query.isNotBlank(),
+                            modifier = Modifier.fillParentMaxHeight(0.75f),
+                        )
                     }
                 }
                 uiState.groups.forEach { group ->
@@ -314,25 +319,31 @@ private fun ContactRow(contact: DeviceContact, onClick: () -> Unit) {
 }
 
 @Composable
-private fun EmptyContactsState(modifier: Modifier = Modifier) {
+private fun EmptyContactsState(isSearch: Boolean = false, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(
-            imageVector = Icons.Filled.PersonOff,
+            imageVector = if (isSearch) Icons.Filled.SearchOff else Icons.Filled.PersonOff,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            text = stringResource(R.string.contacts_list_empty_title),
+            text = stringResource(
+                if (isSearch) R.string.contacts_list_no_results_title else R.string.contacts_list_empty_title,
+            ),
             style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 16.dp),
         )
         Text(
-            text = stringResource(R.string.contacts_list_empty_subtitle),
+            text = stringResource(
+                if (isSearch) R.string.contacts_list_no_results_subtitle else R.string.contacts_list_empty_subtitle,
+            ),
             style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 8.dp),
         )

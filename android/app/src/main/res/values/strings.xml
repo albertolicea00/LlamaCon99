@@ -5,6 +5,8 @@
     <!-- contacts_list -->
     <string name="contacts_list_title">Contactos</string>
     <string name="contacts_list_search_hint">Buscar</string>
+    <string name="contacts_list_no_results_title">No se encontraron contactos</string>
+    <string name="contacts_list_no_results_subtitle">Prueba con otro nombre o número.</string>
     <string name="contacts_list_scroll_to_top">Volver al inicio</string>
     <string name="contacts_list_current_section">Sección %1$s</string>
     <string name="contacts_list_voice_search">Buscar por voz</string>
