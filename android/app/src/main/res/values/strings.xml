@@ -5,6 +5,8 @@
     <!-- contacts_list -->
     <string name="contacts_list_title">Contactos</string>
     <string name="contacts_list_search_hint">Buscar</string>
+    <string name="contacts_list_voice_search">Buscar por voz</string>
+    <string name="contacts_list_voice_unavailable">El dictado por voz no está disponible en este teléfono.</string>
     <string name="contacts_list_empty_title">Sin contactos cubanos</string>
     <string name="contacts_list_empty_subtitle">Los contactos con un número +53 aparecerán aquí.</string>
 

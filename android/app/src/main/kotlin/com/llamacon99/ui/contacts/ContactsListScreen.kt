@@ -1,7 +1,12 @@
 package com.llamacon99.ui.contacts
 
 import android.Manifest
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.speech.RecognizerIntent
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -25,6 +30,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.PersonOff
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,6 +76,16 @@ fun ContactsListScreen(
     val focusManager = LocalFocusManager.current
 
     val context = LocalContext.current
+    val voiceSearchLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data
+                ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                ?.firstOrNull { it.isNotBlank() }
+                ?.let { viewModel.onSearchQueryChanged(it.trim()) }
+        }
+    }
     var hasContactsPermission by remember {
         mutableStateOf(
             androidx.core.content.ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) ==
@@ -157,6 +173,41 @@ fun ContactsListScreen(
                     onValueChange = viewModel::onSearchQueryChanged,
                     placeholder = { Text(stringResource(R.string.contacts_list_search_hint)) },
                     leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                focusManager.clearFocus()
+                                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                                    .putExtra(
+                                        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
+                                    )
+                                    .putExtra(
+                                        RecognizerIntent.EXTRA_LANGUAGE,
+                                        context.resources.configuration.locales[0].toLanguageTag(),
+                                    )
+                                    .putExtra(
+                                        RecognizerIntent.EXTRA_PROMPT,
+                                        context.getString(R.string.contacts_list_voice_search),
+                                    )
+                                    .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+                                try {
+                                    voiceSearchLauncher.launch(intent)
+                                } catch (_: ActivityNotFoundException) {
+                                    Toast.makeText(
+                                        context,
+                                        R.string.contacts_list_voice_unavailable,
+                                        Toast.LENGTH_SHORT,
+                                    ).show()
+                                }
+                            },
+                        ) {
+                            Icon(
+                                Icons.Filled.Mic,
+                                contentDescription = stringResource(R.string.contacts_list_voice_search),
+                            )
+                        }
+                    },
                     singleLine = true,
                     shape = RoundedCornerShape(50),
                     colors = TextFieldDefaults.colors(

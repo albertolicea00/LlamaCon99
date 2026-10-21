@@ -5,6 +5,8 @@
     <!-- contacts_list -->
     <string name="contacts_list_title">Contacts</string>
     <string name="contacts_list_search_hint">Search</string>
+    <string name="contacts_list_voice_search">Search by voice</string>
+    <string name="contacts_list_voice_unavailable">Voice input is unavailable on this phone.</string>
     <string name="contacts_list_empty_title">No Cuban Contacts</string>
     <string name="contacts_list_empty_subtitle">Contacts with a +53 number will show up here.</string>
 
