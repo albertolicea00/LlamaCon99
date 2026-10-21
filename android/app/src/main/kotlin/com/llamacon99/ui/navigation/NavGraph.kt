@@ -16,11 +16,17 @@ private object Routes {
 }
 
 @Composable
-fun LlamaCon99NavGraph(navController: NavHostController = rememberNavController()) {
+fun LlamaCon99NavGraph(
+    navController: NavHostController = rememberNavController(),
+    quickDialMode: String? = null,
+) {
     NavHost(navController = navController, startDestination = Routes.CONTACTS) {
         composable(Routes.CONTACTS) {
             Box {
-                ContactsListScreen(onOpenSettings = { navController.navigate(Routes.SETTINGS) })
+                ContactsListScreen(
+                    onOpenSettings = { navController.navigate(Routes.SETTINGS) },
+                    quickDialMode = quickDialMode,
+                )
                 WelcomeSheet(onOpenSettings = { navController.navigate(Routes.SETTINGS) })
             }
         }

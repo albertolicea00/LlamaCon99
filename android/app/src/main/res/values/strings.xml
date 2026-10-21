@@ -47,6 +47,12 @@
     <string name="settings_section_developer">Desarrollador</string>
     <string name="settings_app_version">Versión de la app</string>
 
+    <!-- shortcuts -->
+    <string name="shortcut_call_99_short">Llamar con 99</string>
+    <string name="shortcut_call_99_long">Llamar por cobrar con *99</string>
+    <string name="shortcut_anonymous_short">Llamar anónimo</string>
+    <string name="shortcut_anonymous_long">Llamar con número oculto (#31#)</string>
+
     <!-- notifications -->
     <string name="notification_channel_foreground_name">Monitoreo de llamadas</string>
     <string name="notification_channel_incoming_call_name">Identificación de llamadas entrantes</string>

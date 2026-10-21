@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="call_99"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_call"
+        android:shortcutShortLabel="@string/shortcut_call_99_short"
+        android:shortcutLongLabel="@string/shortcut_call_99_long">
+        <intent
+            android:action="com.llamacon99.ACTION_QUICK_DIAL"
+            android:targetPackage="com.llamacon99"
+            android:targetClass="com.llamacon99.MainActivity">
+            <extra android:name="dial_mode" android:value="collect" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="call_anonymous"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_anonymous"
+        android:shortcutShortLabel="@string/shortcut_anonymous_short"
+        android:shortcutLongLabel="@string/shortcut_anonymous_long">
+        <intent
+            android:action="com.llamacon99.ACTION_QUICK_DIAL"
+            android:targetPackage="com.llamacon99"
+            android:targetClass="com.llamacon99.MainActivity">
+            <extra android:name="dial_mode" android:value="anonymous" />
+        </intent>
+    </shortcut>
+
+</shortcuts>

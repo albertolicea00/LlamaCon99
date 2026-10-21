@@ -38,12 +38,13 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             window.navigationBarDividerColor = Color.TRANSPARENT
         }
+        val quickDialMode = intent?.getStringExtra("dial_mode")
         setContent {
             LlamaCon99Theme {
                 val navigationShade = if (isSystemInDarkTheme()) ComposeColor.Black else ComposeColor.White
                 Box(modifier = Modifier.fillMaxSize()) {
                     Surface(modifier = Modifier.fillMaxSize()) {
-                        LlamaCon99NavGraph()
+                        LlamaCon99NavGraph(quickDialMode = quickDialMode)
                     }
                     Box(
                         modifier = Modifier

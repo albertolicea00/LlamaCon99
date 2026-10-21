@@ -86,6 +86,7 @@ import com.llamacon99.model.DeviceContact
 @Composable
 fun ContactsListScreen(
     onOpenSettings: () -> Unit,
+    quickDialMode: String? = null,
     viewModel: ContactsListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -220,7 +221,12 @@ fun ContactsListScreen(
                             Column {
                                 ContactRow(
                                     contact = contact,
-                                    onClick = { viewModel.onDial(contact.phoneNumber) },
+                                    onClick = {
+                                        when (quickDialMode) {
+                                            "anonymous" -> viewModel.onDialAnonymous(contact.phoneNumber)
+                                            else -> viewModel.onDial(contact.phoneNumber)
+                                        }
+                                    },
                                 )
                                 if (!last) {
                                     HorizontalDivider(

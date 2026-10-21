@@ -47,6 +47,12 @@
     <string name="settings_section_developer">Developer</string>
     <string name="settings_app_version">App version</string>
 
+    <!-- shortcuts -->
+    <string name="shortcut_call_99_short">Call with 99</string>
+    <string name="shortcut_call_99_long">Make a collect call with *99</string>
+    <string name="shortcut_anonymous_short">Anonymous call</string>
+    <string name="shortcut_anonymous_long">Call with hidden number (#31#)</string>
+
     <!-- notifications -->
     <string name="notification_channel_foreground_name">Call monitoring</string>
     <string name="notification_channel_incoming_call_name">Incoming call identification</string>
