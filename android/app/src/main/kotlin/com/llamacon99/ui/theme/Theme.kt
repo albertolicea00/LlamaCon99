@@ -1,48 +1,81 @@
 package com.llamacon99.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
 private val LightColors = lightColorScheme(
-    primary = SamsungBlue,
+    primary = BrandGreen,
+    onPrimary = OnBrandGreen,
+    primaryContainer = LightGreenContainer,
+    onPrimaryContainer = OnBrandGreen,
+    secondary = BrandGreen,
+    onSecondary = OnBrandGreen,
+    secondaryContainer = LightGreenContainer,
+    onSecondaryContainer = OnBrandGreen,
+    tertiary = BrandGreen,
+    onTertiary = OnBrandGreen,
+    tertiaryContainer = LightGreenContainer,
+    onTertiaryContainer = OnBrandGreen,
+    inversePrimary = BrandGreen,
+    surfaceTint = BrandGreen,
     background = LightSurface,
+    onBackground = DarkSurface,
     surface = LightSurface,
+    onSurface = DarkSurface,
     surfaceVariant = LightSurfaceVariant,
+    onSurfaceVariant = Color(0xFF444746),
+    surfaceDim = Color(0xFFDADADC),
+    surfaceBright = LightSurface,
+    surfaceContainerLowest = Color.White,
+    surfaceContainerLow = LightSurface,
+    surfaceContainer = LightSurfaceVariant,
+    surfaceContainerHigh = LightSurfaceVariant,
+    surfaceContainerHighest = Color(0xFFE3E3E6),
     error = DangerRed,
 )
 
 private val DarkColors = darkColorScheme(
-    primary = SamsungBlueDark,
+    primary = BrandGreen,
+    onPrimary = OnBrandGreen,
+    primaryContainer = DarkGreenContainer,
+    onPrimaryContainer = LightGreenContainer,
+    secondary = BrandGreen,
+    onSecondary = OnBrandGreen,
+    secondaryContainer = DarkGreenContainer,
+    onSecondaryContainer = LightGreenContainer,
+    tertiary = BrandGreen,
+    onTertiary = OnBrandGreen,
+    tertiaryContainer = DarkGreenContainer,
+    onTertiaryContainer = LightGreenContainer,
+    inversePrimary = BrandGreen,
+    surfaceTint = BrandGreen,
     background = DarkSurface,
+    onBackground = LightSurface,
     surface = DarkSurface,
+    onSurface = LightSurface,
     surfaceVariant = DarkSurfaceVariant,
+    onSurfaceVariant = Color(0xFFC4C7C5),
+    surfaceDim = DarkSurface,
+    surfaceBright = Color(0xFF383838),
+    surfaceContainerLowest = Color(0xFF0D0D0D),
+    surfaceContainerLow = Color(0xFF181818),
+    surfaceContainer = DarkSurfaceVariant,
+    surfaceContainerHigh = Color(0xFF282828),
+    surfaceContainerHighest = Color(0xFF333333),
     error = DangerRed,
 )
 
-/**
- * One UI takes its accent color from the device's wallpaper (Material You) on real Samsung
- * phones, so dynamic color is the most "Samsung" choice available on API 31+; below that we fall
- * back to a fixed Samsung-blue palette rather than stock Material purple.
- */
+/** Keep the iOS brand accent consistent across devices and system themes. */
 @Composable
 fun LlamaCon99Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val context = LocalContext.current
-    val colorScheme = when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && darkTheme -> dynamicDarkColorScheme(context)
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !darkTheme -> dynamicLightColorScheme(context)
-        darkTheme -> DarkColors
-        else -> LightColors
-    }
+    val colorScheme = if (darkTheme) DarkColors else LightColors
 
     MaterialTheme(
         colorScheme = colorScheme,
