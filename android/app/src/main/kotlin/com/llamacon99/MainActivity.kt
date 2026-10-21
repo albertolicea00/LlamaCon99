@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
                             .windowInsetsBottomHeight(WindowInsets.navigationBars)
                             .background(
                                 Brush.verticalGradient(
-                                    listOf(navigationShade.copy(alpha = 0f), navigationShade.copy(alpha = 0.65f)),
+                                    listOf(navigationShade.copy(alpha = 0.25f), navigationShade.copy(alpha = 0.9f)),
                                 ),
                             ),
                     )

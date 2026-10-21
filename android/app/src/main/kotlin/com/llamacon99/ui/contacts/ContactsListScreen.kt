@@ -9,7 +9,6 @@ import android.speech.RecognizerIntent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,7 +34,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,7 +54,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,17 +82,6 @@ fun ContactsListScreen(
     val query by viewModel.query.collectAsState()
     val focusManager = LocalFocusManager.current
     val listState = rememberLazyListState()
-    val isScrolled by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 8
-        }
-    }
-    val infoBackground by animateColorAsState(
-        targetValue = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-            alpha = if (isScrolled) 0.8f else 0f,
-        ),
-        label = "infoBubbleBackground",
-    )
 
     val context = LocalContext.current
     val voiceSearchLauncher = rememberLauncherForActivityResult(
@@ -125,6 +111,7 @@ fun ContactsListScreen(
     }
 
     Scaffold(
+        modifier = Modifier.imePadding(),
         // Let the list draw behind navigation buttons; inset only the floating controls below.
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
     ) { innerPadding ->
@@ -132,8 +119,7 @@ fun ContactsListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .consumeWindowInsets(innerPadding)
-                .imePadding(),
+                .consumeWindowInsets(innerPadding),
         ) {
             LazyColumn(
                 state = listState,
@@ -191,8 +177,7 @@ fun ContactsListScreen(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 8.dp, end = 20.dp)
-                    .size(48.dp)
-                    .background(infoBackground, CircleShape),
+                    .size(48.dp),
             ) {
                 Icon(Icons.Filled.Info, contentDescription = stringResource(R.string.settings_title))
             }
@@ -201,7 +186,7 @@ fun ContactsListScreen(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = 40.dp, vertical = 16.dp),
+                    .padding(horizontal = 24.dp, vertical = 4.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 TextField(
@@ -255,9 +240,9 @@ fun ContactsListScreen(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
                     modifier = Modifier
-                        .widthIn(max = 480.dp)
+                        .widthIn(max = 560.dp)
                         .fillMaxWidth()
-                        .heightIn(min = 60.dp)
+                        .heightIn(min = 56.dp)
                         .shadow(8.dp, RoundedCornerShape(50)),
                 )
             }
