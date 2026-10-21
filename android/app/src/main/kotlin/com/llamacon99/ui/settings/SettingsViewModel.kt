@@ -12,6 +12,8 @@ import androidx.lifecycle.viewModelScope
 import com.llamacon99.data.SettingsRepository
 import com.llamacon99.R
 import com.llamacon99.monitor.CallMonitorService
+import com.llamacon99.ui.theme.AppThemeCatalog
+import com.llamacon99.ui.theme.AppThemeDefinition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -55,6 +57,10 @@ class SettingsViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
+    val appTheme: StateFlow<AppThemeDefinition> = settingsRepository.appTheme.stateIn(
+        viewModelScope, SharingStarted.WhileSubscribed(5_000), AppThemeCatalog.default,
+    )
+
     fun refreshPermissionStatus() {
         permissionsRefreshTrigger.value += 1
         viewModelScope.launch {
@@ -69,6 +75,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setDialMode(mode: SettingsRepository.DialMode) {
         viewModelScope.launch { settingsRepository.setDialMode(mode) }
+    }
+
+    fun setAppTheme(theme: AppThemeDefinition) {
+        viewModelScope.launch { settingsRepository.setAppTheme(theme) }
     }
 
     fun setAnonymousSwipeEnabled(enabled: Boolean) {

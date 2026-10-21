@@ -23,9 +23,15 @@ import androidx.compose.ui.graphics.Color as ComposeColor
 import com.llamacon99.ui.navigation.LlamaCon99NavGraph
 import com.llamacon99.ui.theme.LlamaCon99Theme
 import dagger.hilt.android.AndroidEntryPoint
+import com.llamacon99.data.SettingsRepository
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject lateinit var settingsRepository: SettingsRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
@@ -40,7 +46,8 @@ class MainActivity : ComponentActivity() {
         }
         val quickDialMode = intent?.getStringExtra("dial_mode")
         setContent {
-            LlamaCon99Theme {
+            val appTheme by settingsRepository.appTheme.collectAsState(initial = com.llamacon99.ui.theme.AppThemeCatalog.default)
+            LlamaCon99Theme(appTheme = appTheme) {
                 val navigationShade = if (isSystemInDarkTheme()) ComposeColor.Black else ComposeColor.White
                 Box(modifier = Modifier.fillMaxSize()) {
                     Surface(modifier = Modifier.fillMaxSize()) {

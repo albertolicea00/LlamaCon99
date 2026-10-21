@@ -6,6 +6,9 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.staticCompositionLocalOf
+
+val LocalAppTheme = staticCompositionLocalOf { AppThemeCatalog.default }
 
 private val LightColors = lightColorScheme(
     primary = BrandGreen,
@@ -69,18 +72,16 @@ private val DarkColors = darkColorScheme(
     error = DangerRed,
 )
 
-/** Keep the iOS brand accent consistent across devices and system themes. */
+/** Keep the brand colors consistent; app profiles customize component shapes and layout. */
 @Composable
 fun LlamaCon99Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    appTheme: AppThemeDefinition = AppThemeCatalog.default,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = if (darkTheme) DarkColors else LightColors
+    val source = if (darkTheme) DarkColors else LightColors
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = LlamaTypography,
-        shapes = LlamaShapes,
-        content = content,
-    )
+    androidx.compose.runtime.CompositionLocalProvider(LocalAppTheme provides appTheme) {
+        MaterialTheme(colorScheme = source, typography = LlamaTypography, shapes = appTheme.shapes, content = content)
+    }
 }

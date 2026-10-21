@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
@@ -52,7 +51,7 @@ fun SwipeableContactRow(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .clip(RoundedCornerShape(16.dp))
+                .clip(MaterialTheme.shapes.medium)
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.CenterEnd,
         ) {

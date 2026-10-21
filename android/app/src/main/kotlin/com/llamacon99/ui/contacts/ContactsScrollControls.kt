@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -73,7 +72,7 @@ internal fun ContactsScrollControls(
     ) {
         val description = stringResource(R.string.contacts_list_current_section, currentLetter)
         Box(
-            modifier = Modifier.size(48.dp).background(background, CircleShape)
+            modifier = Modifier.size(48.dp).background(background, MaterialTheme.shapes.large)
                 .semantics { contentDescription = description },
             contentAlignment = Alignment.Center,
         ) {
@@ -88,7 +87,7 @@ internal fun ContactsScrollControls(
     ) {
         IconButton(
             onClick = { scope.launch { listState.animateScrollToItem(0) } },
-            modifier = Modifier.size(48.dp).background(background, CircleShape),
+            modifier = Modifier.size(48.dp).background(background, MaterialTheme.shapes.large),
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_md_keyboard_double_arrow_up),

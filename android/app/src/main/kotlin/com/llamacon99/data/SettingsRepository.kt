@@ -8,6 +8,8 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.llamacon99.ui.theme.AppThemeCatalog
+import com.llamacon99.ui.theme.AppThemeDefinition
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -25,6 +27,7 @@ class SettingsRepository @Inject constructor(
 
     private object Keys {
         val dialMode = stringPreferencesKey("dial_mode")
+        val appTheme = stringPreferencesKey("app_theme")
         val anonymousSwipeEnabled = booleanPreferencesKey("anonymous_swipe_enabled")
         val callMonitorEnabled = booleanPreferencesKey("call_monitor_enabled")
         val monitorFromBootEnabled = booleanPreferencesKey("monitor_from_boot_enabled")
@@ -39,6 +42,14 @@ class SettingsRepository @Inject constructor(
 
     suspend fun setDialMode(mode: DialMode) {
         dataStore.edit { it[Keys.dialMode] = mode.name }
+    }
+
+    val appTheme: Flow<AppThemeDefinition> = dataStore.data.map { prefs ->
+        AppThemeCatalog.find(prefs[Keys.appTheme]?.let { if (it == "SAMSUNG") "llama" else it.lowercase() })
+    }
+
+    suspend fun setAppTheme(theme: AppThemeDefinition) {
+        dataStore.edit { it[Keys.appTheme] = theme.id }
     }
 
     val anonymousSwipeEnabled: Flow<Boolean> = dataStore.data.map { it[Keys.anonymousSwipeEnabled] ?: false }

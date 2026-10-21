@@ -75,6 +75,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.llamacon99.ui.theme.LocalAppTheme
+import com.llamacon99.ui.theme.ContactComponents
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Lifecycle
@@ -89,6 +91,7 @@ fun ContactsListScreen(
     quickDialMode: String? = null,
     viewModel: ContactsListViewModel = hiltViewModel(),
 ) {
+    val appTheme = LocalAppTheme.current
     val uiState by viewModel.uiState.collectAsState()
     val query by viewModel.query.collectAsState()
     val focusManager = LocalFocusManager.current
@@ -166,8 +169,8 @@ fun ContactsListScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
-                    top = 8.dp,
-                    bottom = 104.dp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                    top = appTheme.search.listTopInset,
+                    bottom = appTheme.search.listBottomInset + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
                 ),
             ) {
                 item(key = "contacts_title") {
@@ -202,15 +205,16 @@ fun ContactsListScreen(
                     itemsIndexed(group.contacts, key = { _, contact -> contact.id }) { index, contact ->
                         val first = index == 0
                         val last = index == group.contacts.lastIndex
+                        val corner = appTheme.contacts.groupCorner
                         val shape = RoundedCornerShape(
-                            topStart = if (first) 28.dp else 0.dp,
-                            topEnd = if (first) 28.dp else 0.dp,
-                            bottomStart = if (last) 28.dp else 0.dp,
-                            bottomEnd = if (last) 28.dp else 0.dp,
+                            topStart = if (first) corner else 0.dp,
+                            topEnd = if (first) corner else 0.dp,
+                            bottomStart = if (last) corner else 0.dp,
+                            bottomEnd = if (last) corner else 0.dp,
                         )
                         SwipeableContactRow(
                             modifier = Modifier
-                                .padding(horizontal = 24.dp)
+                                .padding(horizontal = appTheme.contacts.groupInset)
                                 .widthIn(max = 560.dp)
                                 .fillMaxWidth()
                                 .clip(shape)
@@ -221,6 +225,7 @@ fun ContactsListScreen(
                             Column {
                                 ContactRow(
                                     contact = contact,
+                                    style = appTheme.contacts,
                                     onClick = {
                                         when (quickDialMode) {
                                             "anonymous" -> viewModel.onDialAnonymous(contact.phoneNumber)
@@ -245,7 +250,7 @@ fun ContactsListScreen(
                 listState = listState,
                 groups = uiState.groups,
                 modifier = Modifier.matchParentSize().navigationBarsPadding()
-                    .padding(top = 64.dp, end = 6.dp, bottom = 80.dp),
+                    .padding(appTheme.scrollbar.railPadding),
             )
             ContactsScrollControls(
                 listState = listState,
@@ -264,11 +269,10 @@ fun ContactsListScreen(
                 Icon(Icons.Filled.Info, contentDescription = stringResource(R.string.settings_title))
             }
             Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 4.dp),
+                modifier = Modifier.navigationBarsPadding()
+                    .align(appTheme.search.alignment)
+                    .padding(appTheme.search.outerPadding)
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center,
             ) {
                 TextField(
@@ -312,7 +316,7 @@ fun ContactsListScreen(
                         }
                     },
                     singleLine = true,
-                    shape = RoundedCornerShape(50),
+                    shape = RoundedCornerShape(appTheme.search.corner),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -324,8 +328,8 @@ fun ContactsListScreen(
                     modifier = Modifier
                         .widthIn(max = 560.dp)
                         .fillMaxWidth()
-                        .heightIn(min = 56.dp)
-                        .shadow(8.dp, RoundedCornerShape(50)),
+                    .heightIn(min = appTheme.search.minHeight)
+                    .shadow(appTheme.search.shadowElevation, RoundedCornerShape(appTheme.search.corner)),
                 )
             }
         }
@@ -333,18 +337,18 @@ fun ContactsListScreen(
 }
 
 @Composable
-private fun ContactRow(contact: DeviceContact, onClick: () -> Unit) {
+private fun ContactRow(contact: DeviceContact, style: ContactComponents, onClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 64.dp)
+            .heightIn(min = style.rowMinHeight)
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = style.contentInset, vertical = 8.dp),
     ) {
-        ContactAvatar(name = contact.name, photoUri = contact.photoUri, size = 38.dp)
-        Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
+        ContactAvatar(name = contact.name, photoUri = contact.photoUri, size = style.avatarSize)
+        Column(modifier = Modifier.weight(1f).padding(start = style.avatarGap)) {
             Text(
                 text = contact.name,
                 style = MaterialTheme.typography.titleMedium,

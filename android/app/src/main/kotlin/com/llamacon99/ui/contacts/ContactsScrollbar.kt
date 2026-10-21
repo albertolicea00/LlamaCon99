@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +36,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.llamacon99.ui.theme.LocalAppTheme
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
@@ -85,39 +85,43 @@ internal fun ContactsScrollbar(
     val trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
     val markerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
     val activeColor = MaterialTheme.colorScheme.primary
+    val theme = LocalAppTheme.current
     val density = LocalDensity.current
 
     Box(modifier) {
         BoxWithConstraints(Modifier.align(Alignment.CenterEnd).fillMaxWidth().fillMaxHeight(0.72f)) {
             val heightPx = with(density) { maxHeight.toPx() }
-            val minThumbPx = with(density) { 32.dp.toPx() }
+            val minThumbPx = with(density) { theme.scrollbar.minThumbHeight.toPx() }
             val bubblePx = with(density) { 72.dp.toPx() }
 
             Canvas(Modifier.matchParentSize().alpha(visibility)) {
                 val (progress, thumbHeight) = scrollbarPosition(listState, size.height, minThumbPx)
-                val width = 12.dp.toPx()
+                val width = theme.scrollbar.width.toPx()
                 val left = size.width - width
                 val centerX = left + width / 2
+                val corner = with(density) { theme.scrollbar.corner.toPx() }.coerceAtMost(width / 2)
                 drawRoundRect(
                     color = trackColor,
                     topLeft = Offset(left, 0f),
                     size = Size(width, size.height),
-                    cornerRadius = CornerRadius(width / 2),
+                    cornerRadius = CornerRadius(corner),
                 )
                 drawRoundRect(
                     color = activeColor.copy(alpha = if (isDragging) 0.55f else 0.18f),
                     topLeft = Offset(left, (size.height - thumbHeight) * (draggedProgress ?: progress)),
                     size = Size(width, thumbHeight),
-                    cornerRadius = CornerRadius(width / 2),
+                    cornerRadius = CornerRadius(corner),
                 )
-                val inset = width / 2
-                val markerCount = groups.size.coerceIn(2, 26)
-                repeat(markerCount) { index ->
-                    drawCircle(
-                        color = markerColor,
-                        radius = 0.65.dp.toPx(),
-                        center = Offset(centerX, inset + (size.height - width).coerceAtLeast(0f) * index / (markerCount - 1)),
-                    )
+                if (theme.scrollbar.showSectionMarkers) {
+                    val inset = width / 2
+                    val markerCount = groups.size.coerceIn(2, 26)
+                    repeat(markerCount) { index ->
+                        drawCircle(
+                            color = markerColor,
+                            radius = 0.65.dp.toPx(),
+                            center = Offset(centerX, inset + (size.height - width).coerceAtLeast(0f) * index / (markerCount - 1)),
+                        )
+                    }
                 }
             }
             Box(
@@ -167,7 +171,7 @@ internal fun ContactsScrollbar(
                             )
                         }
                         .size(72.dp)
-                        .background(activeColor, RoundedCornerShape(36.dp, 36.dp, 8.dp, 36.dp)),
+                        .background(activeColor, MaterialTheme.shapes.extraLarge),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(

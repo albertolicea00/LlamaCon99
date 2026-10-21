@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,10 +25,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -67,6 +64,8 @@ import com.llamacon99.monitor.CallMonitorService
 import com.llamacon99.service.UpdateCheckResult
 import com.llamacon99.service.UpdateChecker
 import com.llamacon99.service.UpdateInfo
+import com.llamacon99.ui.theme.AppThemeCatalog
+import com.llamacon99.ui.theme.AppThemeDefinition
 import com.llamacon99.ui.components.UpdateAvailableDialog
 import kotlinx.coroutines.launch
 
@@ -77,9 +76,11 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val appTheme by viewModel.appTheme.collectAsState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var showLegalDialog by remember { mutableStateOf(false) }
+    var showThemeSheet by remember { mutableStateOf(false) }
     var isCheckingUpdate by remember { mutableStateOf(false) }
     var updateStatus by remember { mutableStateOf<String?>(null) }
     var pendingUpdateInfo by remember { mutableStateOf<UpdateInfo?>(null) }
@@ -116,6 +117,13 @@ fun SettingsScreen(
     if (showLegalDialog) {
         LegalLinksSheet(onDismiss = { showLegalDialog = false })
     }
+    if (showThemeSheet) {
+        ThemePickerSheet(
+            selected = appTheme,
+            onSelect = { viewModel.setAppTheme(it); showThemeSheet = false },
+            onDismiss = { showThemeSheet = false },
+        )
+    }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refreshPermissionStatus() }
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -141,9 +149,11 @@ fun SettingsScreen(
             contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            item { SectionHeader(stringResource(R.string.settings_section_dialing)) }
+            item { SectionHeader(stringResource(R.string.settings_section_preferences)) }
             item {
                 SettingsGroup {
+                    ThemeSelector(selected = appTheme, onClick = { showThemeSheet = true })
+                    GroupDivider()
                     DialModeSelector(
                         selected = uiState.dialMode,
                         onSelect = { mode ->
@@ -247,10 +257,47 @@ fun SettingsScreen(
 }
 
 @Composable
+private fun ThemeSelector(selected: AppThemeDefinition, onClick: () -> Unit) {
+    ListItem(
+        headlineContent = { Text(stringResource(R.string.settings_theme_title)) },
+        supportingContent = { Text(stringResource(selected.nameRes), color = MaterialTheme.colorScheme.primary) },
+        trailingContent = { Icon(Icons.Filled.KeyboardArrowDown, contentDescription = null) },
+        colors = settingsRowColors(),
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ThemePickerSheet(
+    selected: AppThemeDefinition,
+    onSelect: (AppThemeDefinition) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        Column(modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp)) {
+            Text(stringResource(R.string.settings_theme_title), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(horizontal = 24.dp))
+            Text(stringResource(R.string.settings_theme_description), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 6.dp, bottom = 16.dp))
+            AppThemeCatalog.themes.forEach { theme ->
+                ListItem(
+                    headlineContent = { Text(stringResource(theme.nameRes)) },
+                    supportingContent = { Text(stringResource(theme.inspirationRes)) },
+                    trailingContent = {
+                        if (theme == selected) Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    },
+                    colors = settingsRowColors(),
+                    modifier = Modifier.fillMaxWidth().clickable { onSelect(theme) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun SettingsGroup(content: @Composable ColumnScope.() -> Unit) {
     Surface(
         modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
+        shape = MaterialTheme.shapes.extraLarge,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Column(modifier = Modifier.padding(vertical = 4.dp), content = content)
@@ -279,50 +326,61 @@ private fun GroupDivider() {
 @Composable
 private fun settingsRowColors() = ListItemDefaults.colors(containerColor = Color.Transparent)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DialModeSelector(selected: SettingsRepository.DialMode, onSelect: (SettingsRepository.DialMode) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
+    var showSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
     val selectedLabel = if (selected == SettingsRepository.DialMode.PREFILL) {
         R.string.settings_dial_mode_prefill_short
     } else {
         R.string.settings_dial_mode_direct_short
     }
-    Box {
-        ListItem(
-            headlineContent = { Text(stringResource(R.string.settings_dial_mode_title)) },
-            supportingContent = { Text(stringResource(selectedLabel), color = MaterialTheme.colorScheme.primary) },
-            trailingContent = { Icon(Icons.Filled.KeyboardArrowDown, contentDescription = null) },
-            colors = settingsRowColors(),
-            modifier = Modifier.fillMaxWidth().clickable { expanded = true },
-        )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.widthIn(max = 360.dp),
+    ListItem(
+        headlineContent = { Text(stringResource(R.string.settings_dial_mode_title)) },
+        supportingContent = { Text(stringResource(selectedLabel), color = MaterialTheme.colorScheme.primary) },
+        trailingContent = { Icon(Icons.Filled.KeyboardArrowDown, contentDescription = null) },
+        colors = settingsRowColors(),
+        modifier = Modifier.fillMaxWidth().clickable { showSheet = true },
+    )
+    if (showSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showSheet = false },
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ) {
-            listOf(SettingsRepository.DialMode.PREFILL, SettingsRepository.DialMode.DIRECT).forEach { mode ->
-                val prefill = mode == SettingsRepository.DialMode.PREFILL
-                DropdownMenuItem(
-                    text = {
-                        Column {
-                            Text(stringResource(if (prefill) R.string.settings_dial_mode_prefill_short else R.string.settings_dial_mode_direct_short))
-                            Text(
-                                stringResource(if (prefill) R.string.settings_dial_mode_prefill else R.string.settings_dial_mode_direct),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 4.dp),
-                            )
-                        }
-                    },
-                    trailingIcon = {
-                        if (mode == selected) Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                    },
-                    onClick = {
-                        onSelect(mode)
-                        expanded = false
-                    },
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            Column(modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp)) {
+                Text(stringResource(R.string.settings_dial_mode_title), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(horizontal = 24.dp))
+                Text(
+                    stringResource(R.string.settings_dial_mode_sheet_description),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 6.dp, bottom = 16.dp),
                 )
+                listOf(SettingsRepository.DialMode.PREFILL, SettingsRepository.DialMode.DIRECT).forEachIndexed { index, mode ->
+                    if (index > 0) GroupDivider()
+                    val prefill = mode == SettingsRepository.DialMode.PREFILL
+                    ListItem(
+                        headlineContent = {
+                            Text(stringResource(if (prefill) R.string.settings_dial_mode_prefill_short else R.string.settings_dial_mode_direct_short))
+                        },
+                        supportingContent = {
+                            Text(stringResource(if (prefill) R.string.settings_dial_mode_prefill else R.string.settings_dial_mode_direct))
+                        },
+                        trailingContent = {
+                            if (mode == selected) Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                        },
+                        colors = settingsRowColors(),
+                        modifier = Modifier.fillMaxWidth().clickable {
+                            scope.launch {
+                                sheetState.hide()
+                                showSheet = false
+                                onSelect(mode)
+                            }
+                        },
+                    )
+                }
             }
         }
     }
