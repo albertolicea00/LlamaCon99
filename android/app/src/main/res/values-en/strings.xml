@@ -26,6 +26,11 @@
 
     <!-- settings -->
     <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_dial_mode_title">When tapping a contact</string>
+    <string name="settings_dial_mode_prefill_short">Phone app</string>
+    <string name="settings_dial_mode_direct_short">Direct call</string>
+    <string name="settings_monitor_permission_title">Call permissions</string>
     <string name="settings_section_dialing">When dialing</string>
     <string name="settings_dial_mode_prefill">Open my phone app with the number already entered</string>
     <string name="settings_dial_mode_direct">Call directly from here</string>

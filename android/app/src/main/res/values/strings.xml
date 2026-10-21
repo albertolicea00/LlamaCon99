@@ -26,6 +26,11 @@
 
     <!-- settings -->
     <string name="settings_title">Ajustes</string>
+    <string name="settings_back">Volver</string>
+    <string name="settings_dial_mode_title">Al tocar un contacto</string>
+    <string name="settings_dial_mode_prefill_short">App de teléfono</string>
+    <string name="settings_dial_mode_direct_short">Llamada directa</string>
+    <string name="settings_monitor_permission_title">Permisos de llamadas</string>
     <string name="settings_section_dialing">Al marcar</string>
     <string name="settings_dial_mode_prefill">Abrir mi app de teléfono con el número ya escrito</string>
     <string name="settings_dial_mode_direct">Llamar directo desde aquí</string>
