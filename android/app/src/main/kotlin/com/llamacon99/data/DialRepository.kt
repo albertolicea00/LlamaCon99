@@ -1,8 +1,11 @@
 package com.llamacon99.data
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -12,11 +15,20 @@ import javax.inject.Singleton
 class DialRepository @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
-    /** Places the call immediately, bypassing the user's phone app. Requires `CALL_PHONE`. */
+    /** Places the call with permission; otherwise lets the user confirm it in the dialer. */
     fun callDirect(code: String) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            openDialerPrefilled(code)
+            return
+        }
         val intent = Intent(Intent.ACTION_CALL, Uri.fromParts("tel", code, null))
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
+        try {
+            context.startActivity(intent)
+        } catch (_: SecurityException) {
+            // Android can revoke the permission between the check and the activity launch.
+            openDialerPrefilled(code)
+        }
     }
 
     /** Opens the user's default phone app with [code] already entered — no permission needed. */
