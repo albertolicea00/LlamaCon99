@@ -1,5 +1,7 @@
 package com.llamacon99.ui.contacts
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -8,6 +10,7 @@ import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -16,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -35,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -60,99 +66,117 @@ internal fun ContactsScrollbar(
     val scope = rememberCoroutineScope()
     var draggedProgress by remember(groups) { mutableStateOf<Float?>(null) }
     var selectedLetter by remember(groups) { mutableStateOf("") }
-    val trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-    val markerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+    var showScrollbar by remember(groups) { mutableStateOf(false) }
+    val isDragging = draggedProgress != null
+    val isScrolling = listState.isScrollInProgress
+    LaunchedEffect(isScrolling, isDragging) {
+        if (isScrolling || isDragging) {
+            showScrollbar = true
+        } else {
+            delay(2_000)
+            showScrollbar = false
+        }
+    }
+    val visibility by animateFloatAsState(
+        targetValue = if (showScrollbar || isScrolling || isDragging) 1f else 0f,
+        animationSpec = tween(250),
+        label = "scrollbarVisibility",
+    )
+    val trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
+    val markerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
     val activeColor = MaterialTheme.colorScheme.primary
     val density = LocalDensity.current
 
-    BoxWithConstraints(modifier) {
-        val heightPx = with(density) { maxHeight.toPx() }
-        val minThumbPx = with(density) { 32.dp.toPx() }
-        val bubblePx = with(density) { 72.dp.toPx() }
+    Box(modifier) {
+        BoxWithConstraints(Modifier.align(Alignment.CenterEnd).fillMaxWidth().fillMaxHeight(0.72f)) {
+            val heightPx = with(density) { maxHeight.toPx() }
+            val minThumbPx = with(density) { 32.dp.toPx() }
+            val bubblePx = with(density) { 72.dp.toPx() }
 
-        Canvas(Modifier.matchParentSize()) {
-            val (progress, thumbHeight) = scrollbarPosition(listState, size.height, minThumbPx)
-            val width = 16.dp.toPx()
-            val left = size.width - width
-            val centerX = left + width / 2
-            drawRoundRect(
-                color = trackColor,
-                topLeft = Offset(left, 0f),
-                size = Size(width, size.height),
-                cornerRadius = CornerRadius(width / 2),
-            )
-            drawRoundRect(
-                color = activeColor.copy(alpha = if (draggedProgress != null) 0.6f else 0.25f),
-                topLeft = Offset(left, (size.height - thumbHeight) * (draggedProgress ?: progress)),
-                size = Size(width, thumbHeight),
-                cornerRadius = CornerRadius(width / 2),
-            )
-            val inset = width / 2
-            val markerCount = groups.size.coerceIn(2, 26)
-            repeat(markerCount) { index ->
-                drawCircle(
-                    color = markerColor,
-                    radius = 0.65.dp.toPx(),
-                    center = Offset(centerX, inset + (size.height - width).coerceAtLeast(0f) * index / (markerCount - 1)),
+            Canvas(Modifier.matchParentSize().alpha(visibility)) {
+                val (progress, thumbHeight) = scrollbarPosition(listState, size.height, minThumbPx)
+                val width = 12.dp.toPx()
+                val left = size.width - width
+                val centerX = left + width / 2
+                drawRoundRect(
+                    color = trackColor,
+                    topLeft = Offset(left, 0f),
+                    size = Size(width, size.height),
+                    cornerRadius = CornerRadius(width / 2),
                 )
+                drawRoundRect(
+                    color = activeColor.copy(alpha = if (isDragging) 0.55f else 0.18f),
+                    topLeft = Offset(left, (size.height - thumbHeight) * (draggedProgress ?: progress)),
+                    size = Size(width, thumbHeight),
+                    cornerRadius = CornerRadius(width / 2),
+                )
+                val inset = width / 2
+                val markerCount = groups.size.coerceIn(2, 26)
+                repeat(markerCount) { index ->
+                    drawCircle(
+                        color = markerColor,
+                        radius = 0.65.dp.toPx(),
+                        center = Offset(centerX, inset + (size.height - width).coerceAtLeast(0f) * index / (markerCount - 1)),
+                    )
+                }
             }
-        }
-        Box(
-            Modifier.align(Alignment.CenterEnd).width(32.dp).fillMaxHeight()
-                .pointerInput(listState, labels, heightPx) {
-                    awaitEachGesture {
-                        val down = awaitFirstDown()
-                        down.consume()
-                        val (initialProgress, thumbHeight) = scrollbarPosition(listState, heightPx, minThumbPx)
-                        val track = (heightPx - thumbHeight).coerceAtLeast(1f)
-                        val thumbTop = initialProgress * track
-                        val grip = if (down.position.y in thumbTop..(thumbTop + thumbHeight)) {
-                            down.position.y - thumbTop
-                        } else {
-                            thumbHeight / 2
-                        }
-                        var scrollJob: Job? = null
-                        fun moveTo(y: Float) {
-                            val progress = ((y - grip) / track).coerceIn(0f, 1f)
-                            val index = (progress * labels.lastIndex).roundToInt()
-                            draggedProgress = progress
-                            selectedLetter = labels[index]
-                            scrollJob?.cancel()
-                            scrollJob = scope.launch { listState.scrollToItem(index) }
-                        }
-                        try {
-                            moveTo(down.position.y)
-                            drag(down.id) { change ->
-                                change.consume()
-                                moveTo(change.position.y)
-                            }
-                        } finally {
-                            draggedProgress = null
-                        }
-                    }
-                },
-        )
-        draggedProgress?.let { progress ->
-            val (_, thumbHeight) = scrollbarPosition(listState, heightPx, minThumbPx)
             Box(
-                modifier = Modifier.align(Alignment.TopEnd)
-                    .offset {
-                        IntOffset(
-                            x = with(density) { -40.dp.roundToPx() },
-                            y = ((heightPx - thumbHeight) * progress + thumbHeight / 2 - bubblePx / 2)
-                                .coerceIn(0f, (heightPx - bubblePx).coerceAtLeast(0f)).roundToInt(),
-                        )
-                    }
-                    .size(72.dp)
-                    .background(activeColor, RoundedCornerShape(36.dp, 36.dp, 8.dp, 36.dp)),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = selectedLetter,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Medium,
-                )
+                Modifier.align(Alignment.CenterEnd).width(32.dp).fillMaxHeight()
+                    .pointerInput(listState, labels, heightPx) {
+                        awaitEachGesture {
+                            val down = awaitFirstDown()
+                            down.consume()
+                            val (initialProgress, thumbHeight) = scrollbarPosition(listState, heightPx, minThumbPx)
+                            val track = (heightPx - thumbHeight).coerceAtLeast(1f)
+                            val thumbTop = initialProgress * track
+                            val grip = if (down.position.y in thumbTop..(thumbTop + thumbHeight)) {
+                                down.position.y - thumbTop
+                            } else {
+                                thumbHeight / 2
+                            }
+                            var scrollJob: Job? = null
+                            fun moveTo(y: Float) {
+                                val progress = ((y - grip) / track).coerceIn(0f, 1f)
+                                val index = (progress * labels.lastIndex).roundToInt()
+                                draggedProgress = progress
+                                selectedLetter = labels[index]
+                                scrollJob?.cancel()
+                                scrollJob = scope.launch { listState.scrollToItem(index) }
+                            }
+                            try {
+                                moveTo(down.position.y)
+                                drag(down.id) { change ->
+                                    change.consume()
+                                    moveTo(change.position.y)
+                                }
+                            } finally {
+                                draggedProgress = null
+                            }
+                        }
+                    },
+            )
+            draggedProgress?.let { progress ->
+                val (_, thumbHeight) = scrollbarPosition(listState, heightPx, minThumbPx)
+                Box(
+                    modifier = Modifier.align(Alignment.TopEnd)
+                        .offset {
+                            IntOffset(
+                                x = with(density) { -40.dp.roundToPx() },
+                                y = ((heightPx - thumbHeight) * progress + thumbHeight / 2 - bubblePx / 2)
+                                    .coerceIn(0f, (heightPx - bubblePx).coerceAtLeast(0f)).roundToInt(),
+                            )
+                        }
+                        .size(72.dp)
+                        .background(activeColor, RoundedCornerShape(36.dp, 36.dp, 8.dp, 36.dp)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = selectedLetter,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
             }
         }
     }
