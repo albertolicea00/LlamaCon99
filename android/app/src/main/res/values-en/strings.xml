@@ -5,6 +5,8 @@
     <!-- contacts_list -->
     <string name="contacts_list_title">Contacts</string>
     <string name="contacts_list_search_hint">Search</string>
+    <string name="contacts_list_scroll_to_top">Scroll to top</string>
+    <string name="contacts_list_current_section">Section %1$s</string>
     <string name="contacts_list_voice_search">Search by voice</string>
     <string name="contacts_list_voice_unavailable">Voice input is unavailable on this phone.</string>
     <string name="contacts_list_empty_title">No Cuban Contacts</string>

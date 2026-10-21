@@ -5,6 +5,8 @@
     <!-- contacts_list -->
     <string name="contacts_list_title">Contactos</string>
     <string name="contacts_list_search_hint">Buscar</string>
+    <string name="contacts_list_scroll_to_top">Volver al inicio</string>
+    <string name="contacts_list_current_section">Sección %1$s</string>
     <string name="contacts_list_voice_search">Buscar por voz</string>
     <string name="contacts_list_voice_unavailable">El dictado por voz no está disponible en este teléfono.</string>
     <string name="contacts_list_empty_title">Sin contactos cubanos</string>
