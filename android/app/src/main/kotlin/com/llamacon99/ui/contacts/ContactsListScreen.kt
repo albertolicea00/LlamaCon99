@@ -11,10 +11,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,12 +31,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,6 +47,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -85,6 +90,10 @@ fun ContactsListScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.contacts_list_title)) },
+                modifier = Modifier.padding(horizontal = 20.dp),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                ),
                 actions = {
                     IconButton(onClick = onOpenSettings) {
                         Icon(Icons.Filled.Info, contentDescription = stringResource(R.string.settings_title))
@@ -92,54 +101,38 @@ fun ContactsListScreen(
                 },
             )
         },
-        bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .imePadding()
-                    .navigationBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                TextField(
-                    value = query,
-                    onValueChange = viewModel::onSearchQueryChanged,
-                    placeholder = { Text(stringResource(R.string.contacts_list_search_hint)) },
-                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-                    singleLine = true,
-                    shape = RoundedCornerShape(28.dp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
-                    modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth(),
-                )
-            }
-        },
     ) { innerPadding ->
-        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
+                .imePadding(),
+        ) {
             if (uiState.isEmpty) {
                 EmptyContactsState(modifier = Modifier.fillMaxSize())
             } else {
-                LazyColumn(contentPadding = PaddingValues(bottom = 24.dp)) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(top = 8.dp, bottom = 104.dp),
+                ) {
                     uiState.groups.forEach { group ->
                         stickyHeader(key = group.letter) {
                             Text(
                                 text = group.letter,
                                 style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.primary,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.surface)
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .padding(start = 40.dp, end = 24.dp, top = 16.dp, bottom = 8.dp),
                             )
                         }
                         items(group.contacts, key = { it.id }) { contact ->
                             SwipeableContactRow(
+                                modifier = Modifier
+                                    .padding(horizontal = 24.dp, vertical = 4.dp)
+                                    .clip(RoundedCornerShape(32.dp)),
                                 enabled = uiState.anonymousSwipeEnabled,
                                 onRevealAction = { viewModel.onDialAnonymous(contact.phoneNumber) },
                             ) {
@@ -152,6 +145,35 @@ fun ContactsListScreen(
                     }
                 }
             }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(horizontal = 40.dp, vertical = 16.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                TextField(
+                    value = query,
+                    onValueChange = viewModel::onSearchQueryChanged,
+                    placeholder = { Text(stringResource(R.string.contacts_list_search_hint)) },
+                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(50),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                    ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
+                    modifier = Modifier
+                        .widthIn(max = 480.dp)
+                        .fillMaxWidth()
+                        .heightIn(min = 60.dp)
+                        .shadow(8.dp, RoundedCornerShape(50)),
+                )
+            }
         }
     }
 }
@@ -159,12 +181,14 @@ fun ContactsListScreen(
 @Composable
 private fun ContactRow(contact: DeviceContact, onClick: () -> Unit) {
     ListItem(
-        headlineContent = { Text(contact.name) },
-        supportingContent = { Text(contact.phoneNumber) },
-        leadingContent = { ContactAvatar(name = contact.name, photoUri = contact.photoUri) },
+        headlineContent = { Text(contact.name, style = MaterialTheme.typography.titleMedium) },
+        supportingContent = { Text(contact.phoneNumber, style = MaterialTheme.typography.bodySmall) },
+        leadingContent = { ContactAvatar(name = contact.name, photoUri = contact.photoUri, size = 42.dp) },
+        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
+            .heightIn(min = 76.dp)
+            .clip(RoundedCornerShape(32.dp))
             .clickable(onClick = onClick),
     )
 }

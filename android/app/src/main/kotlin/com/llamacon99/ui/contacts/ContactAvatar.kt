@@ -4,12 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +46,11 @@ fun ContactAvatar(
         modifier = modifier
             .size(size)
             .clip(CircleShape)
-            .background(colorForName(name).copy(alpha = 0.25f)),
+            .background(
+                Brush.linearGradient(
+                    listOf(colorForName(name).copy(alpha = 0.65f), colorForName(name)),
+                ),
+            ),
         contentAlignment = Alignment.Center,
     ) {
         if (photoUri != null) {
@@ -58,7 +62,7 @@ fun ContactAvatar(
         } else {
             Text(
                 text = initialsForName(name),
-                color = MaterialTheme.colorScheme.onSurface,
+                color = Color.White,
                 fontSize = (size.value / 2.4).sp,
             )
         }

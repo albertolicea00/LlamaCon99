@@ -10,7 +10,7 @@ val DarkGreenContainer = Color(0xFF123A1B)
 
 val LightSurface = Color(0xFFF7F7F8)
 val LightSurfaceVariant = Color(0xFFEFEFF2)
-val DarkSurface = Color(0xFF121212)
+val DarkSurface = Color(0xFF000000)
 val DarkSurfaceVariant = Color(0xFF1E1E1E)
 
 val DangerRed = Color(0xFFE53935)
