@@ -46,20 +46,20 @@ fun SwipeableContactRow(
     val scope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
     var rowWidthPx by remember { mutableStateOf(0) }
-    val revealWidthPx = remember(rowWidthPx) { (rowWidthPx * 0.28f) }
+    val triggerThreshold = remember(rowWidthPx) { rowWidthPx * 0.35f }
 
     Box(modifier = modifier.onSizeChanged { rowWidthPx = it.width }) {
         Box(
             modifier = Modifier
                 .matchParentSize()
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.errorContainer),
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.CenterEnd,
         ) {
             Icon(
                 imageVector = Icons.Filled.VisibilityOff,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onErrorContainer,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(end = 20.dp),
             )
         }
@@ -71,18 +71,19 @@ fun SwipeableContactRow(
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             scope.launch {
-                                val target = if (offsetX.value < -revealWidthPx / 2) -revealWidthPx else 0f
-                                offsetX.animateTo(target)
-                                if (target != 0f) {
+                                val triggered = offsetX.value < -triggerThreshold
+                                if (triggered) {
+                                    offsetX.animateTo(-rowWidthPx.toFloat())
                                     onRevealAction()
-                                    offsetX.animateTo(0f)
                                 }
+                                offsetX.animateTo(0f)
                             }
                         },
                         onHorizontalDrag = { change, dragAmount ->
                             change.consume()
                             scope.launch {
-                                val next = (offsetX.value + dragAmount).coerceIn(-revealWidthPx, 0f)
+                                val next = (offsetX.value + dragAmount)
+                                    .coerceIn(-rowWidthPx.toFloat(), 0f)
                                 offsetX.snapTo(next)
                             }
                         },
