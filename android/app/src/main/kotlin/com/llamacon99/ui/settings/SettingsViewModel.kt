@@ -1,7 +1,9 @@
 package com.llamacon99.ui.settings
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -55,6 +57,14 @@ class SettingsViewModel @Inject constructor(
 
     fun refreshPermissionStatus() {
         permissionsRefreshTrigger.value += 1
+        viewModelScope.launch {
+            if (!hasCallPhonePermission()) {
+                val current = settingsRepository.dialMode.stateIn(viewModelScope).value
+                if (current == SettingsRepository.DialMode.DIRECT) {
+                    settingsRepository.setDialMode(SettingsRepository.DialMode.PREFILL)
+                }
+            }
+        }
     }
 
     fun setDialMode(mode: SettingsRepository.DialMode) {
@@ -97,6 +107,9 @@ class SettingsViewModel @Inject constructor(
         settingsRepository.setCallMonitorEnabled(false)
         Toast.makeText(context, R.string.settings_call_monitor_start_failed, Toast.LENGTH_LONG).show()
     }
+
+    private fun hasCallPhonePermission(): Boolean =
+        ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
 
     private fun hasCallMonitorPermissions(): Boolean = CallMonitorService.hasRequiredPermissions(context)
 }

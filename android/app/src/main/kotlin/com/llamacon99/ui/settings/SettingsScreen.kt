@@ -88,7 +88,17 @@ fun SettingsScreen(
             item { SectionHeader(stringResource(R.string.settings_section_dialing)) }
             item {
                 SettingsGroup {
-                    DialModeSelector(selected = uiState.dialMode, onSelect = viewModel::setDialMode)
+                    DialModeSelector(
+                        selected = uiState.dialMode,
+                        onSelect = { mode ->
+                            if (mode == SettingsRepository.DialMode.DIRECT) {
+                                viewModel.setDialMode(mode)
+                                permissionLauncher.launch(arrayOf(android.Manifest.permission.CALL_PHONE))
+                            } else {
+                                viewModel.setDialMode(mode)
+                            }
+                        },
+                    )
                     GroupDivider()
                     ToggleRow(
                         title = stringResource(R.string.settings_anonymous_swipe_title),
