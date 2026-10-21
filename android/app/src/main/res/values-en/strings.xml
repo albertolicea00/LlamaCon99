@@ -3,6 +3,11 @@
     <string name="app_name">Llama con 99</string>
 
     <!-- contacts_list -->
+    <string name="contacts_permission_title">Access your contacts</string>
+    <string name="contacts_permission_body">Allow contact access to view and call your Cuban numbers here.</string>
+    <string name="contacts_permission_settings_body">Enable contact access in the app settings. Your list will load automatically when you return.</string>
+    <string name="contacts_permission_grant">Allow access</string>
+    <string name="contacts_permission_settings">Open settings</string>
     <string name="contacts_list_title">Contacts</string>
     <string name="contacts_list_search_hint">Search</string>
     <string name="contacts_list_no_results_title">No contacts found</string>

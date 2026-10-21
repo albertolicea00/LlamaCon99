@@ -3,6 +3,11 @@
     <string name="app_name">Llama con 99</string>
 
     <!-- contacts_list -->
+    <string name="contacts_permission_title">Acceso a tus contactos</string>
+    <string name="contacts_permission_body">Permite el acceso a tus contactos para ver y llamar a tus números cubanos desde aquí.</string>
+    <string name="contacts_permission_settings_body">Activa el permiso de contactos en los ajustes de la app. Al volver, tu lista se cargará automáticamente.</string>
+    <string name="contacts_permission_grant">Permitir acceso</string>
+    <string name="contacts_permission_settings">Abrir ajustes</string>
     <string name="contacts_list_title">Contactos</string>
     <string name="contacts_list_search_hint">Buscar</string>
     <string name="contacts_list_no_results_title">No se encontraron contactos</string>

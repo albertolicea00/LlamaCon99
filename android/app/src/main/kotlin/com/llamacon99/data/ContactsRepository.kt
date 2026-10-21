@@ -1,7 +1,10 @@
 package com.llamacon99.data
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.provider.ContactsContract
+import androidx.core.content.ContextCompat
 import com.llamacon99.model.CallerIdEntry
 import com.llamacon99.model.ContactPhoneNumber
 import com.llamacon99.model.DeviceContact
@@ -29,7 +32,18 @@ class ContactsRepository @Inject constructor(
 
     /** Re-reads the Contacts provider and refreshes [contacts] plus the shared [CallerIdStore]. */
     suspend fun reload() = withContext(Dispatchers.IO) {
-        val result = queryCubanContacts()
+        val result = if (
+            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            emptyList()
+        } else {
+            try {
+                queryCubanContacts()
+            } catch (_: SecurityException) {
+                // Permission can be revoked between the check and the provider query.
+                emptyList()
+            }
+        }
         _contacts.value = result
         callerIdStore.replaceAll(result.toCallerIdEntries())
     }

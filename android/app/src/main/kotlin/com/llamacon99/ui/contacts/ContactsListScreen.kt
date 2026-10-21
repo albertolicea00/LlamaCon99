@@ -3,9 +3,12 @@ package com.llamacon99.ui.contacts
 import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.speech.RecognizerIntent
+import android.net.Uri
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -59,6 +62,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -72,6 +76,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import com.llamacon99.R
 import com.llamacon99.model.DeviceContact
 
@@ -103,14 +110,43 @@ fun ContactsListScreen(
                 PackageManager.PERMISSION_GRANTED,
         )
     }
+    val activity = remember(context) {
+        generateSequence(context) { (it as? ContextWrapper)?.baseContext }
+            .filterIsInstance<Activity>().firstOrNull()
+    }
+    var permissionBlocked by rememberSaveable { mutableStateOf(false) }
     val contactsPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { granted ->
         hasContactsPermission = granted
-        if (granted) viewModel.reload()
+        permissionBlocked = !granted && activity?.let {
+            !ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.READ_CONTACTS)
+        } == true
+        viewModel.reload()
     }
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        if (!hasContactsPermission) contactsPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        val granted = androidx.core.content.ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) ==
+            PackageManager.PERMISSION_GRANTED
+        if (granted != hasContactsPermission) {
+            hasContactsPermission = granted
+            viewModel.reload()
+        }
+    }
+    if (!hasContactsPermission) {
+        ContactsPermissionScreen(
+            openSettings = permissionBlocked,
+            onOpenInfo = onOpenSettings,
+            onGrantAccess = {
+                if (permissionBlocked) {
+                    context.startActivity(
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}")),
+                    )
+                } else {
+                    contactsPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
+                }
+            },
+        )
+        return
     }
 
     Scaffold(
