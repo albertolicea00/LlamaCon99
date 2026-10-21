@@ -172,6 +172,12 @@ fun ContactsListScreen(
                 }
             }
 
+            ContactsScrollbar(
+                listState = listState,
+                groups = uiState.groups,
+                modifier = Modifier.matchParentSize().navigationBarsPadding()
+                    .padding(top = 64.dp, end = 6.dp, bottom = 80.dp),
+            )
             IconButton(
                 onClick = onOpenSettings,
                 modifier = Modifier
