@@ -3,6 +3,7 @@ package com.llamacon99.monitor
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.llamacon99.data.SettingsRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,9 +31,15 @@ class BootCompletedReceiver : BroadcastReceiver() {
             try {
                 val shouldStart = settingsRepository.callMonitorEnabled.first() &&
                     settingsRepository.monitorFromBootEnabled.first()
-                if (shouldStart) {
+                if (shouldStart && CallMonitorService.hasRequiredPermissions(context)) {
                     ContextCompat.startForegroundService(context, Intent(context, CallMonitorService::class.java))
                 }
+            } catch (error: SecurityException) {
+                Log.w("BootCompletedReceiver", "Caller ID monitoring could not start after boot", error)
+                settingsRepository.setCallMonitorEnabled(false)
+            } catch (error: IllegalStateException) {
+                Log.w("BootCompletedReceiver", "Caller ID monitoring could not start after boot", error)
+                settingsRepository.setCallMonitorEnabled(false)
             } finally {
                 pendingResult.finish()
             }

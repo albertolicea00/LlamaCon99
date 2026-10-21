@@ -1,13 +1,14 @@
 package com.llamacon99.ui.settings
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.util.Log
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.llamacon99.data.SettingsRepository
+import com.llamacon99.R
 import com.llamacon99.monitor.CallMonitorService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -66,11 +67,23 @@ class SettingsViewModel @Inject constructor(
 
     fun setCallMonitorEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            settingsRepository.setCallMonitorEnabled(enabled)
-            if (enabled && hasCallMonitorPermissions()) {
-                ContextCompat.startForegroundService(context, Intent(context, CallMonitorService::class.java))
-            } else {
+            if (!enabled) {
+                settingsRepository.setCallMonitorEnabled(false)
                 context.stopService(Intent(context, CallMonitorService::class.java))
+                return@launch
+            }
+            if (!hasCallMonitorPermissions()) {
+                settingsRepository.setCallMonitorEnabled(false)
+                refreshPermissionStatus()
+                return@launch
+            }
+            settingsRepository.setCallMonitorEnabled(true)
+            try {
+                ContextCompat.startForegroundService(context, Intent(context, CallMonitorService::class.java))
+            } catch (error: SecurityException) {
+                monitorStartFailed(error)
+            } catch (error: IllegalStateException) {
+                monitorStartFailed(error)
             }
         }
     }
@@ -79,9 +92,11 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { settingsRepository.setMonitorFromBootEnabled(enabled) }
     }
 
-    private fun hasCallMonitorPermissions(): Boolean =
-        ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) ==
-            PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) ==
-            PackageManager.PERMISSION_GRANTED
+    private suspend fun monitorStartFailed(error: Exception) {
+        Log.w("SettingsViewModel", "Caller ID monitoring could not start", error)
+        settingsRepository.setCallMonitorEnabled(false)
+        Toast.makeText(context, R.string.settings_call_monitor_start_failed, Toast.LENGTH_LONG).show()
+    }
+
+    private fun hasCallMonitorPermissions(): Boolean = CallMonitorService.hasRequiredPermissions(context)
 }

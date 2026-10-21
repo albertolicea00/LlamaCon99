@@ -40,6 +40,7 @@
     <string name="settings_caller_id_explanation">When ETECSA calls you back for a collect call, the number shown isn\'t the real one. Turning this on shows you a notification with who\'s really calling.</string>
     <string name="settings_grant_call_monitor_permission">Grant permission to identify calls</string>
     <string name="settings_call_monitor_title">Identify incoming calls</string>
+    <string name="settings_call_monitor_start_failed">Could not enable caller ID. Check permissions and try again.</string>
     <string name="settings_call_monitor_subtitle">Shows a notification with the real name of who\'s calling</string>
     <string name="settings_monitor_from_boot_title">Keep active after restart</string>
     <string name="settings_monitor_from_boot_subtitle">Automatically restarts monitoring after the phone turns back on</string>

@@ -1,6 +1,5 @@
 package com.llamacon99.ui.settings
 
-import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -53,6 +52,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import com.llamacon99.BuildConfig
 import com.llamacon99.R
 import com.llamacon99.data.SettingsRepository
+import com.llamacon99.monitor.CallMonitorService
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +111,7 @@ fun SettingsScreen(
                             colors = settingsRowColors(),
                             modifier = Modifier.clickable {
                                 permissionLauncher.launch(
-                                    arrayOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CALL_LOG),
+                                    CallMonitorService.requiredPermissions(),
                                 )
                             },
                         )

@@ -40,6 +40,7 @@
     <string name="settings_caller_id_explanation">Cuando ETECSA te devuelve una llamada por cobrar, el número que aparece no es el real. Si activas esto, te avisamos con una notificación quién te está llamando de verdad.</string>
     <string name="settings_grant_call_monitor_permission">Dar permiso para identificar llamadas</string>
     <string name="settings_call_monitor_title">Identificar llamadas entrantes</string>
+    <string name="settings_call_monitor_start_failed">No se pudo activar la identificación de llamadas. Revisa los permisos e inténtalo de nuevo.</string>
     <string name="settings_call_monitor_subtitle">Muestra una notificación con el nombre real de quien llama</string>
     <string name="settings_monitor_from_boot_title">Mantener activo al reiniciar el teléfono</string>
     <string name="settings_monitor_from_boot_subtitle">Reinicia el monitoreo automáticamente después de apagar y encender el teléfono</string>
