@@ -9,6 +9,7 @@ import android.speech.RecognizerIntent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,15 +17,25 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -43,10 +54,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,6 +84,18 @@ fun ContactsListScreen(
     val uiState by viewModel.uiState.collectAsState()
     val query by viewModel.query.collectAsState()
     val focusManager = LocalFocusManager.current
+    val listState = rememberLazyListState()
+    val isScrolled by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 8
+        }
+    }
+    val infoBackground by animateColorAsState(
+        targetValue = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
+            alpha = if (isScrolled) 0.8f else 0f,
+        ),
+        label = "infoBubbleBackground",
+    )
 
     val context = LocalContext.current
     val voiceSearchLauncher = rememberLauncherForActivityResult(
@@ -103,20 +125,8 @@ fun ContactsListScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.contacts_list_title)) },
-                modifier = Modifier.padding(horizontal = 20.dp),
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                ),
-                actions = {
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(Icons.Filled.Info, contentDescription = stringResource(R.string.settings_title))
-                    }
-                },
-            )
-        },
+        // Let the list draw behind navigation buttons; inset only the floating controls below.
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -125,46 +135,72 @@ fun ContactsListScreen(
                 .consumeWindowInsets(innerPadding)
                 .imePadding(),
         ) {
-            if (uiState.isEmpty) {
-                EmptyContactsState(modifier = Modifier.fillMaxSize())
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(top = 8.dp, bottom = 104.dp),
-                ) {
-                    uiState.groups.forEach { group ->
-                        stickyHeader(key = group.letter) {
-                            Text(
-                                text = group.letter,
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .padding(start = 40.dp, end = 24.dp, top = 16.dp, bottom = 8.dp),
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    top = 8.dp,
+                    bottom = 104.dp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                ),
+            ) {
+                item(key = "contacts_title") {
+                    Text(
+                        text = stringResource(R.string.contacts_list_title),
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 36.dp, end = 88.dp, top = 12.dp, bottom = 20.dp),
+                    )
+                }
+                if (uiState.isEmpty) {
+                    item(key = "empty_contacts") {
+                        EmptyContactsState(modifier = Modifier.fillParentMaxHeight(0.75f))
+                    }
+                }
+                uiState.groups.forEach { group ->
+                    stickyHeader(key = group.letter) {
+                        Text(
+                            text = group.letter,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(start = 40.dp, end = 24.dp, top = 16.dp, bottom = 8.dp),
+                        )
+                    }
+                    items(group.contacts, key = { it.id }) { contact ->
+                        SwipeableContactRow(
+                            modifier = Modifier
+                                .padding(horizontal = 24.dp, vertical = 4.dp)
+                                .clip(RoundedCornerShape(32.dp)),
+                            enabled = uiState.anonymousSwipeEnabled,
+                            onRevealAction = { viewModel.onDialAnonymous(contact.phoneNumber) },
+                        ) {
+                            ContactRow(
+                                contact = contact,
+                                onClick = { viewModel.onDial(contact.phoneNumber) },
                             )
-                        }
-                        items(group.contacts, key = { it.id }) { contact ->
-                            SwipeableContactRow(
-                                modifier = Modifier
-                                    .padding(horizontal = 24.dp, vertical = 4.dp)
-                                    .clip(RoundedCornerShape(32.dp)),
-                                enabled = uiState.anonymousSwipeEnabled,
-                                onRevealAction = { viewModel.onDialAnonymous(contact.phoneNumber) },
-                            ) {
-                                ContactRow(
-                                    contact = contact,
-                                    onClick = { viewModel.onDial(contact.phoneNumber) },
-                                )
-                            }
                         }
                     }
                 }
+            }
+
+            IconButton(
+                onClick = onOpenSettings,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 8.dp, end = 20.dp)
+                    .size(48.dp)
+                    .background(infoBackground, CircleShape),
+            ) {
+                Icon(Icons.Filled.Info, contentDescription = stringResource(R.string.settings_title))
             }
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
+                    .navigationBarsPadding()
                     .padding(horizontal = 40.dp, vertical = 16.dp),
                 contentAlignment = Alignment.Center,
             ) {
