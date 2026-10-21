@@ -44,8 +44,12 @@
     <string name="settings_call_monitor_subtitle">Muestra una notificación con el nombre real de quien llama</string>
     <string name="settings_monitor_from_boot_title">Mantener activo al reiniciar el teléfono</string>
     <string name="settings_monitor_from_boot_subtitle">Reinicia el monitoreo automáticamente después de apagar y encender el teléfono</string>
-    <string name="settings_section_developer">Desarrollador</string>
+    <string name="settings_section_about">Acerca de</string>
+    <string name="settings_check_updates">Buscar actualizaciones</string>
     <string name="settings_app_version">Versión de la app</string>
+    <string name="settings_privacy_policy">Política de privacidad</string>
+    <string name="settings_terms">Términos y condiciones</string>
+    <string name="settings_eula">Licencia de uso</string>
 
     <!-- shortcuts -->
     <string name="shortcut_call_99_short">Llamar con 99</string>

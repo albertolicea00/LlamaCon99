@@ -1,6 +1,10 @@
 package com.llamacon99.ui.settings
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.ui.platform.LocalContext
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -150,15 +154,60 @@ fun SettingsScreen(
                     modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
                 )
             }
-            item { SectionHeader(stringResource(R.string.settings_section_developer)) }
+            item { SectionHeader(stringResource(R.string.settings_section_about)) }
             item {
+                val context = LocalContext.current
                 SettingsGroup {
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.settings_check_updates)) },
+                        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
+                        colors = settingsRowColors(),
+                        modifier = Modifier.clickable {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${BuildConfig.APPLICATION_ID}"))
+                            try {
+                                context.startActivity(intent)
+                            } catch (_: ActivityNotFoundException) {
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}")))
+                            }
+                        },
+                    )
+                    GroupDivider()
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.settings_app_version)) },
                         trailingContent = {
-                            Text(BuildConfig.VERSION_NAME, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(
+                                "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         },
                         colors = settingsRowColors(),
+                    )
+                    GroupDivider()
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.settings_privacy_policy)) },
+                        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
+                        colors = settingsRowColors(),
+                        modifier = Modifier.clickable {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://llama99.vercel.app/privacy")))
+                        },
+                    )
+                    GroupDivider()
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.settings_terms)) },
+                        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
+                        colors = settingsRowColors(),
+                        modifier = Modifier.clickable {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://llama99.vercel.app/terms")))
+                        },
+                    )
+                    GroupDivider()
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.settings_eula)) },
+                        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
+                        colors = settingsRowColors(),
+                        modifier = Modifier.clickable {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://llama99.vercel.app/eula")))
+                        },
                     )
                 }
             }

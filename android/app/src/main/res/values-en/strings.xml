@@ -44,8 +44,12 @@
     <string name="settings_call_monitor_subtitle">Shows a notification with the real name of who\'s calling</string>
     <string name="settings_monitor_from_boot_title">Keep active after restart</string>
     <string name="settings_monitor_from_boot_subtitle">Automatically restarts monitoring after the phone turns back on</string>
-    <string name="settings_section_developer">Developer</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_check_updates">Check for updates</string>
     <string name="settings_app_version">App version</string>
+    <string name="settings_privacy_policy">Privacy policy</string>
+    <string name="settings_terms">Terms and conditions</string>
+    <string name="settings_eula">End user license agreement</string>
 
     <!-- shortcuts -->
     <string name="shortcut_call_99_short">Call with 99</string>
