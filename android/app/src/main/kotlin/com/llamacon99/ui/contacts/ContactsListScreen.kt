@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
@@ -32,7 +33,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -45,8 +46,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -67,6 +67,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.llamacon99.R
@@ -123,6 +124,7 @@ fun ContactsListScreen(
         ) {
             LazyColumn(
                 state = listState,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
                     top = 8.dp,
@@ -152,21 +154,41 @@ fun ContactsListScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.background)
-                                .padding(start = 40.dp, end = 24.dp, top = 16.dp, bottom = 8.dp),
+                                .padding(start = 40.dp, end = 24.dp, top = 10.dp, bottom = 4.dp),
                         )
                     }
-                    items(group.contacts, key = { it.id }) { contact ->
+                    itemsIndexed(group.contacts, key = { _, contact -> contact.id }) { index, contact ->
+                        val first = index == 0
+                        val last = index == group.contacts.lastIndex
+                        val shape = RoundedCornerShape(
+                            topStart = if (first) 28.dp else 0.dp,
+                            topEnd = if (first) 28.dp else 0.dp,
+                            bottomStart = if (last) 28.dp else 0.dp,
+                            bottomEnd = if (last) 28.dp else 0.dp,
+                        )
                         SwipeableContactRow(
                             modifier = Modifier
-                                .padding(horizontal = 24.dp, vertical = 4.dp)
-                                .clip(RoundedCornerShape(32.dp)),
+                                .padding(horizontal = 24.dp)
+                                .widthIn(max = 560.dp)
+                                .fillMaxWidth()
+                                .clip(shape)
+                                .background(MaterialTheme.colorScheme.surfaceContainerLow),
                             enabled = uiState.anonymousSwipeEnabled,
                             onRevealAction = { viewModel.onDialAnonymous(contact.phoneNumber) },
                         ) {
-                            ContactRow(
-                                contact = contact,
-                                onClick = { viewModel.onDial(contact.phoneNumber) },
-                            )
+                            Column {
+                                ContactRow(
+                                    contact = contact,
+                                    onClick = { viewModel.onDial(contact.phoneNumber) },
+                                )
+                                if (!last) {
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(start = 66.dp, end = 16.dp),
+                                        thickness = 0.5.dp,
+                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -258,17 +280,30 @@ fun ContactsListScreen(
 
 @Composable
 private fun ContactRow(contact: DeviceContact, onClick: () -> Unit) {
-    ListItem(
-        headlineContent = { Text(contact.name, style = MaterialTheme.typography.titleMedium) },
-        supportingContent = { Text(contact.phoneNumber, style = MaterialTheme.typography.bodySmall) },
-        leadingContent = { ContactAvatar(name = contact.name, photoUri = contact.photoUri, size = 42.dp) },
-        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 76.dp)
-            .clip(RoundedCornerShape(32.dp))
-            .clickable(onClick = onClick),
-    )
+            .heightIn(min = 64.dp)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        ContactAvatar(name = contact.name, photoUri = contact.photoUri, size = 38.dp)
+        Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
+            Text(
+                text = contact.name,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = contact.phoneNumber,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
 }
 
 @Composable
