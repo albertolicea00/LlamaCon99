@@ -4,7 +4,6 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
-import android.telephony.PhoneStateListener
 import android.telephony.TelephonyCallback
 import android.telephony.TelephonyManager
 import androidx.core.content.ContextCompat
@@ -14,7 +13,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -26,7 +24,7 @@ import kotlinx.coroutines.launch
  * dialer role — see the plan's rationale for why that line wasn't crossed.
  *
  * Requires `READ_PHONE_STATE` + `READ_CALL_LOG` (the latter is what lets
- * [PhoneStateListener.onCallStateChanged] / [TelephonyCallback.CallStateListener] actually receive
+ * `PhoneStateListener.onCallStateChanged` actually receives
  * the ringing number on API 28+ — without it the number argument comes back empty).
  */
 @AndroidEntryPoint
@@ -39,7 +37,9 @@ class CallMonitorService : Service() {
     private var telephonyManager: TelephonyManager? = null
 
     private var telephonyCallback: TelephonyCallback? = null
-    private var phoneStateListener: PhoneStateListener? = null
+    // Required for the fallback on Android 8–11 (API 26–30).
+    @Suppress("DEPRECATION")
+    private var phoneStateListener: android.telephony.PhoneStateListener? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -88,7 +88,7 @@ class CallMonitorService : Service() {
             manager.registerTelephonyCallback(mainExecutor, callback)
         } else {
             @Suppress("DEPRECATION")
-            val listener = object : PhoneStateListener() {
+            val listener = object : android.telephony.PhoneStateListener() {
                 @Deprecated("Deprecated in Java")
                 override fun onCallStateChanged(state: Int, phoneNumber: String?) {
                     handleCallState(state, phoneNumber)
@@ -96,7 +96,7 @@ class CallMonitorService : Service() {
             }
             phoneStateListener = listener
             @Suppress("DEPRECATION")
-            manager.listen(listener, PhoneStateListener.LISTEN_CALL_STATE)
+            manager.listen(listener, android.telephony.PhoneStateListener.LISTEN_CALL_STATE)
         }
     }
 
@@ -105,7 +105,7 @@ class CallMonitorService : Service() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) telephonyManager?.unregisterTelephonyCallback(it)
         }
         @Suppress("DEPRECATION")
-        phoneStateListener?.let { telephonyManager?.listen(it, PhoneStateListener.LISTEN_NONE) }
+        phoneStateListener?.let { telephonyManager?.listen(it, android.telephony.PhoneStateListener.LISTEN_NONE) }
     }
 
     private fun handleCallState(state: Int, phoneNumber: String?) {
