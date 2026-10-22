@@ -12,6 +12,7 @@ import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
@@ -76,11 +77,77 @@ class CallerIdOverlay @Inject constructor(
             PixelFormat.TRANSLUCENT,
         ).apply {
             gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-            y = dp(88)
+            val position = context.getSharedPreferences(POSITION_PREFERENCES, Context.MODE_PRIVATE)
+            x = position.getInt(KEY_X, 0)
+            y = position.getInt(KEY_Y, dp(88))
+        }
+        val screenWidth = context.resources.displayMetrics.widthPixels
+        val screenHeight = context.resources.displayMetrics.heightPixels
+        fun keepOnScreen() {
+            val width = root.width.takeIf { it > 0 } ?: params.width
+            val height = root.height.takeIf { it > 0 } ?: dp(180)
+            val maxHorizontalOffset = ((screenWidth - width) / 2).coerceAtLeast(0)
+            params.x = params.x.coerceIn(-maxHorizontalOffset, maxHorizontalOffset)
+            params.y = params.y.coerceIn(0, (screenHeight - height).coerceAtLeast(0))
+        }
+        var downRawX = 0f
+        var downRawY = 0f
+        var downX = 0
+        var downY = 0
+        var moved = false
+        root.setOnTouchListener { view, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    downRawX = event.rawX
+                    downRawY = event.rawY
+                    downX = params.x
+                    downY = params.y
+                    moved = false
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val deltaX = (event.rawX - downRawX).toInt()
+                    val deltaY = (event.rawY - downRawY).toInt()
+                    val touchSlop = android.view.ViewConfiguration.get(context).scaledTouchSlop
+                    if (!moved && (kotlin.math.abs(deltaX) > touchSlop || kotlin.math.abs(deltaY) > touchSlop)) {
+                        moved = true
+                    }
+                    if (moved) {
+                        params.x = downX + deltaX
+                        params.y = downY + deltaY
+                        keepOnScreen()
+                        try {
+                            windowManager.updateViewLayout(view, params)
+                        } catch (error: IllegalArgumentException) {
+                            Log.w("CallerIdOverlay", "Could not move caller ID card", error)
+                        }
+                    }
+                    true
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    if (moved) {
+                        context.getSharedPreferences(POSITION_PREFERENCES, Context.MODE_PRIVATE)
+                            .edit()
+                            .putInt(KEY_X, params.x)
+                            .putInt(KEY_Y, params.y)
+                            .apply()
+                    }
+                    true
+                }
+                else -> false
+            }
         }
         try {
             windowManager.addView(root, params)
             card = root
+            root.post {
+                keepOnScreen()
+                try {
+                    windowManager.updateViewLayout(root, params)
+                } catch (error: IllegalArgumentException) {
+                    Log.w("CallerIdOverlay", "Could not restore caller ID card position", error)
+                }
+            }
             Log.i("CallerIdOverlay", "Floating caller ID card shown")
             // Safety net if a device fails to deliver the end-of-ringing callback.
             handler.postDelayed(timeout, 120_000)
@@ -111,4 +178,10 @@ class CallerIdOverlay @Inject constructor(
     }
 
     private fun dp(value: Int) = (value * context.resources.displayMetrics.density).toInt()
+
+    private companion object {
+        const val POSITION_PREFERENCES = "caller_id_overlay_position"
+        const val KEY_X = "x"
+        const val KEY_Y = "y"
+    }
 }
