@@ -11,7 +11,7 @@ Lists the device's contacts and identifies incoming calls from them, showing the
 | Platform | Status | Path |
 | --- | --- | --- |
 | iOS | Done | [`ios/`](ios/) |
-| Android | Not started | [`android/`](android/) |
+| Android | Done | [`android/`](android/) |
 
 ### iOS
 
@@ -22,12 +22,13 @@ See [`ios/ARCHITECTURE.md`](ios/ARCHITECTURE.md) for build instructions and arch
 
 ### Android
 
-Not started yet.
+Native Kotlin and Jetpack Compose app. Includes Cuban contacts, anonymous swipe-to-call, and incoming caller ID. For build, test, and optimized release APK export instructions, see [`android/ARCHITECTURE.md`](android/ARCHITECTURE.md) or run `make help` from the repository root.
 
 ## Repo layout
 
 ```
 code/
 ├── ios/        # iOS app + CallerID extension (XcodeGen project)
-└── android/    # Android app (pending)
+├── android/    # Android app, architecture, and build guide
+└── Makefile    # Android build commands
 ```

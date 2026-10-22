@@ -11,7 +11,7 @@ Muestra los contactos del dispositivo e identifica las llamadas entrantes de eso
 | Plataforma | Estado | Ruta |
 | --- | --- | --- |
 | iOS | Lista | [`ios/`](ios/) |
-| Android | Sin empezar | [`android/`](android/) |
+| Android | Lista | [`android/`](android/) |
 
 ### iOS
 
@@ -22,12 +22,13 @@ Instrucciones de compilación y arquitectura en [`ios/ARCHITECTURE.md`](ios/ARCH
 
 ### Android
 
-Todavía no empezada.
+App nativa en Kotlin y Jetpack Compose. Incluye lista de contactos cubanos, llamada anónima al deslizar e identificación de llamadas entrantes. Para compilar, probar y exportar el APK release optimizado, consulta [`android/ARCHITECTURE.md`](android/ARCHITECTURE.md) o ejecuta `make help` desde la raíz.
 
 ## Estructura del repo
 
 ```
 code/
 ├── ios/        # App de iOS + extensión de CallerID (proyecto XcodeGen)
-└── android/    # App de Android (pendiente)
+├── android/    # App, arquitectura y compilación Android
+└── Makefile    # Comandos de compilación Android
 ```

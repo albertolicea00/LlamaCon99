@@ -1,9 +1,16 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+}
+
+val releasePropsFile = rootProject.file("keys/release.properties")
+val releaseProps = Properties().apply {
+    if (releasePropsFile.exists()) releasePropsFile.inputStream().use(::load)
 }
 
 // Firebase is enabled as soon as this app has its own config downloaded from Firebase Console.
@@ -28,10 +35,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(releaseProps.getProperty("storeFile", "keys/release.jks"))
+            storePassword = releaseProps.getProperty("storePassword")
+            keyAlias = releaseProps.getProperty("keyAlias", "llamacon99")
+            keyPassword = releaseProps.getProperty("keyPassword")
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (releasePropsFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
@@ -62,6 +82,15 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+android.applicationVariants.all {
+    val variant = this
+    outputs.all {
+        val output = this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl
+        val suffix = if (variant.buildType.name == "release") "" else "-debug"
+        output?.outputFileName = "llamacon99-v${variant.versionName}$suffix.apk"
     }
 }
 
