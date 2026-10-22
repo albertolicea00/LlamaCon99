@@ -203,7 +203,7 @@ fun ContactsListScreen(
                                 .padding(start = 40.dp, end = 24.dp, top = 10.dp, bottom = 4.dp),
                         )
                     }
-                    itemsIndexed(group.contacts, key = { _, contact -> contact.id }) { index, contact ->
+                    itemsIndexed(group.contacts, key = { _, entry -> entry.id }) { index, entry ->
                         val first = index == 0
                         val last = index == group.contacts.lastIndex
                         val corner = appTheme.contacts.groupCorner
@@ -221,16 +221,19 @@ fun ContactsListScreen(
                                 .clip(shape)
                                 .background(MaterialTheme.colorScheme.surfaceContainerLow),
                             enabled = uiState.anonymousSwipeEnabled,
-                            onRevealAction = { viewModel.onDialAnonymous(contact.phoneNumber) },
+                            onRevealAction = { viewModel.onDialAnonymous(entry.phoneNumber.number) },
                         ) {
                             Column {
                                 ContactRow(
-                                    contact = contact,
+                                    contact = entry.contact,
+                                    phoneNumber = entry.phoneNumber.number,
+                                    phoneLabel = entry.phoneNumber.label,
+                                    showPhoneLabel = entry.contact.numbers.size > 1,
                                     style = appTheme.contacts,
                                     onClick = {
                                         when (quickDialMode) {
-                                            "anonymous" -> viewModel.onDialAnonymous(contact.phoneNumber)
-                                            else -> viewModel.onDial(contact.phoneNumber)
+                                            "anonymous" -> viewModel.onDialAnonymous(entry.phoneNumber.number)
+                                            else -> viewModel.onDial(entry.phoneNumber.number)
                                         }
                                     },
                                 )
@@ -338,7 +341,14 @@ fun ContactsListScreen(
 }
 
 @Composable
-private fun ContactRow(contact: DeviceContact, style: ContactComponents, onClick: () -> Unit) {
+private fun ContactRow(
+    contact: DeviceContact,
+    phoneNumber: String,
+    phoneLabel: String,
+    showPhoneLabel: Boolean,
+    style: ContactComponents,
+    onClick: () -> Unit,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -356,11 +366,27 @@ private fun ContactRow(contact: DeviceContact, style: ContactComponents, onClick
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Text(
-                text = contact.phoneNumber,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 3.dp),
+            ) {
+                Text(
+                    text = phoneNumber,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                if (showPhoneLabel) {
+                    Text(
+                        text = phoneLabel,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(50))
+                            .padding(horizontal = 8.dp, vertical = 3.dp),
+                    )
+                }
+            }
         }
     }
 }

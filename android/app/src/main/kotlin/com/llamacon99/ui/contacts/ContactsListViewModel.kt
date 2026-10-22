@@ -7,6 +7,7 @@ import com.llamacon99.data.ContactsRepository
 import com.llamacon99.data.DialRepository
 import com.llamacon99.data.SettingsRepository
 import com.llamacon99.model.DeviceContact
+import com.llamacon99.model.ContactPhoneNumber
 import com.llamacon99.telemetry.AppTelemetry
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,8 +25,16 @@ import kotlinx.coroutines.launch
 /** One A-Z section of the contacts list, mirroring iOS's `Section(group.letter)`. */
 data class AlphabetGroup(
     val letter: String,
-    val contacts: List<DeviceContact>,
+    val contacts: List<ContactNumberEntry>,
 )
+
+/** A visible row for one number; contacts with several numbers appear once per number. */
+data class ContactNumberEntry(
+    val contact: DeviceContact,
+    val phoneNumber: ContactPhoneNumber,
+) {
+    val id: String get() = "${contact.id}:${phoneNumber.number}"
+}
 
 data class ContactsListUiState(
     val groups: List<AlphabetGroup> = emptyList(),
@@ -52,18 +61,16 @@ class ContactsListViewModel @Inject constructor(
         searchQuery,
         settingsRepository.anonymousSwipeEnabled,
     ) { contacts, query, anonymousSwipeEnabled ->
-        val filtered = if (query.isBlank()) {
-            contacts
-        } else {
-            contacts.filter { contact ->
-                contact.name.contains(query, ignoreCase = true) ||
-                    contact.numbers.any { it.number.contains(query) }
-            }
+        val rows = contacts.flatMap { contact ->
+            contact.numbers.map { number -> ContactNumberEntry(contact, number) }
+        }
+        val filtered = if (query.isBlank()) rows else rows.filter { row ->
+            row.contact.name.contains(query, ignoreCase = true) || row.phoneNumber.number.contains(query)
         }
 
         val grouped = filtered
-            .sortedBy { it.name.lowercase() }
-            .groupBy { it.name.firstOrNull()?.uppercaseChar()?.toString() ?: "#" }
+            .sortedWith(compareBy<ContactNumberEntry> { it.contact.name.lowercase() }.thenBy { it.phoneNumber.number })
+            .groupBy { it.contact.name.firstOrNull()?.uppercaseChar()?.toString() ?: "#" }
             .toSortedMap()
             .map { (letter, contacts) -> AlphabetGroup(letter, contacts) }
 
