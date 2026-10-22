@@ -22,6 +22,8 @@ keys/*.properties
 *.jks
 
 # Generated / IDE noise
+/app/release/
+/app/debug/
 .navigation
 /*/build/
 *.hprof
