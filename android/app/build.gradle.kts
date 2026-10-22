@@ -1,4 +1,5 @@
 import java.util.Properties
+import com.android.build.api.artifact.SingleArtifact
 
 plugins {
     alias(libs.plugins.android.application)
@@ -91,6 +92,38 @@ android.applicationVariants.all {
         val output = this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl
         val suffix = if (variant.buildType.name == "release") "" else "-debug"
         output?.outputFileName = "llamacon99-v${variant.versionName}$suffix.apk"
+    }
+}
+
+abstract class NameBundleTask : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val inputBundle: RegularFileProperty
+
+    @get:OutputFile
+    abstract val outputBundle: RegularFileProperty
+
+    @TaskAction
+    fun copyBundle() {
+        val destination = outputBundle.get().asFile
+        destination.parentFile.mkdirs()
+        inputBundle.get().asFile.copyTo(destination, overwrite = true)
+    }
+}
+
+// APK outputFileName does not apply to App Bundles. Transform the final bundle so
+// Gradle and Android Studio both see the versioned file, preserving its signature.
+androidComponents {
+    onVariants { variant ->
+        val suffix = if (variant.buildType == "release") "" else "-${variant.name}"
+        val nameBundle = tasks.register<NameBundleTask>("name${variant.name.replaceFirstChar { it.uppercaseChar() }}Bundle") {
+            outputBundle.set(layout.buildDirectory.file(variant.outputs.single().versionName.map { version ->
+                "outputs/bundle/${variant.name}/llamacon99-v$version$suffix.aab"
+            }))
+        }
+        variant.artifacts.use(nameBundle)
+            .wiredWithFiles(NameBundleTask::inputBundle, NameBundleTask::outputBundle)
+            .toTransform(SingleArtifact.BUNDLE)
     }
 }
 
