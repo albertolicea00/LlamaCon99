@@ -6,6 +6,14 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+// Firebase is enabled as soon as this app has its own config downloaded from Firebase Console.
+// Keep debug builds usable before then; the Qvacell google-services.json belongs to another app.
+if (file("google-services.json").isFile) {
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
+    apply(plugin = "com.google.firebase.firebase-perf")
+}
+
 android {
     namespace = "com.llamacon99"
     compileSdk = 36
@@ -58,6 +66,11 @@ android {
 }
 
 dependencies {
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.perf)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

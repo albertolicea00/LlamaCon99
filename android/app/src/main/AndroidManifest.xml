@@ -26,6 +26,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LlamaCon99">
 
+        <meta-data
+            android:name="google_analytics_automatic_screen_reporting_enabled"
+            android:value="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

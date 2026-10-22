@@ -15,6 +15,7 @@ keys/*.keystore
 keys/*.p12
 keys/*.pem
 keys/google-services.json
+app/google-services.json
 keys/*.properties
 *.keystore
 *.jks
