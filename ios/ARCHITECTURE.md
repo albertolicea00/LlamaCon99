@@ -14,9 +14,21 @@ open LlamaCon99.xcodeproj
 ```
 
 Run the `LlamaCon99` scheme; `CallerIDExtension` embeds automatically,
-you don't run it directly. The CallKit Call Directory Extension only
-verifies as enabled on a physical device (Settings › Phone) — the
-simulator can't check its status.
+you don't run it directly. From the repository root, the Makefile provides
+`make ios-build` for a Simulator build, `make ios-device-build` for an
+unsigned physical-device build, `make ios-archive` for a signed archive, and
+`make ios-export` to export an IPA. `make ios-project` regenerates the project
+from `project.yml`; `make ios-version` prints its marketing version.
+
+IPA export requires Xcode signing to be configured and an export options
+plist. The default is `ios/ExportOptions.plist`; override it with, for example,
+`make ios-export IOS_EXPORT_OPTIONS=/path/to/ExportOptions.plist`. Create the
+plist for the intended distribution method (Development, Ad Hoc, or App Store)
+in Xcode Organizer or with Apple's documented export options. The Makefile
+does not create certificates, provisioning profiles, or signing identities.
+
+The CallKit Call Directory Extension only verifies as enabled on a physical
+device (Settings › Phone) — the simulator can't check its status.
 
 Two targets, one App Group, no backend.
 
