@@ -2,6 +2,7 @@ package com.llamacon99.service
 
 import com.llamacon99.BuildConfig
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import java.net.HttpURLConnection
@@ -62,6 +63,8 @@ object UpdateChecker {
                 htmlUrl = htmlUrl,
                 apkUrl = apkUrl,
             ))
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (_: Exception) {
             UpdateCheckResult.Failed
         }

@@ -14,6 +14,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,8 @@ import com.llamacon99.ui.theme.LlamaCon99Theme
 import dagger.hilt.android.AndroidEntryPoint
 import com.llamacon99.data.SettingsRepository
 import com.llamacon99.monitor.CallMonitorService
+import com.llamacon99.service.AutomaticUpdateViewModel
+import com.llamacon99.ui.components.UpdateAvailableDialog
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,9 +43,15 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject lateinit var settingsRepository: SettingsRepository
+    private val automaticUpdates: AutomaticUpdateViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                automaticUpdates.checkWhileResumed()
+            }
+        }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 settingsRepository.callMonitorEnabled.collect { enabled ->
@@ -65,6 +74,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val appTheme by settingsRepository.appTheme.collectAsState(initial = com.llamacon99.ui.theme.AppThemeCatalog.default)
             LlamaCon99Theme(appTheme = appTheme) {
+                val pendingUpdate by automaticUpdates.pendingUpdate.collectAsState()
                 val navigationShade = if (isSystemInDarkTheme()) ComposeColor.Black else ComposeColor.White
                 Box(modifier = Modifier.fillMaxSize()) {
                     Surface(modifier = Modifier.fillMaxSize()) {
@@ -81,6 +91,9 @@ class MainActivity : ComponentActivity() {
                                 ),
                             ),
                     )
+                }
+                pendingUpdate?.let { info ->
+                    UpdateAvailableDialog(info = info, onDismiss = automaticUpdates::dismissUpdate)
                 }
             }
         }
