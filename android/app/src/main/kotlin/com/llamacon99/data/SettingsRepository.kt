@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import javax.inject.Inject
@@ -32,6 +33,9 @@ class SettingsRepository @Inject constructor(
         val callMonitorEnabled = booleanPreferencesKey("call_monitor_enabled")
         val monitorFromBootEnabled = booleanPreferencesKey("monitor_from_boot_enabled")
         val lastWelcomeShownAtMillis = longPreferencesKey("last_welcome_shown_at_millis")
+        val welcomeSetupStarted = booleanPreferencesKey("welcome_setup_started")
+        val legacyWelcomeSetupStep = intPreferencesKey("welcome_setup_step")
+        val welcomeSetupCompleted = booleanPreferencesKey("welcome_setup_completed")
         val lastUpdateCheckAtMillis = longPreferencesKey("last_update_check_at_millis")
     }
 
@@ -74,6 +78,21 @@ class SettingsRepository @Inject constructor(
 
     suspend fun setLastWelcomeShownAtMillis(millis: Long) {
         dataStore.edit { it[Keys.lastWelcomeShownAtMillis] = millis }
+    }
+
+    val welcomeSetupStarted: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[Keys.welcomeSetupStarted] ?: ((prefs[Keys.legacyWelcomeSetupStep] ?: 0) > 0)
+    }
+
+    suspend fun setWelcomeSetupStarted(started: Boolean) {
+        dataStore.edit { it[Keys.welcomeSetupStarted] = started }
+    }
+
+    val welcomeSetupCompleted: Flow<Boolean> =
+        dataStore.data.map { it[Keys.welcomeSetupCompleted] ?: false }
+
+    suspend fun setWelcomeSetupCompleted(completed: Boolean) {
+        dataStore.edit { it[Keys.welcomeSetupCompleted] = completed }
     }
 
     val lastUpdateCheckAtMillis: Flow<Long?> = dataStore.data.map { it[Keys.lastUpdateCheckAtMillis] }

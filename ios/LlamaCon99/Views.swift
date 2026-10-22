@@ -107,6 +107,7 @@ struct ContactsListView: View {
                 showingWelcome = false
                 showingInstallGuide = true
             }
+            .presentationDetents([.fraction(0.7)])
             .interactiveDismissDisabled()
         }
         .onAppear {

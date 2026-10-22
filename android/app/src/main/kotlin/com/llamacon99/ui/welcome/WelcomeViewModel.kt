@@ -1,54 +1,92 @@
 package com.llamacon99.ui.welcome
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.provider.Settings
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.llamacon99.data.SettingsRepository
+import com.llamacon99.monitor.CallMonitorService
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
-private val WEEKLY_REMINDER_INTERVAL_MILLIS = TimeUnit.DAYS.toMillis(7)
-
 /**
- * Shows once on first launch, then resurfaces weekly until the user has set up call monitoring —
- * same reminder cadence as iOS's `WelcomeView` (`ios/LlamaCon99/Views.swift`).
+ * Keeps caller-ID setup visible until its guided permission flow is completed.
  */
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _shouldShow = MutableStateFlow(false)
     val shouldShow: StateFlow<Boolean> = _shouldShow.asStateFlow()
+    private val _setupStep = MutableStateFlow(0)
+    val setupStep: StateFlow<Int> = _setupStep.asStateFlow()
+    private val permissionRefreshTrigger = MutableStateFlow(0)
 
     init {
         viewModelScope.launch {
-            val monitorEnabled = settingsRepository.callMonitorEnabled.first()
-            val lastShown = settingsRepository.lastWelcomeShownAtMillis.first()
-            val now = System.currentTimeMillis()
-            val due = lastShown == null || now - lastShown >= WEEKLY_REMINDER_INTERVAL_MILLIS
-            _shouldShow.value = !monitorEnabled && due
+            combine(
+                settingsRepository.callMonitorEnabled,
+                settingsRepository.welcomeSetupStarted,
+                settingsRepository.welcomeSetupCompleted,
+                permissionRefreshTrigger,
+            ) { monitorEnabled, setupStarted, setupCompleted, _ ->
+                val permissionsGranted = hasAllSetupPermissions()
+                _setupStep.value = if (setupStarted || (setupCompleted && !permissionsGranted)) {
+                    firstIncompleteStep()
+                } else {
+                    0
+                }
+                _shouldShow.value = (!monitorEnabled && !setupCompleted) || (setupCompleted && !permissionsGranted)
+            }.collect { }
         }
     }
 
-    fun onDismissed() {
+    fun startSetup() {
         viewModelScope.launch {
-            settingsRepository.setLastWelcomeShownAtMillis(System.currentTimeMillis())
-            _shouldShow.value = false
+            settingsRepository.setWelcomeSetupStarted(true)
+            refreshPermissionStatus()
         }
+    }
+
+    fun refreshPermissionStatus() {
+        permissionRefreshTrigger.value += 1
     }
 
     fun completeSetup() {
         viewModelScope.launch {
             settingsRepository.setMonitorFromBootEnabled(true)
             settingsRepository.setCallMonitorEnabled(true)
+            settingsRepository.setWelcomeSetupStarted(false)
+            settingsRepository.setWelcomeSetupCompleted(true)
             settingsRepository.setLastWelcomeShownAtMillis(System.currentTimeMillis())
             _shouldShow.value = false
+        }
+    }
+
+    private fun hasAllSetupPermissions(): Boolean =
+        CallMonitorService.hasRequiredPermissions(context) && Settings.canDrawOverlays(context)
+
+    private fun firstIncompleteStep(): Int {
+        val missingPermission = CallMonitorService.requiredPermissions().firstOrNull {
+            ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
+        }
+        return when (missingPermission) {
+            Manifest.permission.READ_PHONE_STATE -> 1
+            Manifest.permission.READ_CALL_LOG -> 2
+            Manifest.permission.POST_NOTIFICATIONS -> 3
+            null -> if (Settings.canDrawOverlays(context)) 5 else 4
+            else -> 1
         }
     }
 }

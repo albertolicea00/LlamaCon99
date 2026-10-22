@@ -9,10 +9,20 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -20,14 +30,17 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -50,12 +63,16 @@ fun WelcomeSheet(
     val shouldShow by viewModel.shouldShow.collectAsState()
     if (!shouldShow) return
 
-    var step by remember { mutableIntStateOf(INTRO_STEP) }
+    val step by viewModel.setupStep.collectAsState()
     var overlayGranted by remember { mutableStateOf(Settings.canDrawOverlays(context)) }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { it != androidx.compose.material3.SheetValue.Hidden },
+    )
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         overlayGranted = Settings.canDrawOverlays(context)
+        viewModel.refreshPermissionStatus()
     }
 
     val permissionForStep = when (step) {
@@ -67,7 +84,7 @@ fun WelcomeSheet(
         else -> null
     }
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) step++
+        if (granted) viewModel.refreshPermissionStatus()
     }
     val overlayLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         overlayGranted = Settings.canDrawOverlays(context)
@@ -101,31 +118,46 @@ fun WelcomeSheet(
     }
 
     ModalBottomSheet(
-        onDismissRequest = viewModel::onDismissed,
+        onDismissRequest = {},
         sheetState = sheetState,
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
-            Text(title, style = MaterialTheme.typography.headlineLarge)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .padding(start = 24.dp, top = 12.dp, end = 24.dp, bottom = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            WelcomeStepIcon(step, Modifier.align(Alignment.Start))
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                textAlign = TextAlign.Start,
+            )
             if (step in PHONE_STATE_STEP..OVERLAY_STEP) {
                 Text(
                     text = stringResource(R.string.welcome_setup_progress, step, OVERLAY_STEP),
                     style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(top = 8.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                 )
             }
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(top = 16.dp, bottom = 24.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 24.dp),
             )
+            Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = {
                     when (step) {
-                        INTRO_STEP -> step = PHONE_STATE_STEP
+                        INTRO_STEP -> viewModel.startSetup()
                         PHONE_STATE_STEP, CALL_LOG_STEP, NOTIFICATIONS_STEP -> {
                             val permission = permissionForStep
                             if (permission == null || ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
-                                step++
+                                viewModel.refreshPermissionStatus()
                             } else {
                                 permissionLauncher.launch(permission)
                             }
@@ -133,7 +165,7 @@ fun WelcomeSheet(
                         OVERLAY_STEP -> {
                             if (Settings.canDrawOverlays(context)) {
                                 overlayGranted = true
-                                step = DONE_STEP
+                                viewModel.refreshPermissionStatus()
                             } else {
                                 overlayLauncher.launch(Intent(
                                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -152,4 +184,31 @@ fun WelcomeSheet(
             }
         }
     }
+}
+
+@Composable
+private fun WelcomeStepIcon(step: Int, modifier: Modifier = Modifier) {
+    if (step == INTRO_STEP) {
+        Icon(
+            painter = painterResource(R.drawable.ic_launcher_foreground),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = modifier.size(56.dp),
+        )
+        return
+    }
+
+    val image = when (step) {
+        PHONE_STATE_STEP -> Icons.Filled.Call
+        CALL_LOG_STEP -> Icons.Filled.History
+        NOTIFICATIONS_STEP -> Icons.Filled.NotificationsActive
+        OVERLAY_STEP -> Icons.Filled.Layers
+        else -> Icons.Filled.CheckCircle
+    }
+    Icon(
+        imageVector = image,
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary,
+        modifier = modifier.size(30.dp),
+    )
 }
