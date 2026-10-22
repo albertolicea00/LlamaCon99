@@ -42,4 +42,13 @@ class WelcomeViewModel @Inject constructor(
             _shouldShow.value = false
         }
     }
+
+    fun completeSetup() {
+        viewModelScope.launch {
+            settingsRepository.setMonitorFromBootEnabled(true)
+            settingsRepository.setCallMonitorEnabled(true)
+            settingsRepository.setLastWelcomeShownAtMillis(System.currentTimeMillis())
+            _shouldShow.value = false
+        }
+    }
 }

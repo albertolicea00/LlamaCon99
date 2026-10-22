@@ -23,7 +23,23 @@
     <!-- welcome -->
     <string name="welcome_title">Welcome to %1$s</string>
     <string name="welcome_body">Turn on caller ID to know who\'s really calling, even when the number shown looks odd.</string>
-    <string name="welcome_cta">Set up</string>
+    <string name="welcome_start_setup">Start setup</string>
+    <string name="welcome_setup_progress">Step %1$d of %2$d</string>
+    <string name="welcome_phone_state_title">Detect incoming calls</string>
+    <string name="welcome_phone_state_body">This permission lets the app know when your phone is ringing so it can identify the call.</string>
+    <string name="welcome_call_log_title">Read the incoming number</string>
+    <string name="welcome_call_log_body">Android needs this permission to share the incoming number with the app. We use it to recognize the *99 collect-call format and find the contact.</string>
+    <string name="welcome_notifications_title">Show the caller ID alert</string>
+    <string name="welcome_notifications_body">This permission lets the app show the identified name and number in a notification while a call comes in.</string>
+    <string name="welcome_overlay_title">Show a card over the call</string>
+    <string name="welcome_overlay_body">Android will open its special “Display over other apps” permission. Turn it on to show who is calling over the call screen, then return here.</string>
+    <string name="welcome_overlay_granted">Permission granted. Continue to finish turning on caller ID.</string>
+    <string name="welcome_done_title">You’re all set</string>
+    <string name="welcome_done_body">We’ll turn on caller ID and restart it automatically after the phone reboots. You can change automatic startup in Settings.</string>
+    <string name="welcome_grant_permission">Allow and continue</string>
+    <string name="welcome_grant_overlay">Open Android permission</string>
+    <string name="welcome_continue">Continue</string>
+    <string name="welcome_enable_caller_id">Turn on caller ID</string>
 
     <!-- settings -->
     <string name="settings_title">Settings</string>

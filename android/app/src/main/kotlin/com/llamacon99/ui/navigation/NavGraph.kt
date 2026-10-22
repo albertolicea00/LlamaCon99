@@ -39,7 +39,7 @@ fun LlamaCon99NavGraph(
                     onOpenSettings = { navController.navigate(Routes.SETTINGS) },
                     quickDialMode = quickDialMode,
                 )
-                WelcomeSheet(onOpenSettings = { navController.navigate(Routes.SETTINGS) })
+                WelcomeSheet()
             }
         }
         composable(Routes.SETTINGS) {
