@@ -116,13 +116,11 @@ abstract class NameBundleTask : DefaultTask() {
 androidComponents {
     onVariants { variant ->
         val suffix = if (variant.buildType == "release") "" else "-${variant.name}"
-        val nameBundle = tasks.register<NameBundleTask>("name${variant.name.replaceFirstChar { it.uppercaseChar() }}Bundle") {
-            outputBundle.set(layout.buildDirectory.file(variant.outputs.single().versionName.map { version ->
-                "outputs/bundle/${variant.name}/llamacon99-v$version$suffix.aab"
-            }))
-        }
+        val version = variant.outputs.single().versionName.get()
+        val nameBundle = tasks.register<NameBundleTask>("name${variant.name.replaceFirstChar { it.uppercaseChar() }}Bundle")
         variant.artifacts.use(nameBundle)
             .wiredWithFiles(NameBundleTask::inputBundle, NameBundleTask::outputBundle)
+            .withName("llamacon99-v$version$suffix.aab")
             .toTransform(SingleArtifact.BUNDLE)
     }
 }
