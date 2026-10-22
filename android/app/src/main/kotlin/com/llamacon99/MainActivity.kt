@@ -1,8 +1,15 @@
 package com.llamacon99
 
 import android.graphics.Color
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -24,6 +31,8 @@ import com.llamacon99.ui.navigation.LlamaCon99NavGraph
 import com.llamacon99.ui.theme.LlamaCon99Theme
 import dagger.hilt.android.AndroidEntryPoint
 import com.llamacon99.data.SettingsRepository
+import com.llamacon99.monitor.CallMonitorService
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import javax.inject.Inject
@@ -34,6 +43,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingsRepository.callMonitorEnabled.collect { enabled ->
+                    if (enabled) restoreCallMonitor()
+                }
+            }
+        }
         enableEdgeToEdge(
             navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
         )
@@ -67,5 +83,25 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private suspend fun restoreCallMonitor() {
+        if (!CallMonitorService.hasRequiredPermissions(this)) {
+            settingsRepository.setCallMonitorEnabled(false)
+            return
+        }
+        try {
+            ContextCompat.startForegroundService(this, Intent(this, CallMonitorService::class.java))
+        } catch (error: SecurityException) {
+            reportMonitorFailure(error)
+        } catch (error: IllegalStateException) {
+            reportMonitorFailure(error)
+        }
+    }
+
+    private suspend fun reportMonitorFailure(error: Exception) {
+        Log.w("MainActivity", "Caller ID monitoring could not resume", error)
+        settingsRepository.setCallMonitorEnabled(false)
+        Toast.makeText(this, R.string.settings_call_monitor_start_failed, Toast.LENGTH_LONG).show()
     }
 }

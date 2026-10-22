@@ -112,14 +112,15 @@ CallMonitorService (foreground)
 ```
 
 Unlike iOS, Android has no separate Call Directory Extension or App Group boundary here: the
-service and app share the same process and DataStore. The service is started only after the user
-enables caller-ID monitoring in Settings. `READ_PHONE_STATE`, `READ_CALL_LOG`, and, on Android 13+,
+service and app share the same process and DataStore. The service is started after the user
+enables caller-ID monitoring in Settings, and restored when the app opens with that opt-in saved.
+`READ_PHONE_STATE`, `READ_CALL_LOG`, and, on Android 13+,
 `POST_NOTIFICATIONS` are required. The manifest declares the foreground service as `specialUse`
 with a caller-ID monitoring subtype; keep its type and subtype aligned if the service's purpose ever
 changes. It is passive caller identification, not a phone-call service and not a default dialer.
 
-`BootCompletedReceiver` is disabled by default. Settings enables it only when “monitor from boot” is
-on; after reboot it checks both saved opt-ins and the required permissions before restarting the
+`BootCompletedReceiver` receives boot events and checks both saved opt-ins (“monitor calls” and
+“monitor from boot”) and the required permissions before restarting the
 service. If the service cannot start, the ViewModel/service logs the failure, clears the enabled
 setting, and reports the problem to the user.
 

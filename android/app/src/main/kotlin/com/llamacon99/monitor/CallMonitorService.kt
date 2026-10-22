@@ -34,7 +34,8 @@ class CallMonitorService : Service() {
     @Inject lateinit var notifier: CallerIdNotifier
     @Inject lateinit var settingsRepository: SettingsRepository
 
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    // Serialize call-state changes and banner delivery so an ended call cannot publish a late banner.
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var telephonyManager: TelephonyManager? = null
     @Suppress("DEPRECATION")
     private var phoneStateListener: android.telephony.PhoneStateListener? = null
@@ -116,12 +117,14 @@ class CallMonitorService : Service() {
     }
 
     private fun handleCallState(state: Int, phoneNumber: String?) {
-        lookupJob?.cancel()
         if (state != TelephonyManager.CALL_STATE_RINGING) {
+            lookupJob?.cancel()
             notifier.dismissIncomingCallBanner()
             return
         }
+        // A numberless update must not cancel an identification already in progress.
         val number = phoneNumber?.takeIf { it.isNotBlank() } ?: return
+        lookupJob?.cancel()
         lookupJob = serviceScope.launch {
             val localNumber = CallerIdMatcher.unwrap(number) ?: return@launch
             val wrapped = CallerIdMatcher.wrappedNumber(localNumber) ?: return@launch

@@ -14,8 +14,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
- * Disabled by default (see `AndroidManifest.xml`) — only enabled via `PackageManager` when the
- * user opts into "monitor calls from boot" in Settings. Restarts [CallMonitorService] after a
+ * Checks the saved opt-ins before doing any work. Restarts [CallMonitorService] after a
  * reboot so the caller-ID banner keeps working without the user having to reopen the app first.
  */
 @AndroidEntryPoint
