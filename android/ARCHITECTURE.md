@@ -107,8 +107,9 @@ ContactsRepository.reload()
 CallMonitorService (foreground)
   -> listens for ringing state and incoming number
   -> CallerIdMatcher.unwrap()
-  -> CallerIdStore.lookup()
-  -> CallerIdNotifier.showIncomingCallBanner(contact name)
+  -> CallerIdLookup.nameFor() queries live Contacts, then the cached CallerIdStore
+  -> CallerIdNotifier.showIncomingCallBanner(contact name or unsaved label, real number)
+  -> CallerIdOverlay.show() if display-over-other-apps permission is granted
 ```
 
 Unlike iOS, Android has no separate Call Directory Extension or App Group boundary here: the
@@ -118,6 +119,19 @@ enables caller-ID monitoring in Settings, and restored when the app opens with t
 `POST_NOTIFICATIONS` are required. The manifest declares the foreground service as `specialUse`
 with a caller-ID monitoring subtype; keep its type and subtype aligned if the service's purpose ever
 changes. It is passive caller identification, not a phone-call service and not a default dialer.
+
+The notification includes both the identity and the recovered number; a valid collect call with
+no matching contact still shows its real number. For `99535370241399`, remove only the `9953`
+prefix and `99` suffix: the local number is `53702413` (international `+53 53702413`). Do not strip
+another `53` from a local number that happens to begin with those digits.
+
+Heads-up notification display depends on Android and channel settings; posting a notification
+does not guarantee that it appears over the system dialer. Settings > Show over the call opens
+the optional `SYSTEM_ALERT_WINDOW` permission screen. When granted, `CallerIdOverlay` shows a
+small dismissible name/number card while ringing. It does not change the system dialer's number
+or cover the answer/hang-up controls. Secure system screens may suppress overlays. Both the
+notification and overlay are cleared when ringing ends or the service stops; the card also has
+a two-minute safety timeout. Duplicate updates for the same ringing number do not repost it.
 
 `BootCompletedReceiver` receives boot events and checks both saved opt-ins (“monitor calls” and
 “monitor from boot”) and the required permissions before restarting the

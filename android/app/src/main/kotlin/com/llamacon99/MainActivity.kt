@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 settingsRepository.callMonitorEnabled.collect { enabled ->
+                    Log.i("MainActivity", "Caller ID preference: enabled=$enabled")
                     if (enabled) restoreCallMonitor()
                 }
             }
@@ -87,10 +88,12 @@ class MainActivity : ComponentActivity() {
 
     private suspend fun restoreCallMonitor() {
         if (!CallMonitorService.hasRequiredPermissions(this)) {
+            Log.w("MainActivity", "Caller ID restore skipped: required permissions missing")
             settingsRepository.setCallMonitorEnabled(false)
             return
         }
         try {
+            Log.i("MainActivity", "Requesting caller ID service start")
             ContextCompat.startForegroundService(this, Intent(this, CallMonitorService::class.java))
         } catch (error: SecurityException) {
             reportMonitorFailure(error)

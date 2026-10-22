@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -31,6 +32,7 @@ data class SettingsUiState(
     val callMonitorEnabled: Boolean = false,
     val monitorFromBootEnabled: Boolean = false,
     val hasCallMonitorPermissions: Boolean = false,
+    val canShowCallerIdOverlay: Boolean = false,
 )
 
 @HiltViewModel
@@ -54,6 +56,7 @@ class SettingsViewModel @Inject constructor(
             callMonitorEnabled = callMonitorEnabled,
             monitorFromBootEnabled = monitorFromBootEnabled,
             hasCallMonitorPermissions = hasCallMonitorPermissions(),
+            canShowCallerIdOverlay = Settings.canDrawOverlays(context),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 

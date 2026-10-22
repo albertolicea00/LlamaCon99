@@ -2,6 +2,7 @@ package com.llamacon99.ui.settings
 
 import android.content.Intent
 import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -129,6 +130,9 @@ fun SettingsScreen(
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
     ) { viewModel.refreshPermissionStatus() }
+    val overlayPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+    ) { viewModel.refreshPermissionStatus() }
 
     Scaffold(
         topBar = {
@@ -206,6 +210,24 @@ fun SettingsScreen(
                             onCheckedChange = viewModel::setMonitorFromBootEnabled,
                         )
                     }
+                    GroupDivider()
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.settings_caller_id_overlay_title)) },
+                        supportingContent = {
+                            Text(stringResource(
+                                if (uiState.canShowCallerIdOverlay) R.string.settings_caller_id_overlay_enabled
+                                else R.string.settings_caller_id_overlay_permission,
+                            ))
+                        },
+                        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
+                        colors = settingsRowColors(),
+                        modifier = Modifier.clickable {
+                            overlayPermissionLauncher.launch(Intent(
+                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                Uri.parse("package:${context.packageName}"),
+                            ))
+                        },
+                    )
                 }
             }
             item {

@@ -7,6 +7,20 @@ import org.junit.Test
 class CallerIdMatcherTest {
 
     @Test
+    fun `reported incoming number preserves 53 at the start of the local number`() {
+        assertEquals("53702413", CallerIdMatcher.unwrap("99535370241399"))
+        assertEquals("53702413", CallerIdMatcher.unwrap("+99 53 53702413 99"))
+        assertEquals(99535370241399L, CallerIdMatcher.wrappedNumber("53702413"))
+        assertEquals("53702413", CubanPhoneNumber.normalize("+53 53702413"))
+    }
+
+    @Test
+    fun `ordinary numbers are not treated as collect calls`() {
+        assertNull(CallerIdMatcher.unwrap("+5353702413"))
+        assertNull(CallerIdMatcher.unwrap("53702413"))
+    }
+
+    @Test
     fun `wraps local number into etecsa format`() {
         assertEquals(99535123456799L, CallerIdMatcher.wrappedNumber("51234567"))
     }

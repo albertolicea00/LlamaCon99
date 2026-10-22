@@ -3,19 +3,20 @@ package com.llamacon99.monitor
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.llamacon99.R
+import com.llamacon99.MainActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Builds the heads-up "who's really calling" banner shown over the system's native incoming-call
- * screen. This is the ceiling of what a non-default-dialer app can do on Android — it cannot
- * replace or relabel the system call screen itself (that's what iOS's Call Directory Extension
- * does), only overlay a notification on top of it while the phone rings.
+ * Posts caller identity in the notification shade. Heads-up presentation is controlled by
+ * Android and the user's channel settings; CallerIdOverlay provides the optional floating card.
  */
 @Singleton
 class CallerIdNotifier @Inject constructor(
@@ -57,13 +58,21 @@ class CallerIdNotifier @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
 
-    fun showIncomingCallBanner(contactName: String) {
+    fun showIncomingCallBanner(contactName: String, localNumber: String) {
+        val details = context.getString(R.string.notification_incoming_call_text, contactName, localNumber)
         val notification = NotificationCompat.Builder(context, INCOMING_CALL_CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_incoming_call_title, contactName))
-            .setContentText(context.getString(R.string.notification_incoming_call_text))
+            .setContentText(details)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(details))
+            .setContentIntent(PendingIntent.getActivity(
+                context, 0, Intent(context, MainActivity::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            ))
             .setSmallIcon(R.drawable.ic_notification)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_CALL)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setOnlyAlertOnce(true)
             .setAutoCancel(true)
             .build()
         notificationManager.notify(INCOMING_CALL_NOTIFICATION_ID, notification)

@@ -43,7 +43,10 @@
     <string name="settings_anonymous_swipe_title">Anonymous call on swipe</string>
     <string name="settings_anonymous_swipe_subtitle">Swipe a contact left to dial with #31# (hides your number)</string>
     <string name="settings_section_caller_id">Caller ID</string>
-    <string name="settings_caller_id_explanation">When ETECSA calls you back for a collect call, the number shown isn\'t the real one. Turning this on shows you a notification with who\'s really calling.</string>
+    <string name="settings_caller_id_explanation">Recover the real number of collect calls and look up the name in your contacts. Enable “Show over the call” to see a card while ringing. Your phone app will still display the number sent by ETECSA.</string>
+    <string name="settings_caller_id_overlay_title">Show over the call</string>
+    <string name="settings_caller_id_overlay_permission">Allow display over other apps to see the name and number while ringing.</string>
+    <string name="settings_caller_id_overlay_enabled">Permission granted. The card appears when caller identification is enabled. Tap to change the permission.</string>
     <string name="settings_grant_call_monitor_permission">Grant permission to identify calls</string>
     <string name="settings_call_monitor_title">Identify incoming calls</string>
     <string name="settings_call_monitor_start_failed">Could not enable caller ID. Check permissions and try again.</string>
@@ -78,5 +81,9 @@
     <string name="notification_channel_incoming_call_name">Incoming call identification</string>
     <string name="notification_foreground_title">Identifying incoming calls</string>
     <string name="notification_incoming_call_title">%1$s is calling</string>
-    <string name="notification_incoming_call_text">Collect call identified by Llama con 99</string>
+    <string name="notification_incoming_call_text">Collect call from %1$s · +53 %2$s</string>
+    <string name="caller_id_unknown_contact">Unsaved number</string>
+    <string name="caller_id_overlay_label">Collect call · Llama con 99</string>
+    <string name="caller_id_overlay_dismiss">Hide caller identification</string>
+    <string name="caller_id_phone_number">+53 %1$s</string>
 </resources>

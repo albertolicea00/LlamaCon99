@@ -15,7 +15,7 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.llamacon99.R
 import com.llamacon99.data.CallerIdMatcher
-import com.llamacon99.data.CallerIdStore
+import com.llamacon99.data.CallerIdLookup
 import com.llamacon99.data.SettingsRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -30,8 +30,9 @@ import kotlinx.coroutines.withContext
 /** Passive caller ID monitoring, independent of the system dialer and self-managed calls. */
 @AndroidEntryPoint
 class CallMonitorService : Service() {
-    @Inject lateinit var callerIdStore: CallerIdStore
+    @Inject lateinit var callerIdLookup: CallerIdLookup
     @Inject lateinit var notifier: CallerIdNotifier
+    @Inject lateinit var overlay: CallerIdOverlay
     @Inject lateinit var settingsRepository: SettingsRepository
 
     // Serialize call-state changes and banner delivery so an ended call cannot publish a late banner.
@@ -41,11 +42,13 @@ class CallMonitorService : Service() {
     private var phoneStateListener: android.telephony.PhoneStateListener? = null
     private var lookupJob: Job? = null
     private var monitoringStarted = false
+    private var ringingNumber: String? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
+        Log.i(TAG, "Creating caller ID service")
         if (!hasRequiredPermissions(this)) {
             failToStart(null)
             return
@@ -64,6 +67,7 @@ class CallMonitorService : Service() {
             )
             registerCallStateListener()
             monitoringStarted = true
+            Log.i(TAG, "Monitoring started: call-state listener registered")
         } catch (error: SecurityException) {
             failToStart(error)
         } catch (error: IllegalStateException) {
@@ -75,6 +79,7 @@ class CallMonitorService : Service() {
         if (monitoringStarted) START_STICKY else START_NOT_STICKY
 
     override fun onDestroy() {
+        Log.i(TAG, "Destroying caller ID service")
         @Suppress("DEPRECATION")
         try {
             phoneStateListener?.let { telephonyManager?.listen(it, android.telephony.PhoneStateListener.LISTEN_NONE) }
@@ -83,6 +88,7 @@ class CallMonitorService : Service() {
         }
         lookupJob?.cancel()
         notifier.dismissIncomingCallBanner()
+        overlay.dismiss()
         serviceScope.cancel()
         super.onDestroy()
     }
@@ -117,19 +123,41 @@ class CallMonitorService : Service() {
     }
 
     private fun handleCallState(state: Int, phoneNumber: String?) {
+        // Log only state and length, never contact names or telephone digits.
+        Log.d(TAG, "Call state=$state numberPresent=${!phoneNumber.isNullOrBlank()} digits=${phoneNumber?.count { it.isDigit() } ?: 0}")
         if (state != TelephonyManager.CALL_STATE_RINGING) {
+            ringingNumber = null
             lookupJob?.cancel()
             notifier.dismissIncomingCallBanner()
+            overlay.dismiss()
             return
         }
         // A numberless update must not cancel an identification already in progress.
-        val number = phoneNumber?.takeIf { it.isNotBlank() } ?: return
+        val number = phoneNumber?.takeIf { it.isNotBlank() } ?: run {
+            Log.d(TAG, "Ringing without incoming number; waiting for numbered update")
+            return
+        }
+        val localNumber = CallerIdMatcher.unwrap(number) ?: run {
+            Log.d(TAG, "Incoming number does not match the collect-call format")
+            return
+        }
+        if (ringingNumber == localNumber) return
+        ringingNumber = localNumber
         lookupJob?.cancel()
+        notifier.dismissIncomingCallBanner()
+        overlay.dismiss()
         lookupJob = serviceScope.launch {
-            val localNumber = CallerIdMatcher.unwrap(number) ?: return@launch
-            val wrapped = CallerIdMatcher.wrappedNumber(localNumber) ?: return@launch
-            val name = callerIdStore.lookup(wrapped) ?: return@launch
-            if (hasRequiredPermissions(this@CallMonitorService)) notifier.showIncomingCallBanner(name)
+            Log.d(TAG, "Collect-call format recognized; looking up contact")
+            val contactName = callerIdLookup.nameFor(localNumber)
+            Log.d(TAG, "Contact lookup complete: matched=${contactName != null}")
+            val name = contactName ?: getString(R.string.caller_id_unknown_contact)
+            if (hasRequiredPermissions(this@CallMonitorService)) {
+                notifier.showIncomingCallBanner(name, localNumber)
+                Log.i(TAG, "Caller ID notification posted")
+                overlay.show(name, localNumber)
+            } else {
+                Log.w(TAG, "Caller ID display skipped: required permissions missing")
+            }
         }
     }
 
