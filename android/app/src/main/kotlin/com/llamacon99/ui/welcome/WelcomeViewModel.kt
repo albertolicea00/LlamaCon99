@@ -75,18 +75,23 @@ class WelcomeViewModel @Inject constructor(
     }
 
     private fun hasAllSetupPermissions(): Boolean =
-        CallMonitorService.hasRequiredPermissions(context) && Settings.canDrawOverlays(context)
+        ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
+            CallMonitorService.hasRequiredPermissions(context) &&
+            Settings.canDrawOverlays(context)
 
     private fun firstIncompleteStep(): Int {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            return 1
+        }
         val missingPermission = CallMonitorService.requiredPermissions().firstOrNull {
             ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
         }
         return when (missingPermission) {
-            Manifest.permission.READ_PHONE_STATE -> 1
-            Manifest.permission.READ_CALL_LOG -> 2
-            Manifest.permission.POST_NOTIFICATIONS -> 3
-            null -> if (Settings.canDrawOverlays(context)) 5 else 4
-            else -> 1
+            Manifest.permission.READ_PHONE_STATE -> 2
+            Manifest.permission.READ_CALL_LOG -> 3
+            Manifest.permission.POST_NOTIFICATIONS -> 4
+            null -> if (Settings.canDrawOverlays(context)) 6 else 5
+            else -> 2
         }
     }
 }

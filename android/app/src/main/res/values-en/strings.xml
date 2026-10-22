@@ -25,6 +25,8 @@
     <string name="welcome_body">Turn on caller ID to know who\'s really calling, even when the number shown looks odd.</string>
     <string name="welcome_start_setup">Start setup</string>
     <string name="welcome_setup_progress">Step %1$d of %2$d</string>
+    <string name="welcome_contacts_title">Access your contacts</string>
+    <string name="welcome_contacts_body">This permission lets the app find who is calling in your contacts and show their name when we identify a *99 collect call.</string>
     <string name="welcome_phone_state_title">Detect incoming calls</string>
     <string name="welcome_phone_state_body">This permission lets the app know when your phone is ringing so it can identify the call.</string>
     <string name="welcome_call_log_title">Read the incoming number</string>

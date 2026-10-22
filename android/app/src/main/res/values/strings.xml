@@ -25,6 +25,8 @@
     <string name="welcome_body">Activa la identificación de llamadas para saber quién te llama de verdad, aunque el número que se vea sea raro.</string>
     <string name="welcome_start_setup">Empezar configuración</string>
     <string name="welcome_setup_progress">Paso %1$d de %2$d</string>
+    <string name="welcome_contacts_title">Acceder a tus contactos</string>
+    <string name="welcome_contacts_body">Este permiso permite buscar quién te llama entre tus contactos y mostrar su nombre cuando identifiquemos una llamada por cobrar *99.</string>
     <string name="welcome_phone_state_title">Detectar llamadas entrantes</string>
     <string name="welcome_phone_state_body">Este permiso permite saber cuándo está sonando el teléfono para identificar la llamada.</string>
     <string name="welcome_call_log_title">Leer el número que llama</string>

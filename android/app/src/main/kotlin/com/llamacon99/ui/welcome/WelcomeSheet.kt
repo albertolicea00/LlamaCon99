@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Contacts
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,11 +49,12 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import com.llamacon99.R
 
 private const val INTRO_STEP = 0
-private const val PHONE_STATE_STEP = 1
-private const val CALL_LOG_STEP = 2
-private const val NOTIFICATIONS_STEP = 3
-private const val OVERLAY_STEP = 4
-private const val DONE_STEP = 5
+private const val CONTACTS_STEP = 1
+private const val PHONE_STATE_STEP = 2
+private const val CALL_LOG_STEP = 3
+private const val NOTIFICATIONS_STEP = 4
+private const val OVERLAY_STEP = 5
+private const val DONE_STEP = 6
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,6 +78,7 @@ fun WelcomeSheet(
     }
 
     val permissionForStep = when (step) {
+        CONTACTS_STEP -> Manifest.permission.READ_CONTACTS
         PHONE_STATE_STEP -> Manifest.permission.READ_PHONE_STATE
         CALL_LOG_STEP -> Manifest.permission.READ_CALL_LOG
         NOTIFICATIONS_STEP -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -92,6 +95,7 @@ fun WelcomeSheet(
 
     val title = when (step) {
         INTRO_STEP -> stringResource(R.string.welcome_title, stringResource(R.string.app_name))
+        CONTACTS_STEP -> stringResource(R.string.welcome_contacts_title)
         PHONE_STATE_STEP -> stringResource(R.string.welcome_phone_state_title)
         CALL_LOG_STEP -> stringResource(R.string.welcome_call_log_title)
         NOTIFICATIONS_STEP -> stringResource(R.string.welcome_notifications_title)
@@ -100,9 +104,11 @@ fun WelcomeSheet(
     }
     val description = when (step) {
         INTRO_STEP -> stringResource(R.string.welcome_body)
+        CONTACTS_STEP -> stringResource(R.string.welcome_contacts_body)
         PHONE_STATE_STEP -> stringResource(R.string.welcome_phone_state_body)
         CALL_LOG_STEP -> stringResource(R.string.welcome_call_log_body)
         NOTIFICATIONS_STEP -> stringResource(R.string.welcome_notifications_body)
+        CONTACTS_STEP, PHONE_STATE_STEP, CALL_LOG_STEP, NOTIFICATIONS_STEP -> stringResource(R.string.welcome_grant_permission)
         OVERLAY_STEP -> stringResource(
             if (overlayGranted) R.string.welcome_overlay_granted else R.string.welcome_overlay_body,
         )
@@ -135,7 +141,7 @@ fun WelcomeSheet(
                 modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 textAlign = TextAlign.Start,
             )
-            if (step in PHONE_STATE_STEP..OVERLAY_STEP) {
+            if (step in CONTACTS_STEP..OVERLAY_STEP) {
                 Text(
                     text = stringResource(R.string.welcome_setup_progress, step, OVERLAY_STEP),
                     style = MaterialTheme.typography.labelMedium,
@@ -154,7 +160,7 @@ fun WelcomeSheet(
                 onClick = {
                     when (step) {
                         INTRO_STEP -> viewModel.startSetup()
-                        PHONE_STATE_STEP, CALL_LOG_STEP, NOTIFICATIONS_STEP -> {
+                        CONTACTS_STEP, PHONE_STATE_STEP, CALL_LOG_STEP, NOTIFICATIONS_STEP -> {
                             val permission = permissionForStep
                             if (permission == null || ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
                                 viewModel.refreshPermissionStatus()
@@ -199,6 +205,7 @@ private fun WelcomeStepIcon(step: Int, modifier: Modifier = Modifier) {
     }
 
     val image = when (step) {
+        CONTACTS_STEP -> Icons.Filled.Contacts
         PHONE_STATE_STEP -> Icons.Filled.Call
         CALL_LOG_STEP -> Icons.Filled.History
         NOTIFICATIONS_STEP -> Icons.Filled.NotificationsActive
