@@ -3,3 +3,6 @@
 Thumbs.db
 desktop.ini
 dist/
+
+# Added by ggshield
+.cache_ggshield
