@@ -35,7 +35,7 @@ fun WelcomeSheet(
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
             Text(
-                text = stringResource(R.string.welcome_title),
+                text = stringResource(R.string.welcome_title, stringResource(R.string.app_name)),
                 style = MaterialTheme.typography.headlineLarge,
             )
             Text(
