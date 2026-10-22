@@ -174,6 +174,8 @@ make android-debug    # build a debug APK
 make android-test     # run local unit tests
 make android-release  # build the optimized release APK
 make android-export   # build and copy the APK to dist/android/
+make android-bundle   # build the versioned AAB for Google Play
+make android-bundle-export # build and copy the AAB to dist/android/
 make android-clean    # remove Android build outputs
 ```
 
@@ -181,6 +183,12 @@ The release build enables R8 code shrinking/optimization and unused-resource shr
 named from `versionName`, for example `llamacon99-v1.0.0.apk`, and is initially written to
 `app/build/outputs/apk/release/`. `make android-export` copies it to
 `dist/android/llamacon99-v<VERSION>.apk`.
+
+App Bundles have a separate naming rule: the final `SingleArtifact.BUNDLE` is copied
+without changing its signed contents to `app/build/outputs/bundle/release/llamacon99-v<VERSION>.aab`.
+This also applies when generating a signed bundle from Android Studio. Use
+`make android-bundle-export` to export it as `dist/android/llamacon99-v<VERSION>.aab`.
+The APK naming rule alone does not rename AABs.
 
 ### Release signing
 

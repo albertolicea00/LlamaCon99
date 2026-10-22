@@ -13,7 +13,7 @@ IOS_EXPORT_OPTIONS ?= ios/ExportOptions.plist
 IOS_EXPORT_PATH := dist/ios
 
 .DEFAULT_GOAL := help
-.PHONY: help android-version android-debug android-test android-release android-export android-clean \
+.PHONY: help android-version android-debug android-test android-release android-export android-bundle android-bundle-export android-clean \
 	ios-version ios-project ios-build ios-device-build ios-archive ios-export ios-clean
 
 help: ## List available commands
@@ -35,6 +35,14 @@ android-export: android-release ## Build release and copy it to dist/android wit
 	@mkdir -p dist/android
 	cp "android/app/build/outputs/apk/release/llamacon99-v$(ANDROID_VERSION).apk" "dist/android/llamacon99-v$(ANDROID_VERSION).apk"
 	@echo "Exported dist/android/llamacon99-v$(ANDROID_VERSION).apk"
+
+android-bundle: ## Build the versioned release AAB for Google Play
+	$(ANDROID_GRADLEW) -p android :app:bundleRelease -Pksp.incremental=false
+
+android-bundle-export: android-bundle ## Build and export the versioned AAB to dist/android
+	@mkdir -p dist/android
+	cp "android/app/build/outputs/bundle/release/llamacon99-v$(ANDROID_VERSION).aab" "dist/android/llamacon99-v$(ANDROID_VERSION).aab"
+	@echo "Exported dist/android/llamacon99-v$(ANDROID_VERSION).aab"
 
 android-clean: ## Remove Android build outputs
 	$(ANDROID_GRADLEW) -p android clean
