@@ -40,7 +40,11 @@ class CallerIdOverlay @Inject constructor(
         }
         val dark = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         val foreground = if (dark) Color.WHITE else Color.rgb(6, 33, 10)
-        val background = if (dark) Color.rgb(18, 58, 27) else Color.rgb(213, 245, 217)
+        val background = if (dark) {
+            Color.argb(228, 0, 0, 0)
+        } else {
+            Color.argb(228, 255, 255, 255)
+        }
         val root = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(20), dp(12), dp(20), dp(20))
