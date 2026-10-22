@@ -38,7 +38,7 @@ class CallerIdNotifier @Inject constructor(
                 FOREGROUND_CHANNEL_ID,
                 context.getString(R.string.notification_channel_foreground_name),
                 NotificationManager.IMPORTANCE_LOW,
-            ),
+            ).apply { setShowBadge(false) },
         )
 
         notificationManager.createNotificationChannel(
@@ -46,7 +46,10 @@ class CallerIdNotifier @Inject constructor(
                 INCOMING_CALL_CHANNEL_ID,
                 context.getString(R.string.notification_channel_incoming_call_name),
                 NotificationManager.IMPORTANCE_HIGH,
-            ).apply { setSound(null, null) },
+            ).apply {
+                setSound(null, null)
+                setShowBadge(false)
+            },
         )
     }
 
