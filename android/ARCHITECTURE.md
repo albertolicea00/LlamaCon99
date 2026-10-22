@@ -152,6 +152,38 @@ screen views; contact refreshes record non-fatal errors and a `contacts_load` pe
 Never copy another app's Firebase configuration into this project. Add LlamaCon99's configuration at
 `app/google-services.json`; without it, the app can build but Firebase reporting is inactive.
 
+### Firebase smoke test (debug builds only)
+
+`src/debug/` includes an ADB test receiver protected by `android.permission.DUMP` and Performance
+diagnostic logging. Neither is included in release builds. With a debug APK installed, open the
+app, then run:
+
+```sh
+adb shell setprop debug.firebase.analytics.app com.llamacon99
+adb shell setprop log.tag.FirebaseCrashlytics DEBUG
+adb shell setprop log.tag.TRuntime.CctTransportBackend DEBUG
+adb shell am broadcast -n com.llamacon99/.debug.TelemetryTestReceiver --es kind event --es test_id manual-check
+adb shell am broadcast -n com.llamacon99/.debug.TelemetryTestReceiver --es kind nonfatal --es test_id manual-check
+# Deliberately closes the app; reopen it afterward to finish processing reports.
+adb shell am broadcast -n com.llamacon99/.debug.TelemetryTestReceiver --es kind fatal --es test_id manual-check
+adb shell am start -n com.llamacon99/.MainActivity
+adb logcat -d -s TelemetryTest FirebaseCrashlytics FirebasePerformance TRuntime.CctTransportBackend
+adb shell setprop debug.firebase.analytics.app .none.
+```
+
+The event and trace are named `telemetry_test`. The exceptions contain `LlamaCon99 synthetic`
+and their test ID. A report successfully enqueued to DataTransport confirms local capture, not
+server acceptance; check the transport HTTP response and Firebase Console as well.
+
+On 2026-10-22, the SM-A155M debug build 1.0.1 passed compilation and JVM tests. Test ID
+`firebase-smoke-20261022` produced an Analytics upload acknowledged with HTTP 204. The synthetic
+nonfatal and fatal errors were captured in one Crashlytics session and the report was queued,
+but its upload to `crashlyticsreports-pa.googleapis.com` returned HTTP 403. The Performance
+transport to `firebaselogging-pa.googleapis.com` also returned 403; its Remote Config request
+reported a project authorization failure. Dashboard appearance was not verified. These responses
+need investigation of project/API authorization and device network access before declaring the
+integration fully operational. See [Firebase API-key troubleshooting](https://firebase.google.com/docs/projects/api-keys).
+
 ## Tests
 
 Local JVM tests cover the pure phone-number rules and ETECSA wrapper parsing:
