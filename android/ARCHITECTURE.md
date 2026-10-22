@@ -189,14 +189,30 @@ The event and trace are named `telemetry_test`. The exceptions contain `LlamaCon
 and their test ID. A report successfully enqueued to DataTransport confirms local capture, not
 server acceptance; check the transport HTTP response and Firebase Console as well.
 
-On 2026-10-22, the SM-A155M debug build 1.0.1 passed compilation and JVM tests. Test ID
-`firebase-smoke-20261022` produced an Analytics upload acknowledged with HTTP 204. The synthetic
-nonfatal and fatal errors were captured in one Crashlytics session and the report was queued,
-but its upload to `crashlyticsreports-pa.googleapis.com` returned HTTP 403. The Performance
-transport to `firebaselogging-pa.googleapis.com` also returned 403; its Remote Config request
-reported a project authorization failure. Dashboard appearance was not verified. These responses
-need investigation of project/API authorization and device network access before declaring the
-integration fully operational. See [Firebase API-key troubleshooting](https://firebase.google.com/docs/projects/api-keys).
+### Verified delivery and Cuba network limitation (2026-10-22)
+
+The Firebase configuration targets project `llamacon99`, package `com.llamacon99`. On 2026-10-22,
+debug build 1.0.1 passed compilation and JVM tests on the development machine; delivery was tested
+on a Samsung SM-A155M in Cuba:
+
+| Service | Without VPN | With VPN |
+| --- | --- | --- |
+| Analytics | Test event upload accepted: HTTP 204 | Test event upload accepted: HTTP 204 |
+| Crashlytics | Report upload rejected: HTTP 403 | Synthetic nonfatal report upload accepted: HTTP 200 |
+| Performance Monitoring | Metric upload rejected: HTTP 403; Remote Config reported an authorization failure | Remote Config recovered; test trace upload accepted: HTTP 200 |
+
+The VPN retest used `vpn_20261022_01` for the Analytics event and nonfatal error, and
+`vpn_20261022_02` for the Performance trace. Crashlytics received HTTP 200 from
+`crashlyticsreports-pa.googleapis.com`; Performance received HTTP 200 from
+`firebaselogging-pa.googleapis.com`. Early Performance traces were dropped by SDK sampling;
+the later test trace was logged and its transport batch accepted after Remote Config recovered.
+No code or Firebase configuration changes were needed for the VPN retest. Server acceptance is
+confirmed; appearance of the processed data in Firebase Console was not verified.
+
+The app targets Cuban users, so successful delivery with VPN does not establish delivery on their
+normal connections. Analytics worked without VPN in this test; Crashlytics and Performance did
+not. Treat this as an observed network limitation as of 2026-10-22, rather than a guarantee about
+every Cuban network. See the [known limitations](../README.md#known-limitations).
 
 ## Tests
 

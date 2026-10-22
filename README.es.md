@@ -24,6 +24,18 @@ Instrucciones de compilación y arquitectura en [`ios/ARCHITECTURE.md`](ios/ARCH
 
 App nativa en Kotlin y Jetpack Compose. Incluye lista de contactos cubanos, llamada anónima al deslizar e identificación de llamadas entrantes. Para compilar, probar y exportar el APK release optimizado, consulta [`android/ARCHITECTURE.md`](android/ARCHITECTURE.md) o ejecuta `make help` desde la raíz.
 
+## Limitaciones conocidas
+
+**Telemetría de Firebase en Android desde Cuba — comprobado el 22 de octubre de 2026.** La app
+está dirigida a usuarios cubanos. En un Samsung SM-A155M conectado desde Cuba sin VPN, Analytics
+envió correctamente el evento de prueba (HTTP 204), pero los envíos de Crashlytics y Performance
+Monitoring fueron rechazados (HTTP 403). Al activar la VPN, ambos servicios enviaron correctamente
+sus datos de prueba (HTTP 200), y Analytics siguió funcionando. Por tanto, pueden faltar informes
+de errores y rendimiento de usuarios que se conecten desde Cuba sin VPN. Estos resultados
+corresponden a la conexión probada; no confirman el comportamiento en todas las redes cubanas.
+Consulta los detalles de verificación en la
+[arquitectura de Android](android/ARCHITECTURE.md#verified-delivery-and-cuba-network-limitation-2026-10-22).
+
 ## Estructura del repo
 
 ```

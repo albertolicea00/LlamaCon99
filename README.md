@@ -24,6 +24,17 @@ See [`ios/ARCHITECTURE.md`](ios/ARCHITECTURE.md) for build instructions and arch
 
 Native Kotlin and Jetpack Compose app. Includes Cuban contacts, anonymous swipe-to-call, and incoming caller ID. For build, test, and optimized release APK export instructions, see [`android/ARCHITECTURE.md`](android/ARCHITECTURE.md) or run `make help` from the repository root.
 
+## Known limitations
+
+**Android Firebase telemetry from Cuba — verified on 2026-10-22.** The app targets Cuban users.
+On a Samsung SM-A155M in Cuba without VPN, Analytics successfully sent the test event (HTTP 204),
+but Crashlytics and Performance Monitoring uploads were rejected (HTTP 403). With VPN enabled,
+both services successfully sent their test data (HTTP 200), and Analytics continued to work.
+Crash and performance reports may therefore be missing for users connecting from Cuba without
+VPN. These results describe the tested connection; they do not establish behavior on every Cuban
+network. See [Android architecture](android/ARCHITECTURE.md#verified-delivery-and-cuba-network-limitation-2026-10-22)
+for verification details.
+
 ## Repo layout
 
 ```
