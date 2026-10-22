@@ -92,14 +92,18 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             if (!enabled) {
                 settingsRepository.setCallMonitorEnabled(false)
+                settingsRepository.setMonitorFromBootEnabled(false)
                 context.stopService(Intent(context, CallMonitorService::class.java))
                 return@launch
             }
             if (!hasCallMonitorPermissions()) {
                 settingsRepository.setCallMonitorEnabled(false)
+                settingsRepository.setMonitorFromBootEnabled(false)
                 refreshPermissionStatus()
                 return@launch
             }
+            // Boot monitoring starts on with caller ID; users can turn it off separately.
+            settingsRepository.setMonitorFromBootEnabled(true)
             settingsRepository.setCallMonitorEnabled(true)
             try {
                 ContextCompat.startForegroundService(context, Intent(context, CallMonitorService::class.java))

@@ -23,8 +23,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -202,32 +204,48 @@ fun SettingsScreen(
                             checked = uiState.callMonitorEnabled,
                             onCheckedChange = viewModel::setCallMonitorEnabled,
                         )
-                        GroupDivider()
-                        ToggleRow(
-                            title = stringResource(R.string.settings_monitor_from_boot_title),
-                            subtitle = stringResource(R.string.settings_monitor_from_boot_subtitle),
-                            checked = uiState.monitorFromBootEnabled,
-                            onCheckedChange = viewModel::setMonitorFromBootEnabled,
-                        )
+                        if (uiState.callMonitorEnabled) {
+                            GroupDivider()
+                            ToggleRow(
+                                title = stringResource(R.string.settings_monitor_from_boot_title),
+                                subtitle = stringResource(R.string.settings_monitor_from_boot_subtitle),
+                                checked = uiState.monitorFromBootEnabled,
+                                onCheckedChange = viewModel::setMonitorFromBootEnabled,
+                            )
+                            GroupDivider()
+                            ListItem(
+                                headlineContent = { Text(stringResource(R.string.settings_caller_id_overlay_title)) },
+                                leadingContent = {
+                                    Icon(
+                                        imageVector = if (uiState.canShowCallerIdOverlay) {
+                                            Icons.Filled.CheckCircle
+                                        } else {
+                                            Icons.Filled.Warning
+                                        },
+                                        contentDescription = null,
+                                        tint = if (uiState.canShowCallerIdOverlay) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            MaterialTheme.colorScheme.error
+                                        },
+                                    )
+                                },
+                                supportingContent = if (uiState.canShowCallerIdOverlay) null else {
+                                    {
+                                        Text(stringResource(R.string.settings_caller_id_overlay_permission))
+                                    }
+                                },
+                                trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
+                                colors = settingsRowColors(),
+                                modifier = Modifier.clickable {
+                                    overlayPermissionLauncher.launch(Intent(
+                                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                        Uri.parse("package:${context.packageName}"),
+                                    ))
+                                },
+                            )
+                        }
                     }
-                    GroupDivider()
-                    ListItem(
-                        headlineContent = { Text(stringResource(R.string.settings_caller_id_overlay_title)) },
-                        supportingContent = {
-                            Text(stringResource(
-                                if (uiState.canShowCallerIdOverlay) R.string.settings_caller_id_overlay_enabled
-                                else R.string.settings_caller_id_overlay_permission,
-                            ))
-                        },
-                        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
-                        colors = settingsRowColors(),
-                        modifier = Modifier.clickable {
-                            overlayPermissionLauncher.launch(Intent(
-                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                Uri.parse("package:${context.packageName}"),
-                            ))
-                        },
-                    )
                 }
             }
             item {
