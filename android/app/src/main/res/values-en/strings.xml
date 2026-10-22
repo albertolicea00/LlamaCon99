@@ -18,6 +18,7 @@
     <string name="contacts_list_voice_unavailable">Voice input is unavailable on this phone.</string>
     <string name="contacts_list_empty_title">No Cuban Contacts</string>
     <string name="contacts_list_empty_subtitle">Contacts with a +53 number will show up here.</string>
+    <string name="contacts_anonymous_swipe_action">Anonymous</string>
 
     <!-- welcome -->
     <string name="welcome_title">Welcome to %1$s</string>

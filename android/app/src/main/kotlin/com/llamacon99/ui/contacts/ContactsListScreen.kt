@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -156,7 +157,7 @@ fun ContactsListScreen(
     Scaffold(
         modifier = Modifier.imePadding(),
         // Let the list draw behind navigation buttons; inset only the floating controls below.
-        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -169,7 +170,7 @@ fun ContactsListScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
-                    top = appTheme.search.listTopInset,
+                    top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + appTheme.search.listTopInset,
                     bottom = appTheme.search.listBottomInset + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
                 ),
             ) {
@@ -255,7 +256,7 @@ fun ContactsListScreen(
             ContactsScrollControls(
                 listState = listState,
                 groups = uiState.groups,
-                modifier = Modifier.align(Alignment.TopStart).padding(start = 24.dp, top = 8.dp),
+                modifier = Modifier.align(Alignment.TopStart).padding(start = 24.dp, top = 16.dp),
                 scrollToTopModifier = Modifier.align(Alignment.BottomCenter)
                     .navigationBarsPadding().padding(bottom = 68.dp),
             )
@@ -263,7 +264,7 @@ fun ContactsListScreen(
                 onClick = onOpenSettings,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(top = 8.dp, end = 20.dp)
+                    .padding(top = 16.dp, end = 20.dp)
                     .size(48.dp),
             ) {
                 Icon(Icons.Filled.Info, contentDescription = stringResource(R.string.settings_title))

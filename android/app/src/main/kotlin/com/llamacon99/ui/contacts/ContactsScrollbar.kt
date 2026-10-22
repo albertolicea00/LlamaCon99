@@ -1,6 +1,11 @@
 package com.llamacon99.ui.contacts
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -17,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -65,6 +71,7 @@ internal fun ContactsScrollbar(
 
     val scope = rememberCoroutineScope()
     var draggedProgress by remember(groups) { mutableStateOf<Float?>(null) }
+    var bubbleProgress by remember(groups) { mutableStateOf(0f) }
     var selectedLetter by remember(groups) { mutableStateOf("") }
     var showScrollbar by remember(groups) { mutableStateOf(false) }
     val isDragging = draggedProgress != null
@@ -82,6 +89,12 @@ internal fun ContactsScrollbar(
         animationSpec = tween(250),
         label = "scrollbarVisibility",
     )
+    val listProgress = scrollbarProgress(listState)
+    val thumbProgress by animateFloatAsState(
+        targetValue = draggedProgress ?: listProgress,
+        animationSpec = if (isDragging) snap() else spring(dampingRatio = 0.9f, stiffness = 320f),
+        label = "scrollbarThumbPosition",
+    )
     val trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
     val markerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
     val activeColor = MaterialTheme.colorScheme.primary
@@ -95,7 +108,7 @@ internal fun ContactsScrollbar(
             val bubblePx = with(density) { 72.dp.toPx() }
 
             Canvas(Modifier.matchParentSize().alpha(visibility)) {
-                val (progress, thumbHeight) = scrollbarPosition(listState, size.height, minThumbPx)
+                val (_, thumbHeight) = scrollbarPosition(listState, size.height, minThumbPx)
                 val width = theme.scrollbar.width.toPx()
                 val left = size.width - width
                 val centerX = left + width / 2
@@ -108,7 +121,7 @@ internal fun ContactsScrollbar(
                 )
                 drawRoundRect(
                     color = activeColor.copy(alpha = if (isDragging) 0.55f else 0.18f),
-                    topLeft = Offset(left, (size.height - thumbHeight) * (draggedProgress ?: progress)),
+                    topLeft = Offset(left, (size.height - thumbHeight) * thumbProgress),
                     size = Size(width, thumbHeight),
                     cornerRadius = CornerRadius(corner),
                 )
@@ -143,6 +156,7 @@ internal fun ContactsScrollbar(
                                 val progress = ((y - grip) / track).coerceIn(0f, 1f)
                                 val index = (progress * labels.lastIndex).roundToInt()
                                 draggedProgress = progress
+                                bubbleProgress = progress
                                 selectedLetter = labels[index]
                                 scrollJob?.cancel()
                                 scrollJob = scope.launch { listState.scrollToItem(index) }
@@ -159,19 +173,24 @@ internal fun ContactsScrollbar(
                         }
                     },
             )
-            draggedProgress?.let { progress ->
+            AnimatedVisibility(
+                visible = isDragging,
+                modifier = Modifier.align(Alignment.TopEnd),
+                enter = fadeIn(tween(100)),
+                exit = fadeOut(tween(250)),
+            ) {
                 val (_, thumbHeight) = scrollbarPosition(listState, heightPx, minThumbPx)
                 Box(
                     modifier = Modifier.align(Alignment.TopEnd)
                         .offset {
                             IntOffset(
                                 x = with(density) { -40.dp.roundToPx() },
-                                y = ((heightPx - thumbHeight) * progress + thumbHeight / 2 - bubblePx / 2)
+                                y = ((heightPx - thumbHeight) * bubbleProgress + thumbHeight / 2 - bubblePx / 2)
                                     .coerceIn(0f, (heightPx - bubblePx).coerceAtLeast(0f)).roundToInt(),
                             )
                         }
                         .size(72.dp)
-                        .background(activeColor, MaterialTheme.shapes.extraLarge),
+                        .background(activeColor, RoundedCornerShape(36.dp, 36.dp, 8.dp, 36.dp)),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
@@ -187,6 +206,7 @@ internal fun ContactsScrollbar(
 }
 
 private fun scrollbarPosition(state: LazyListState, height: Float, minimumThumb: Float): Pair<Float, Float> {
+    val progress = scrollbarProgress(state)
     val layout = state.layoutInfo
     val first = layout.visibleItemsInfo.firstOrNull { it.index == state.firstVisibleItemIndex }
         ?: return 0f to height
@@ -198,5 +218,18 @@ private fun scrollbarPosition(state: LazyListState, height: Float, minimumThumb:
     val total = layout.totalItemsCount.coerceAtLeast(1)
     val thumbHeight = (height * visible / total)
         .coerceIn(minimumThumb.coerceAtMost(height), (minimumThumb * 1.5f).coerceAtMost(height))
-    return (start / (total - visible).coerceAtLeast(1f)).coerceIn(0f, 1f) to thumbHeight
+    return progress to thumbHeight
+}
+
+private fun scrollbarProgress(state: LazyListState): Float {
+    val layout = state.layoutInfo
+    val first = layout.visibleItemsInfo.firstOrNull { it.index == state.firstVisibleItemIndex }
+        ?: return 0f
+    val last = layout.visibleItemsInfo.maxByOrNull { it.index } ?: return 0f
+    val start = first.index + state.firstVisibleItemScrollOffset.toFloat() / first.size.coerceAtLeast(1)
+    val end = last.index +
+        ((layout.viewportEndOffset - last.offset).toFloat() / last.size.coerceAtLeast(1)).coerceIn(0f, 1f)
+    val visible = (end - start).coerceAtLeast(1f)
+    val total = layout.totalItemsCount.coerceAtLeast(1)
+    return (start / (total - visible).coerceAtLeast(1f)).coerceIn(0f, 1f)
 }

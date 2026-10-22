@@ -38,7 +38,7 @@ internal fun ContactsScrollControls(
     scrollToTopModifier: Modifier = Modifier,
 ) {
     val sections = remember(groups) {
-        var index = 1 // The list title precedes the section headers.
+        var index = 1 // The title is the first list item.
         groups.map { group ->
             (index to group.letter).also { index += group.contacts.size + 1 }
         }
