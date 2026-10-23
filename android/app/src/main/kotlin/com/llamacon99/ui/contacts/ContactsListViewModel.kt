@@ -1,6 +1,7 @@
 package com.llamacon99.ui.contacts
 
-import android.content.Context
+import android.util.Log
+// import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.llamacon99.data.ContactsRepository
@@ -8,9 +9,9 @@ import com.llamacon99.data.DialRepository
 import com.llamacon99.data.SettingsRepository
 import com.llamacon99.model.DeviceContact
 import com.llamacon99.model.ContactPhoneNumber
-import com.llamacon99.telemetry.AppTelemetry
+// import com.llamacon99.telemetry.AppTelemetry
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+// import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +48,7 @@ private const val ANONYMOUS_CALL_PREFIX = "#31#"
 
 @HiltViewModel
 class ContactsListViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
+    // @ApplicationContext private val context: Context,
     private val contactsRepository: ContactsRepository,
     private val dialRepository: DialRepository,
     private val settingsRepository: SettingsRepository,
@@ -87,15 +88,16 @@ class ContactsListViewModel @Inject constructor(
 
     fun reload() {
         viewModelScope.launch {
-            val trace = AppTelemetry.startTrace(context, "contacts_load")
+            // val trace = AppTelemetry.startTrace(context, "contacts_load")
             try {
                 contactsRepository.reload()
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (error: Exception) {
-                AppTelemetry.recordNonFatal(context, error, "contacts_reload_failed")
-            } finally {
-                trace?.stop()
+                // AppTelemetry.recordNonFatal(context, error, "contacts_reload_failed")
+                Log.w("ContactsListViewModel", "Could not reload contacts", error)
+            // } finally {
+            //     trace?.stop()
             }
         }
     }

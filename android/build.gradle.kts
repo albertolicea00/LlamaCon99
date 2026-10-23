@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.google.services) apply false
-    alias(libs.plugins.firebase.crashlytics) apply false
-    alias(libs.plugins.firebase.perf) apply false
+    // Disabled pending delivery from Cuba without VPN; see ARCHITECTURE.md.
+    // alias(libs.plugins.firebase.crashlytics) apply false
+    // alias(libs.plugins.firebase.perf) apply false
 }

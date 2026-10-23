@@ -18,8 +18,9 @@ val releaseProps = Properties().apply {
 // Keep debug builds usable before then; the Qvacell google-services.json belongs to another app.
 if (file("google-services.json").isFile) {
     apply(plugin = "com.google.gms.google-services")
-    apply(plugin = "com.google.firebase.crashlytics")
-    apply(plugin = "com.google.firebase.firebase-perf")
+    // Disabled pending delivery from Cuba without VPN; see ../ARCHITECTURE.md.
+    // apply(plugin = "com.google.firebase.crashlytics")
+    // apply(plugin = "com.google.firebase.firebase-perf")
 }
 
 android {
@@ -128,8 +129,9 @@ androidComponents {
 dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.perf)
+    // Disabled pending delivery from Cuba without VPN; see ../ARCHITECTURE.md.
+    // implementation(libs.firebase.crashlytics)
+    // implementation(libs.firebase.perf)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

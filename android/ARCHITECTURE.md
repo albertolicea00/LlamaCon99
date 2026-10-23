@@ -30,7 +30,7 @@ for the iOS-specific CallKit design.
 | App appearance profiles and component geometry | `ui/theme/AppThemeCatalog.kt`, `ui/theme/Theme.kt` |
 | Welcome reminder | `ui/welcome/WelcomeSheet.kt`, `ui/welcome/WelcomeViewModel.kt` |
 | GitHub release check and update prompt | `service/UpdateChecker.kt`, `ui/components/UpdateAvailableDialog.kt` |
-| Firebase Analytics, Crashlytics, and Performance | `telemetry/AppTelemetry.kt`, `app/build.gradle.kts` |
+| Firebase Analytics | `telemetry/AppTelemetry.kt`, `app/build.gradle.kts` |
 | Launcher shortcuts | `res/xml/shortcuts.xml`, `MainActivity.kt` |
 
 ## Project layout
@@ -160,40 +160,37 @@ default if an unknown value is encountered.
 Android UI strings are resource-backed: Spanish defaults in `res/values/strings.xml`, English
 translations in `res/values-en/strings.xml`. Add or update both when adding user-visible copy.
 
-`AppTelemetry` is a narrow wrapper around Firebase Analytics, Crashlytics, and Performance. It stays
-dormant unless Firebase has initialized from this app's own `google-services.json`. Navigation logs
-screen views; contact refreshes record non-fatal errors and a `contacts_load` performance trace.
+`AppTelemetry` is a narrow wrapper around Firebase Analytics. It stays dormant unless Firebase
+has initialized from this app's own `google-services.json`. Navigation logs screen views and
+initialization sets the `build_type` user property. Crashlytics and Performance Monitoring have
+been disabled by commenting out their SDK dependencies, Gradle plugins, traces, and synthetic error tests,
+because their uploads failed from Cuba without VPN in the test below. Contact refresh failures
+are logged locally with Android Logcat; they are not sent to Firebase.
 Never copy another app's Firebase configuration into this project. Add LlamaCon99's configuration at
 `app/google-services.json`; without it, the app can build but Firebase reporting is inactive.
 
 ### Firebase smoke test (debug builds only)
 
-`src/debug/` includes an ADB test receiver protected by `android.permission.DUMP` and Performance
-diagnostic logging. Neither is included in release builds. With a debug APK installed, open the
-app, then run:
+`src/debug/` includes an Analytics-only ADB test receiver protected by `android.permission.DUMP`.
+It is excluded from release builds. With a debug APK installed, open the app, then run:
 
 ```sh
 adb shell setprop debug.firebase.analytics.app com.llamacon99
-adb shell setprop log.tag.FirebaseCrashlytics DEBUG
-adb shell setprop log.tag.TRuntime.CctTransportBackend DEBUG
+adb shell setprop log.tag.FA VERBOSE
+adb shell setprop log.tag.FA-SVC VERBOSE
 adb shell am broadcast -n com.llamacon99/.debug.TelemetryTestReceiver --es kind event --es test_id manual-check
-adb shell am broadcast -n com.llamacon99/.debug.TelemetryTestReceiver --es kind nonfatal --es test_id manual-check
-# Deliberately closes the app; reopen it afterward to finish processing reports.
-adb shell am broadcast -n com.llamacon99/.debug.TelemetryTestReceiver --es kind fatal --es test_id manual-check
-adb shell am start -n com.llamacon99/.MainActivity
-adb logcat -d -s TelemetryTest FirebaseCrashlytics FirebasePerformance TRuntime.CctTransportBackend
+adb logcat -d -s TelemetryTest FA FA-SVC
 adb shell setprop debug.firebase.analytics.app .none.
 ```
 
-The event and trace are named `telemetry_test`. The exceptions contain `LlamaCon99 synthetic`
-and their test ID. A report successfully enqueued to DataTransport confirms local capture, not
-server acceptance; check the transport HTTP response and Firebase Console as well.
+The event is named `telemetry_test` and includes its test ID. Local event logging alone does not
+confirm delivery; check the Analytics upload response and matching event in Firebase DebugView.
 
 ### Verified delivery and Cuba network limitation (2026-10-22)
 
 The Firebase configuration targets project `llamacon99`, package `com.llamacon99`. On 2026-10-22,
 debug build 1.0.1 passed compilation and JVM tests on the development machine; delivery was tested
-on a Samsung SM-A155M in Cuba:
+on a Samsung SM-A155M in Cuba before Crashlytics and Performance were commented out:
 
 | Service | Without VPN | With VPN |
 | --- | --- | --- |
@@ -212,7 +209,31 @@ confirmed; appearance of the processed data in Firebase Console was not verified
 The app targets Cuban users, so successful delivery with VPN does not establish delivery on their
 normal connections. Analytics worked without VPN in this test; Crashlytics and Performance did
 not. Treat this as an observed network limitation as of 2026-10-22, rather than a guarantee about
-every Cuban network. See the [known limitations](../README.md#known-limitations).
+every Cuban network. The app now retains only Analytics; the results above document the former
+integration. Their code is preserved as comments for reactivation. See the [known limitations](../README.md#known-limitations).
+
+
+### Reactivating Crashlytics and Performance Monitoring
+
+Only Analytics is active. Crashlytics and Performance are preserved as comments because their
+uploads failed from Cuba without VPN on 2026-10-22. Once delivery is available from Cuba, restore
+these pieces together:
+
+1. Uncomment the Crashlytics and Performance plugin aliases in `gradle/libs.versions.toml` and
+   `build.gradle.kts`, and their plugin applications and SDK dependencies in `app/build.gradle.kts`.
+2. In `telemetry/AppTelemetry.kt`, uncomment the SDK imports, Crashlytics `build_type` key,
+   `recordNonFatal()`, and `startTrace()`.
+3. In `ui/contacts/ContactsListViewModel.kt`, uncomment the imports, injected application context,
+   contacts-loading trace, nonfatal reporting, and `finally` block that stops the trace.
+4. In `src/debug/AndroidManifest.xml`, restore the Performance logging metadata. In
+   `debug/TelemetryTestReceiver.kt`, uncomment the imports, Crashlytics test key, synthetic error
+   branches, and Performance trace; update the log and accepted-kind message accordingly.
+5. Build debug and release and run the JVM tests. On a test device in Cuba without VPN, verify a
+   synthetic nonfatal report and trace: check successful transport responses and the matching data
+   in Firebase Console. Recheck Analytics and update both READMEs to reflect the active services.
+
+The Crashlytics Gradle plugin resumes release mapping uploads when re-enabled. While disabled,
+keep the R8 mapping file for each distributed release for manual stack-trace deobfuscation.
 
 ## Tests
 
@@ -276,7 +297,7 @@ filename automatically follows `versionName`.
 
 `settings.gradle.kts`, the root `build.gradle.kts`, and `gradle/libs.versions.toml` configure the
 Android project and version catalog. Keep dependency versions in the catalog where possible.
-`app/build.gradle.kts` conditionally applies Firebase Gradle plugins only when the app-specific
+`app/build.gradle.kts` conditionally applies the Google Services Gradle plugin only when the app-specific
 `google-services.json` is present, enabling local builds without Firebase secrets. The module uses
 JDK 17, compile/target SDK 36, minimum SDK 26, Jetpack Compose, Navigation Compose, DataStore, Hilt,
 Coil, and Firebase libraries.

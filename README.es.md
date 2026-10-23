@@ -30,10 +30,12 @@ App nativa en Kotlin y Jetpack Compose. Incluye lista de contactos cubanos, llam
 está dirigida a usuarios cubanos. En un Samsung SM-A155M conectado desde Cuba sin VPN, Analytics
 envió correctamente el evento de prueba (HTTP 204), pero los envíos de Crashlytics y Performance
 Monitoring fueron rechazados (HTTP 403). Al activar la VPN, ambos servicios enviaron correctamente
-sus datos de prueba (HTTP 200), y Analytics siguió funcionando. Por tanto, pueden faltar informes
-de errores y rendimiento de usuarios que se conecten desde Cuba sin VPN. Estos resultados
+sus datos de prueba (HTTP 200), y Analytics siguió funcionando. La app Android conserva
+ahora únicamente Analytics; Crashlytics y Performance Monitoring quedan comentados para poder
+reactivarlos cuando se compruebe el envío desde Cuba sin VPN. Mientras tanto, no se recopilan
+informes de errores ni de rendimiento. Estos resultados
 corresponden a la conexión probada; no confirman el comportamiento en todas las redes cubanas.
-Consulta los detalles de verificación en la
+Consulta los detalles de verificación y los pasos para reactivarlos en la
 [arquitectura de Android](android/ARCHITECTURE.md#verified-delivery-and-cuba-network-limitation-2026-10-22).
 
 ## Estructura del repo

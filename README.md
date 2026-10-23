@@ -30,10 +30,10 @@ Native Kotlin and Jetpack Compose app. Includes Cuban contacts, anonymous swipe-
 On a Samsung SM-A155M in Cuba without VPN, Analytics successfully sent the test event (HTTP 204),
 but Crashlytics and Performance Monitoring uploads were rejected (HTTP 403). With VPN enabled,
 both services successfully sent their test data (HTTP 200), and Analytics continued to work.
-Crash and performance reports may therefore be missing for users connecting from Cuba without
-VPN. These results describe the tested connection; they do not establish behavior on every Cuban
-network. See [Android architecture](android/ARCHITECTURE.md#verified-delivery-and-cuba-network-limitation-2026-10-22)
-for verification details.
+The Android app now retains only Analytics; Crashlytics and Performance Monitoring are commented
+out for future reactivation, so crash and performance reports are no longer collected. These results describe the
+tested connection; they do not establish behavior on every Cuban network. See [Android architecture](android/ARCHITECTURE.md#verified-delivery-and-cuba-network-limitation-2026-10-22)
+for verification details and reactivation instructions.
 
 ## Repo layout
 
