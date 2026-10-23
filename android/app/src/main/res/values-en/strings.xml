@@ -104,6 +104,6 @@
     <string name="caller_id_overlay_dismiss">Hide caller identification</string>
     <string name="caller_id_phone_number">+53 %1$s</string>
     <string name="settings_dual_sim_title">Direct calling disabled</string>
-    <string name="settings_dual_sim_body">Two active SIMs were detected. To avoid calling from the wrong line, direct calling is disabled and Phone app has been selected. Confirm the call and choose your SIM in the phone app.</string>
+    <string name="settings_dual_sim_body">Multiple active SIMs were detected. To avoid calling from the wrong line, direct calling is disabled and Phone app has been selected. Confirm the call and choose your SIM in the phone app.</string>
     <string name="settings_dual_sim_ok">Got it</string>
 </resources>

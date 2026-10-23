@@ -104,6 +104,6 @@
     <string name="caller_id_overlay_dismiss">Ocultar identificación</string>
     <string name="caller_id_phone_number">+53 %1$s</string>
     <string name="settings_dual_sim_title">Llamada directa deshabilitada</string>
-    <string name="settings_dual_sim_body">Se detectaron dos SIM activas. Para evitar confundir la línea desde la que llamas, la marcación directa está deshabilitada y se ha seleccionado App de teléfono. Confirma la llamada y elige la SIM en la app de teléfono.</string>
+    <string name="settings_dual_sim_body">Se detectaron varias SIM activas. Para evitar confundir la línea desde la que llamas, la marcación directa está deshabilitada y se ha seleccionado App de teléfono. Confirma la llamada y elige la SIM en la app de teléfono.</string>
     <string name="settings_dual_sim_ok">Entendido</string>
 </resources>
