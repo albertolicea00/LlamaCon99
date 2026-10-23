@@ -57,7 +57,7 @@
     <string name="settings_theme_llama">Nido</string>
     <string name="settings_theme_inspired_samsung">Inspired by Samsung One UI</string>
     <string name="settings_dial_mode_prefill">Opens the phone app with the number entered so you can confirm the call.</string>
-    <string name="settings_dial_mode_direct">Starts the call from Llama con 99 when you tap the contact.</string>
+    <string name="settings_dial_mode_direct">Starts the call from Llama con 99 when you tap the contact. Requires one active SIM and permission to call and check SIMs.</string>
     <string name="settings_anonymous_swipe_title">Anonymous call on swipe</string>
     <string name="settings_anonymous_swipe_subtitle">Swipe a contact left to dial with #31# (hides your number)</string>
     <string name="settings_section_caller_id">Caller ID</string>
@@ -103,4 +103,7 @@
     <string name="caller_id_overlay_label">Collect call · Llama con 99</string>
     <string name="caller_id_overlay_dismiss">Hide caller identification</string>
     <string name="caller_id_phone_number">+53 %1$s</string>
+    <string name="settings_dual_sim_title">Direct calling disabled</string>
+    <string name="settings_dual_sim_body">Two active SIMs were detected. To avoid calling from the wrong line, direct calling is disabled and Phone app has been selected. Confirm the call and choose your SIM in the phone app.</string>
+    <string name="settings_dual_sim_ok">Got it</string>
 </resources>

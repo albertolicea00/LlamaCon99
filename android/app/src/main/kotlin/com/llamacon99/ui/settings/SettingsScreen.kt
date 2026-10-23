@@ -48,6 +48,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -82,6 +83,7 @@ fun SettingsScreen(
     val appTheme by viewModel.appTheme.collectAsState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    var pendingDirectCall by rememberSaveable { mutableStateOf(false) }
     var showLegalDialog by remember { mutableStateOf(false) }
     var showThemeSheet by remember { mutableStateOf(false) }
     var isCheckingUpdate by remember { mutableStateOf(false) }
@@ -132,6 +134,16 @@ fun SettingsScreen(
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
     ) { viewModel.refreshPermissionStatus() }
+    val directCallPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions(),
+    ) { grants ->
+        viewModel.refreshPermissionStatus()
+        if (pendingDirectCall && grants[android.Manifest.permission.CALL_PHONE] == true &&
+            grants[android.Manifest.permission.READ_PHONE_STATE] == true) {
+            viewModel.setDialMode(SettingsRepository.DialMode.DIRECT)
+        }
+        pendingDirectCall = false
+    }
     val overlayPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
     ) { viewModel.refreshPermissionStatus() }
@@ -162,10 +174,14 @@ fun SettingsScreen(
                     GroupDivider()
                     DialModeSelector(
                         selected = uiState.dialMode,
+                        isDualSim = uiState.isDualSim,
                         onSelect = { mode ->
                             if (mode == SettingsRepository.DialMode.DIRECT) {
-                                viewModel.setDialMode(mode)
-                                permissionLauncher.launch(arrayOf(android.Manifest.permission.CALL_PHONE))
+                                pendingDirectCall = true
+                                directCallPermissionLauncher.launch(arrayOf(
+                                    android.Manifest.permission.CALL_PHONE,
+                                    android.Manifest.permission.READ_PHONE_STATE,
+                                ))
                             } else {
                                 viewModel.setDialMode(mode)
                             }
@@ -368,7 +384,7 @@ private fun settingsRowColors() = ListItemDefaults.colors(containerColor = Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DialModeSelector(selected: SettingsRepository.DialMode, onSelect: (SettingsRepository.DialMode) -> Unit) {
+private fun DialModeSelector(selected: SettingsRepository.DialMode, isDualSim: Boolean, onSelect: (SettingsRepository.DialMode) -> Unit) {
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -393,7 +409,7 @@ private fun DialModeSelector(selected: SettingsRepository.DialMode, onSelect: (S
             Column(modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp)) {
                 Text(stringResource(R.string.settings_dial_mode_title), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(horizontal = 24.dp))
                 Text(
-                    stringResource(R.string.settings_dial_mode_sheet_description),
+                    stringResource(if (isDualSim) R.string.settings_dual_sim_body else R.string.settings_dial_mode_sheet_description),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 6.dp, bottom = 16.dp),
@@ -401,18 +417,25 @@ private fun DialModeSelector(selected: SettingsRepository.DialMode, onSelect: (S
                 listOf(SettingsRepository.DialMode.PREFILL, SettingsRepository.DialMode.DIRECT).forEachIndexed { index, mode ->
                     if (index > 0) GroupDivider()
                     val prefill = mode == SettingsRepository.DialMode.PREFILL
+                    val enabled = prefill || !isDualSim
                     ListItem(
                         headlineContent = {
-                            Text(stringResource(if (prefill) R.string.settings_dial_mode_prefill_short else R.string.settings_dial_mode_direct_short))
+                            Text(
+                                stringResource(if (prefill) R.string.settings_dial_mode_prefill_short else R.string.settings_dial_mode_direct_short),
+                                color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                            )
                         },
                         supportingContent = {
-                            Text(stringResource(if (prefill) R.string.settings_dial_mode_prefill else R.string.settings_dial_mode_direct))
+                            Text(
+                                stringResource(if (prefill) R.string.settings_dial_mode_prefill else R.string.settings_dial_mode_direct),
+                                color = if (enabled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                            )
                         },
                         trailingContent = {
                             if (mode == selected) Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                         },
                         colors = settingsRowColors(),
-                        modifier = Modifier.fillMaxWidth().clickable {
+                        modifier = Modifier.fillMaxWidth().clickable(enabled = enabled) {
                             scope.launch {
                                 sheetState.hide()
                                 showSheet = false

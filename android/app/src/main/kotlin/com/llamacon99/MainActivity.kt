@@ -31,6 +31,11 @@ import androidx.compose.ui.graphics.Color as ComposeColor
 import com.llamacon99.ui.navigation.LlamaCon99NavGraph
 import com.llamacon99.ui.theme.LlamaCon99Theme
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.stringResource
+import com.llamacon99.data.SimRepository
 import com.llamacon99.data.SettingsRepository
 import com.llamacon99.monitor.CallMonitorService
 import com.llamacon99.service.AutomaticUpdateViewModel
@@ -43,6 +48,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject lateinit var settingsRepository: SettingsRepository
+    @Inject lateinit var simRepository: SimRepository
     private val automaticUpdates: AutomaticUpdateViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +81,19 @@ class MainActivity : ComponentActivity() {
             val appTheme by settingsRepository.appTheme.collectAsState(initial = com.llamacon99.ui.theme.AppThemeCatalog.default)
             LlamaCon99Theme(appTheme = appTheme) {
                 val pendingUpdate by automaticUpdates.pendingUpdate.collectAsState()
+                val showDualSimNotice by settingsRepository.directDialDisabledNotice.collectAsState()
+                if (showDualSimNotice) {
+                    AlertDialog(
+                        onDismissRequest = settingsRepository::dismissDirectDialDisabledNotice,
+                        title = { Text(stringResource(R.string.settings_dual_sim_title)) },
+                        text = { Text(stringResource(R.string.settings_dual_sim_body)) },
+                        confirmButton = {
+                            TextButton(onClick = settingsRepository::dismissDirectDialDisabledNotice) {
+                                Text(stringResource(R.string.settings_dual_sim_ok))
+                            }
+                        },
+                    )
+                }
                 val navigationShade = if (isSystemInDarkTheme()) ComposeColor.Black else ComposeColor.White
                 Box(modifier = Modifier.fillMaxSize()) {
                     Surface(modifier = Modifier.fillMaxSize()) {
@@ -97,6 +116,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        simRepository.refresh()
     }
 
     private suspend fun restoreCallMonitor() {

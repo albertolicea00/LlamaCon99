@@ -11,6 +11,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import com.llamacon99.ui.theme.AppThemeCatalog
 import com.llamacon99.ui.theme.AppThemeDefinition
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -23,6 +30,7 @@ import kotlinx.coroutines.flow.map
 @Singleton
 class SettingsRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
+    private val simRepository: SimRepository,
 ) {
     enum class DialMode { DIRECT, PREFILL }
 
@@ -39,13 +47,39 @@ class SettingsRepository @Inject constructor(
         val lastUpdateCheckAtMillis = longPreferencesKey("last_update_check_at_millis")
     }
 
-    /** Default is [DialMode.PREFILL]: no extra permission, and the user confirms the call themselves. */
-    val dialMode: Flow<DialMode> = dataStore.data.map { prefs ->
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val disabledNotice = MutableStateFlow(false)
+    val directDialDisabledNotice = disabledNotice.asStateFlow()
+
+    private val preferredDialMode: Flow<DialMode> = dataStore.data.map { prefs ->
         prefs[Keys.dialMode]?.let { runCatching { DialMode.valueOf(it) }.getOrNull() } ?: DialMode.PREFILL
     }
 
+    /** Phone app is the default, and the fallback unless exactly one active SIM is verified. */
+    val dialMode: Flow<DialMode> = combine(preferredDialMode, simRepository.activeSimCount, ::effectiveDialMode)
+
+    init {
+        scope.launch {
+            combine(preferredDialMode, simRepository.activeSimCount) { mode, count -> mode to count }
+                .collect { (mode, count) ->
+                    if (mode == DialMode.DIRECT && count != null && count > 1) {
+                        disabledNotice.value = true
+                        dataStore.edit { prefs ->
+                            if (prefs[Keys.dialMode] == DialMode.DIRECT.name) {
+                                prefs[Keys.dialMode] = DialMode.PREFILL.name
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    fun dismissDirectDialDisabledNotice() { disabledNotice.value = false }
+
     suspend fun setDialMode(mode: DialMode) {
-        dataStore.edit { it[Keys.dialMode] = mode.name }
+        val count = simRepository.refresh()
+        dataStore.edit { it[Keys.dialMode] = effectiveDialMode(mode, count).name }
+        if (mode == DialMode.DIRECT && count != null && count > 1) disabledNotice.value = true
     }
 
     val appTheme: Flow<AppThemeDefinition> = dataStore.data.map { prefs ->

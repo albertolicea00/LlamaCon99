@@ -14,10 +14,11 @@ import javax.inject.Singleton
 @Singleton
 class DialRepository @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val simRepository: SimRepository,
 ) {
     /** Places the call with permission; otherwise lets the user confirm it in the dialer. */
     fun callDirect(code: String) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+        if (simRepository.refresh() != 1 || ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             openDialerPrefilled(code)
             return
         }

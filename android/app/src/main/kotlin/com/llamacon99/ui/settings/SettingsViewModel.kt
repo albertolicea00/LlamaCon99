@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.llamacon99.data.SimRepository
 import com.llamacon99.data.SettingsRepository
 import com.llamacon99.R
 import com.llamacon99.monitor.CallMonitorService
@@ -22,12 +23,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 data class SettingsUiState(
     val dialMode: SettingsRepository.DialMode = SettingsRepository.DialMode.PREFILL,
+    val isDualSim: Boolean = false,
     val anonymousSwipeEnabled: Boolean = false,
     val callMonitorEnabled: Boolean = false,
     val monitorFromBootEnabled: Boolean = false,
@@ -39,6 +42,7 @@ data class SettingsUiState(
 class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository,
+    private val simRepository: SimRepository,
 ) : ViewModel() {
 
     private val permissionsRefreshTrigger = MutableStateFlow(0)
@@ -48,10 +52,11 @@ class SettingsViewModel @Inject constructor(
         settingsRepository.anonymousSwipeEnabled,
         settingsRepository.callMonitorEnabled,
         settingsRepository.monitorFromBootEnabled,
-        permissionsRefreshTrigger,
-    ) { dialMode, anonymousSwipeEnabled, callMonitorEnabled, monitorFromBootEnabled, _ ->
+        combine(permissionsRefreshTrigger, simRepository.activeSimCount) { _, count -> count },
+    ) { dialMode, anonymousSwipeEnabled, callMonitorEnabled, monitorFromBootEnabled, activeSimCount ->
         SettingsUiState(
             dialMode = dialMode,
+            isDualSim = (activeSimCount ?: 0) > 1,
             anonymousSwipeEnabled = anonymousSwipeEnabled,
             callMonitorEnabled = callMonitorEnabled,
             monitorFromBootEnabled = monitorFromBootEnabled,
@@ -65,10 +70,11 @@ class SettingsViewModel @Inject constructor(
     )
 
     fun refreshPermissionStatus() {
+        simRepository.refresh()
         permissionsRefreshTrigger.value += 1
         viewModelScope.launch {
             if (!hasCallPhonePermission()) {
-                val current = settingsRepository.dialMode.stateIn(viewModelScope).value
+                val current = settingsRepository.dialMode.first()
                 if (current == SettingsRepository.DialMode.DIRECT) {
                     settingsRepository.setDialMode(SettingsRepository.DialMode.PREFILL)
                 }

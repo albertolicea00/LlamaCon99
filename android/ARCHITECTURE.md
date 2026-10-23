@@ -22,6 +22,7 @@ for the iOS-specific CallKit design.
 | Cuban number validation and `*99` number wrapping | `data/CubanPhoneNumber.kt`, `data/CallerIdMatcher.kt` |
 | Contact provider query and caller-ID table refresh | `data/ContactsRepository.kt`, `data/CallerIdStore.kt` |
 | Dial prefixes and launching the phone app | `ui/contacts/ContactsListViewModel.kt`, `data/DialRepository.kt` |
+| Active SIM detection and direct-call availability | `data/SimRepository.kt`, `data/SettingsRepository.kt` |
 | Preferences and persisted app settings | `data/SettingsRepository.kt`, `di/DataStoreModule.kt` |
 | Caller-ID monitoring lifecycle and telephony events | `monitor/CallMonitorService.kt` |
 | Incoming-call notification content and channels | `monitor/CallerIdNotifier.kt` |
@@ -81,8 +82,16 @@ Contact taps dial `*99` followed by the selected local number. The dial mode is 
 
 - **Prefill** is the default. It opens the user's phone app with the number entered (`ACTION_DIAL`),
   where the user confirms the call. It does not need `CALL_PHONE`.
-- **Direct** uses `ACTION_CALL` if `CALL_PHONE` has been granted. If permission is missing or revoked,
-  the app falls back to the prefilled dialer.
+- **Direct** uses `ACTION_CALL` only with `CALL_PHONE` permission and exactly one verified active
+  SIM. `READ_PHONE_STATE` is requested when enabling it so `SimRepository` can count active
+  subscriptions rather than physical slots. If the count is unavailable, zero, or greater than one,
+  or call permission is missing, `DialRepository` falls back to `ACTION_DIAL` before placing a call.
+- With two or more active SIMs, the direct option is disabled and the effective mode is **Phone app**.
+  If Direct was selected, `SettingsRepository` saves Prefill and shows an informational dialog once
+  explaining that the user should choose the SIM in the phone app. Removing the second SIM does
+  not automatically re-enable Direct. SIM changes are observed during the process lifetime and
+  refreshed on resume and immediately before a direct call. The same guard covers anonymous calls
+  and launcher shortcuts. Prefill remains the default on a fresh installation.
 
 Anonymous calls add `#31#` before the number. Dynamic shortcut intents pass `dial_mode=collect` or
 `dial_mode=anonymous` through `MainActivity`; shortcut resources and labels live in

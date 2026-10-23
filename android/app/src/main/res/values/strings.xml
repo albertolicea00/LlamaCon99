@@ -57,7 +57,7 @@
     <string name="settings_theme_llama">Nido</string>
     <string name="settings_theme_inspired_samsung">Inspirado en Samsung One UI</string>
     <string name="settings_dial_mode_prefill">Abre el marcador con el número escrito y tú confirmas la llamada.</string>
-    <string name="settings_dial_mode_direct">Inicia la llamada desde Llama con 99 al tocar el contacto.</string>
+    <string name="settings_dial_mode_direct">Inicia la llamada desde Llama con 99 al tocar el contacto. Requiere una sola SIM activa y permisos para llamar y comprobar las SIM.</string>
     <string name="settings_anonymous_swipe_title">Llamada anónima al deslizar</string>
     <string name="settings_anonymous_swipe_subtitle">Desliza un contacto a la izquierda para marcar con #31# (oculta tu número)</string>
     <string name="settings_section_caller_id">Identificación de llamadas</string>
@@ -103,4 +103,7 @@
     <string name="caller_id_overlay_label">Llamada por cobrar · Llama con 99</string>
     <string name="caller_id_overlay_dismiss">Ocultar identificación</string>
     <string name="caller_id_phone_number">+53 %1$s</string>
+    <string name="settings_dual_sim_title">Llamada directa deshabilitada</string>
+    <string name="settings_dual_sim_body">Se detectaron dos SIM activas. Para evitar confundir la línea desde la que llamas, la marcación directa está deshabilitada y se ha seleccionado App de teléfono. Confirma la llamada y elige la SIM en la app de teléfono.</string>
+    <string name="settings_dual_sim_ok">Entendido</string>
 </resources>
