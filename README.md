@@ -24,6 +24,20 @@ See [`ios/ARCHITECTURE.md`](ios/ARCHITECTURE.md) for build instructions and arch
 
 Native Kotlin and Jetpack Compose app. Includes Cuban contacts, anonymous swipe-to-call, and incoming caller ID. For build, test, and optimized release APK export instructions, see [`android/ARCHITECTURE.md`](android/ARCHITECTURE.md) or run `make help` from the repository root.
 
+### Android themes
+
+Choose a visual style from **Settings → Customization**. All themes support light and dark mode and retain the brand green. They change screen structure, controls, and visual navigation.
+
+| Theme | Inspired by | Style |
+| --- | --- | --- |
+| SamUI | Samsung One UI | Large titles, rounded groups, and thumb-friendly controls. |
+| ManzanaUI | Apple iOS | Continuous list, collapsing header, bottom search, and a side A–Z index. |
+| MaterialUI | Google Pixel / Material You (Material 3) | Top pill-shaped search and open contact rows with avatars. |
+| HorizonUI | Huawei HarmonyOS | Top search and modular contact groups. |
+| HyperUI | Xiaomi HyperOS | Large header, top search, and a compact list with a side index. |
+| MonoUI | Nothing OS | A monochrome base with the app’s green accent, technical typography, a dot pattern, and a side index. |
+| FluentUI | Microsoft Fluent Design | Command bar, top search, a list panel, and sidebar navigation on wide screens. |
+
 ## Known limitations
 
 **Android Firebase telemetry from Cuba — verified on 2026-10-22.** The app targets Cuban users.

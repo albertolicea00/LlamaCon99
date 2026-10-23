@@ -10,7 +10,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 
 val LocalAppTheme = staticCompositionLocalOf { AppThemeCatalog.default }
 
-private val LightColors = lightColorScheme(
+internal val LightColors = lightColorScheme(
     primary = BrandGreen,
     onPrimary = OnBrandGreen,
     primaryContainer = LightGreenContainer,
@@ -41,7 +41,7 @@ private val LightColors = lightColorScheme(
     error = DangerRed,
 )
 
-private val DarkColors = darkColorScheme(
+internal val DarkColors = darkColorScheme(
     primary = BrandGreen,
     onPrimary = OnBrandGreen,
     primaryContainer = DarkGreenContainer,
@@ -72,16 +72,16 @@ private val DarkColors = darkColorScheme(
     error = DangerRed,
 )
 
-/** Keep the brand colors consistent; app profiles customize component shapes and layout. */
+/** Apply each profile consistently to all screens and Material components. */
 @Composable
 fun LlamaCon99Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     appTheme: AppThemeDefinition = AppThemeCatalog.default,
     content: @Composable () -> Unit,
 ) {
-    val source = if (darkTheme) DarkColors else LightColors
+    val source = profileColors(appTheme.style, darkTheme, if (darkTheme) DarkColors else LightColors)
 
     androidx.compose.runtime.CompositionLocalProvider(LocalAppTheme provides appTheme) {
-        MaterialTheme(colorScheme = source, typography = LlamaTypography, shapes = appTheme.shapes, content = content)
+        MaterialTheme(colorScheme = source, typography = appTheme.typography, shapes = appTheme.shapes, content = content)
     }
 }

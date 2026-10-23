@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.llamacon99.ui.theme.LocalAppTheme
+import com.llamacon99.ui.theme.ThemeStyle
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
@@ -174,7 +175,7 @@ internal fun ContactsScrollbar(
                     },
             )
             AnimatedVisibility(
-                visible = isDragging,
+                visible = isDragging && theme.style != ThemeStyle.FLUENT,
                 modifier = Modifier.align(Alignment.TopEnd),
                 enter = fadeIn(tween(100)),
                 exit = fadeOut(tween(250)),

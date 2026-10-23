@@ -24,6 +24,20 @@ Instrucciones de compilación y arquitectura en [`ios/ARCHITECTURE.md`](ios/ARCH
 
 App nativa en Kotlin y Jetpack Compose. Incluye lista de contactos cubanos, llamada anónima al deslizar e identificación de llamadas entrantes. Para compilar, probar y exportar el APK release optimizado, consulta [`android/ARCHITECTURE.md`](android/ARCHITECTURE.md) o ejecuta `make help` desde la raíz.
 
+### Temas de Android
+
+Puedes elegir el estilo visual desde **Ajustes → Personalización**. Todos los temas tienen modo claro y oscuro y conservan el verde de la marca. Cambian la estructura, los controles y la navegación visual.
+
+| Tema | Inspirado en | Estilo |
+| --- | --- | --- |
+| SamUI | Samsung One UI | Títulos grandes, grupos redondeados y controles al alcance del pulgar. |
+| ManzanaUI | Apple iOS | Lista continua, cabecera que se recoge al desplazar, buscador inferior e índice A–Z lateral. |
+| MaterialUI | Google Pixel / Material You (Material 3) | Buscador superior en forma de pastilla y filas abiertas con avatares. |
+| HorizonUI | Huawei HarmonyOS | Buscador superior y contactos agrupados en módulos. |
+| HyperUI | Xiaomi HyperOS | Cabecera grande, búsqueda superior y lista compacta con índice lateral. |
+| MonoUI | Nothing OS | Base monocromática con el acento verde de la app, tipografía técnica, trama de puntos e índice lateral. |
+| FluentUI | Microsoft Fluent Design | Barra de comandos, buscador superior, panel de lista y navegación lateral en pantallas amplias. |
+
 ## Limitaciones conocidas
 
 **Telemetría de Firebase en Android desde Cuba — comprobado el 22 de octubre de 2026.** La app

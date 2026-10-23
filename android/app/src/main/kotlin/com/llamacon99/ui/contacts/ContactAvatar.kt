@@ -5,15 +5,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.llamacon99.ui.theme.LocalAppTheme
+import com.llamacon99.ui.theme.ThemeStyle
 
 private val avatarPalette = listOf(
     Color(0xFFE57373), Color(0xFF64B5F6), Color(0xFF81C784),
@@ -34,7 +40,7 @@ private fun initialsForName(name: String): String =
         .mapNotNull { it.firstOrNull()?.uppercaseChar() }
         .joinToString("")
 
-/** Circular avatar: contact photo if present, otherwise initials on a deterministic color. */
+/** Circular avatar with profile-aware initials and grayscale photos for MonoUI. */
 @Composable
 fun ContactAvatar(
     name: String,
@@ -42,13 +48,21 @@ fun ContactAvatar(
     modifier: Modifier = Modifier,
     size: androidx.compose.ui.unit.Dp = 48.dp,
 ) {
+    val palette = LocalAppTheme.current.style
+    val monochrome = palette == ThemeStyle.MONO
+    val colors = MaterialTheme.colorScheme
+    val avatarColors = when {
+        monochrome -> listOf(colors.onSurface, colors.onSurface)
+        palette == ThemeStyle.BRAND -> listOf(colorForName(name).copy(alpha = 0.65f), colorForName(name))
+        else -> listOf(colors.primaryContainer, colors.secondaryContainer)
+    }
     Box(
         modifier = modifier
             .size(size)
             .clip(CircleShape)
             .background(
                 Brush.linearGradient(
-                    listOf(colorForName(name).copy(alpha = 0.65f), colorForName(name)),
+                    avatarColors,
                 ),
             ),
         contentAlignment = Alignment.Center,
@@ -57,13 +71,20 @@ fun ContactAvatar(
             AsyncImage(
                 model = photoUri,
                 contentDescription = name,
+                contentScale = ContentScale.Crop,
+                colorFilter = if (monochrome) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
                 modifier = Modifier.size(size).clip(CircleShape),
             )
         } else {
             Text(
                 text = initialsForName(name),
-                color = Color.White,
+                color = when {
+                    monochrome -> colors.surface
+                    palette == ThemeStyle.BRAND -> Color.White
+                    else -> colors.onPrimaryContainer
+                },
                 fontSize = (size.value / 2.4).sp,
+                fontFamily = MaterialTheme.typography.labelLarge.fontFamily,
             )
         }
     }

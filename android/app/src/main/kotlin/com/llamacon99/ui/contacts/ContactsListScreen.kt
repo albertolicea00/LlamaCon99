@@ -14,6 +14,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -154,6 +156,47 @@ fun ContactsListScreen(
         return
     }
 
+    val onVoiceSearch: () -> Unit = {
+        focusManager.clearFocus()
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            .putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
+            )
+            .putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE,
+                context.resources.configuration.locales[0].toLanguageTag(),
+            )
+            .putExtra(
+                RecognizerIntent.EXTRA_PROMPT,
+                context.getString(R.string.contacts_list_voice_search),
+            )
+            .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+        try {
+            voiceSearchLauncher.launch(intent)
+        } catch (_: ActivityNotFoundException) {
+            Toast.makeText(
+                context,
+                R.string.contacts_list_voice_unavailable,
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
+    if (appTheme.style != com.llamacon99.ui.theme.ThemeStyle.BRAND) {
+        PlatformContactsScreen(
+            uiState = uiState,
+            query = query,
+            onQueryChange = viewModel::onSearchQueryChanged,
+            onVoiceSearch = onVoiceSearch,
+            onOpenSettings = onOpenSettings,
+            onDial = { number ->
+                if (quickDialMode == "anonymous") viewModel.onDialAnonymous(number) else viewModel.onDial(number)
+            },
+            onDialAnonymous = viewModel::onDialAnonymous,
+        )
+        return
+    }
+
     Scaffold(
         modifier = Modifier.imePadding(),
         // Let the list draw behind navigation buttons; inset only the floating controls below.
@@ -180,7 +223,7 @@ fun ContactsListScreen(
                         style = MaterialTheme.typography.headlineSmall,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 36.dp, end = 88.dp, top = 12.dp, bottom = 20.dp),
+                            .padding(start = appTheme.contacts.groupInset + 16.dp, end = 88.dp, top = appTheme.titleTopInset, bottom = appTheme.titleBottomInset),
                     )
                 }
                 if (uiState.isEmpty || (query.isNotBlank() && uiState.groups.isEmpty())) {
@@ -200,12 +243,13 @@ fun ContactsListScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.background)
-                                .padding(start = 40.dp, end = 24.dp, top = 10.dp, bottom = 4.dp),
+                                .padding(start = appTheme.contacts.groupInset + 16.dp, end = 24.dp, top = 10.dp, bottom = 4.dp),
                         )
                     }
                     itemsIndexed(group.contacts, key = { _, entry -> entry.id }) { index, entry ->
-                        val first = index == 0
-                        val last = index == group.contacts.lastIndex
+                        val separateCards = appTheme.contacts.rowGap > 0.dp
+                        val first = index == 0 || separateCards
+                        val last = index == group.contacts.lastIndex || separateCards
                         val corner = appTheme.contacts.groupCorner
                         val shape = RoundedCornerShape(
                             topStart = if (first) corner else 0.dp,
@@ -216,9 +260,14 @@ fun ContactsListScreen(
                         SwipeableContactRow(
                             modifier = Modifier
                                 .padding(horizontal = appTheme.contacts.groupInset)
+                                .padding(bottom = appTheme.contacts.rowGap)
                                 .widthIn(max = 560.dp)
                                 .fillMaxWidth()
+                                .shadow(appTheme.contacts.elevation, shape)
                                 .clip(shape)
+                                .then(if (appTheme.contacts.borderWidth > 0.dp) Modifier.border(
+                                    appTheme.contacts.borderWidth, MaterialTheme.colorScheme.outlineVariant, shape,
+                                ) else Modifier)
                                 .background(MaterialTheme.colorScheme.surfaceContainerLow),
                             enabled = uiState.anonymousSwipeEnabled,
                             onRevealAction = { viewModel.onDialAnonymous(entry.phoneNumber.number) },
@@ -239,7 +288,7 @@ fun ContactsListScreen(
                                 )
                                 if (!last) {
                                     HorizontalDivider(
-                                        modifier = Modifier.padding(start = 66.dp, end = 16.dp),
+                                        modifier = Modifier.padding(start = appTheme.contacts.contentInset + appTheme.contacts.avatarSize + appTheme.contacts.avatarGap, end = appTheme.contacts.contentInset),
                                         thickness = 0.5.dp,
                                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
                                     )
@@ -259,14 +308,15 @@ fun ContactsListScreen(
             ContactsScrollControls(
                 listState = listState,
                 groups = uiState.groups,
-                modifier = Modifier.align(Alignment.TopStart).padding(start = 24.dp, top = 16.dp),
+                modifier = Modifier.align(Alignment.TopStart).statusBarsPadding().padding(start = 24.dp, top = 16.dp),
                 scrollToTopModifier = Modifier.align(Alignment.BottomCenter)
-                    .navigationBarsPadding().padding(bottom = 68.dp),
+                    .navigationBarsPadding().padding(bottom = appTheme.search.minHeight + 20.dp),
             )
             IconButton(
                 onClick = onOpenSettings,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
+                    .statusBarsPadding()
                     .padding(top = 16.dp, end = 20.dp)
                     .size(48.dp),
             ) {
@@ -286,32 +336,7 @@ fun ContactsListScreen(
                     leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                     trailingIcon = {
                         IconButton(
-                            onClick = {
-                                focusManager.clearFocus()
-                                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-                                    .putExtra(
-                                        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
-                                    )
-                                    .putExtra(
-                                        RecognizerIntent.EXTRA_LANGUAGE,
-                                        context.resources.configuration.locales[0].toLanguageTag(),
-                                    )
-                                    .putExtra(
-                                        RecognizerIntent.EXTRA_PROMPT,
-                                        context.getString(R.string.contacts_list_voice_search),
-                                    )
-                                    .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
-                                try {
-                                    voiceSearchLauncher.launch(intent)
-                                } catch (_: ActivityNotFoundException) {
-                                    Toast.makeText(
-                                        context,
-                                        R.string.contacts_list_voice_unavailable,
-                                        Toast.LENGTH_SHORT,
-                                    ).show()
-                                }
-                            },
+                            onClick = onVoiceSearch,
                         ) {
                             Icon(
                                 Icons.Filled.Mic,
@@ -392,7 +417,7 @@ private fun ContactRow(
 }
 
 @Composable
-private fun EmptyContactsState(isSearch: Boolean = false, modifier: Modifier = Modifier) {
+internal fun EmptyContactsState(isSearch: Boolean = false, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

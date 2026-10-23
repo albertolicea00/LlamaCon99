@@ -155,14 +155,31 @@ Settings includes dialing behavior, anonymous swipe, caller-ID monitoring and it
 monitor-on-boot, appearance, update checking, app version, and legal links. Theme and dial-mode
 choices use bottom sheets implemented in `SettingsScreen.kt`.
 
-`AppThemeCatalog` is the registry for appearance profiles. A profile has an ID, localized name and
-inspiration description, Material shapes, and component-specific measurements for contact rows,
-search placement, and the scrollbar. UI components read the profile through `LocalAppTheme`; add a
-theme by registering another `AppThemeDefinition` and providing its string resources, then extend
-component behavior only where the catalog needs a new reusable property. Avoid spreading theme-ID
-conditionals across screens. Brand colors remain the same across profiles; themes change component
-geometry and layout. `SettingsRepository` persists only the profile ID and falls back to the catalog
-default if an unknown value is encountered.
+`AppThemeCatalog` is the registry for appearance profiles. Each profile defines a stable ID,
+localized labels, a structural `ThemeStyle`, typography, shapes, and component measurements.
+SamUI retains the original `llama` ID and its one-handed layout. The other six profiles render
+through `PlatformContactsScreen.kt`, which provides separate Apple, Pixel, HarmonyOS, HyperOS,
+Nothing, and Fluent screen structures while sharing contacts, search, voice, and dialing actions.
+All profiles preserve `BrandGreen` exactly; wallpaper colors never replace the brand accent.
+`ThemePalettes.kt` only adjusts neutral surfaces. ManzanaUI uses a continuous list without avatars,
+a collapsing title, bottom search, and `ContactsAlphabetIndex` for persistent tap/drag section
+navigation. Other profiles choose top search, modular cards, compact lists, or an adaptive Fluent
+sidebar. The alphabetical index exposes section actions to accessibility services. Section target
+indices are tested independently of drawing and account for the title and section headers.
+Settings keeps preference state and permission/service actions in `SettingsScreen`, with shared
+presentation in `SettingsContent` and profile-specific anatomy in `SettingsLayout`/`SettingsRow`.
+ManzanaUI uses translucent groups and a floating glass back control. `SettingsGlass` blurs captured
+background layers on Android 12+, while older devices use an almost opaque material fallback.
+Background-only captures are separate from scrolling-content captures, preventing recursive
+capture when glass groups appear beneath the glass header. Labels and touch targets are never
+blurred. `SettingsSheet` applies the profile material to theme, dial-mode, and legal sheets.
+MaterialUI uses open preference rows; MonoUI uses straight outlines and dot lettering; HorizonUI
+and HyperUI use their own group geometry and inline values; FluentUI adds boxed values and section
+navigation on wide displays. Brand green remains fixed across all controls. All contact profiles
+show the phone number beneath the name, including ManzanaUI.
+`SettingsRepository` persists only the profile ID and falls back to SamUI for unknown values.
+The debug-only `ThemePreviewActivity` renders sample contacts without accessing real data or
+placing calls, for visual checks in light/dark mode and at different screen sizes.
 
 ## Localization and telemetry
 
