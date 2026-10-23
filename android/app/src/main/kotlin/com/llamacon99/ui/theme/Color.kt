@@ -8,6 +8,7 @@ val OnBrandGreen = Color(0xFF06210A)
 val LightGreenContainer = Color(0xFFD5F5D9)
 val DarkGreenContainer = Color(0xFF123A1B)
 
+val LightBackground = Color(0xFFE9E9ED)
 val LightSurface = Color(0xFFF7F7F8)
 val LightSurfaceVariant = Color(0xFFEFEFF2)
 val DarkSurface = Color(0xFF000000)
