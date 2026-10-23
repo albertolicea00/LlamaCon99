@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color as ComposeColor
 import com.llamacon99.ui.navigation.LlamaCon99NavGraph
 import com.llamacon99.ui.theme.LlamaCon99Theme
+import com.llamacon99.ui.theme.warningTextColor
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -86,7 +87,7 @@ class MainActivity : ComponentActivity() {
                     AlertDialog(
                         onDismissRequest = settingsRepository::dismissDirectDialDisabledNotice,
                         title = { Text(stringResource(R.string.settings_dual_sim_title)) },
-                        text = { Text(stringResource(R.string.settings_dual_sim_body)) },
+                        text = { Text(stringResource(R.string.settings_dual_sim_body), color = warningTextColor()) },
                         confirmButton = {
                             TextButton(onClick = settingsRepository::dismissDirectDialDisabledNotice) {
                                 Text(stringResource(R.string.settings_dual_sim_ok))

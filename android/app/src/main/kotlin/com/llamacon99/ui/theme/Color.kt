@@ -1,6 +1,8 @@
 package com.llamacon99.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 
 // Same sRGB accent as iOS Assets.xcassets/AccentColor.colorset.
 val BrandGreen = Color(0xFF40CB57)
@@ -15,3 +17,7 @@ val DarkSurface = Color(0xFF000000)
 val DarkSurfaceVariant = Color(0xFF1E1E1E)
 
 val DangerRed = Color(0xFFE53935)
+
+@Composable
+fun warningTextColor(): Color =
+    if (isSystemInDarkTheme()) Color(0xFFFFD966) else Color(0xFF806000)

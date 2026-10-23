@@ -70,6 +70,7 @@ import com.llamacon99.service.UpdateChecker
 import com.llamacon99.service.UpdateInfo
 import com.llamacon99.ui.theme.AppThemeCatalog
 import com.llamacon99.ui.theme.AppThemeDefinition
+import com.llamacon99.ui.theme.warningTextColor
 import com.llamacon99.ui.components.UpdateAvailableDialog
 import kotlinx.coroutines.launch
 
@@ -411,7 +412,7 @@ private fun DialModeSelector(selected: SettingsRepository.DialMode, isDualSim: B
                 Text(
                     stringResource(if (isDualSim) R.string.settings_dual_sim_body else R.string.settings_dial_mode_sheet_description),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = if (isDualSim) warningTextColor() else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 6.dp, bottom = 16.dp),
                 )
                 listOf(SettingsRepository.DialMode.PREFILL, SettingsRepository.DialMode.DIRECT).forEachIndexed { index, mode ->
