@@ -54,7 +54,7 @@
     <string name="settings_section_preferences">Preferences</string>
     <string name="settings_theme_title">Customization</string>
     <string name="settings_theme_description">Choose a visual style for the app.</string>
-    <string name="settings_theme_llama">Nido</string>
+    <string name="settings_theme_llama">SamUI</string>
     <string name="settings_theme_inspired_samsung">Inspired by Samsung One UI</string>
     <string name="settings_dial_mode_prefill">Opens the phone app with the number entered so you can confirm the call.</string>
     <string name="settings_dial_mode_direct">Starts the call from Llama con 99 when you tap the contact. Requires one active SIM and permission to call and check SIMs.</string>

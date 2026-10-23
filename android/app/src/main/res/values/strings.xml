@@ -54,7 +54,7 @@
     <string name="settings_section_preferences">Preferencias</string>
     <string name="settings_theme_title">Personalización</string>
     <string name="settings_theme_description">Elige el estilo visual de tu app.</string>
-    <string name="settings_theme_llama">Nido</string>
+    <string name="settings_theme_llama">SamUI</string>
     <string name="settings_theme_inspired_samsung">Inspirado en Samsung One UI</string>
     <string name="settings_dial_mode_prefill">Abre el marcador con el número escrito y tú confirmas la llamada.</string>
     <string name="settings_dial_mode_direct">Inicia la llamada desde Llama con 99 al tocar el contacto. Requiere una sola SIM activa y permisos para llamar y comprobar las SIM.</string>
