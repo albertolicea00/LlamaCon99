@@ -162,6 +162,7 @@ fun SettingsScreen(
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${context.packageName}"),
             )) },
             onCheckUpdate = onCheckUpdate,
+            onTestCallerId = viewModel::testCallerId,
             onLegalLinks = { showLegalDialog = true },
         ),
         overlays = {
@@ -196,6 +197,7 @@ internal data class SettingsActions(
     val onMonitorPermissions: () -> Unit,
     val onOverlayPermissions: () -> Unit,
     val onCheckUpdate: () -> Unit,
+    val onTestCallerId: () -> Unit,
     val onLegalLinks: () -> Unit,
 )
 
@@ -317,6 +319,21 @@ internal fun SettingsContent(
                     colors = settingsRowColors(),
                     modifier = Modifier.clickable(enabled = !isCheckingUpdate) { actions.onCheckUpdate() },
                 )
+                if (uiState.callMonitorEnabled) {
+                    GroupDivider()
+                    SettingsRow(
+                        headlineContent = { Text(stringResource(R.string.settings_test_caller_id)) },
+                        supportingContent = {
+                            Text(stringResource(
+                                if (uiState.canShowCallerIdOverlay) R.string.settings_test_caller_id_overlay
+                                else R.string.settings_test_caller_id_notification,
+                            ))
+                        },
+                        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
+                        colors = settingsRowColors(),
+                        modifier = Modifier.clickable { actions.onTestCallerId() },
+                    )
+                }
                 GroupDivider()
                 SettingsRow(
                     headlineContent = { Text(stringResource(R.string.settings_app_version)) },

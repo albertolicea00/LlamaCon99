@@ -57,7 +57,7 @@ class ThemePreviewActivity : ComponentActivity() {
                                 onAnonymousSwipe = { preferenceState = preferenceState.copy(anonymousSwipeEnabled = it) },
                                 onCallMonitor = { preferenceState = preferenceState.copy(callMonitorEnabled = it) },
                                 onMonitorFromBoot = { preferenceState = preferenceState.copy(monitorFromBootEnabled = it) },
-                                onMonitorPermissions = {}, onOverlayPermissions = {}, onCheckUpdate = {}, onLegalLinks = {},
+                                onMonitorPermissions = {}, onOverlayPermissions = {}, onCheckUpdate = {}, onTestCallerId = {}, onLegalLinks = {},
                             ),
                             overlays = {
                                 if (showThemePicker) ThemePickerSheet(selectedTheme,

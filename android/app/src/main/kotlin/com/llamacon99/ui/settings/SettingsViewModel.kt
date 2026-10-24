@@ -13,6 +13,8 @@ import androidx.lifecycle.viewModelScope
 import com.llamacon99.data.SimRepository
 import com.llamacon99.data.SettingsRepository
 import com.llamacon99.R
+import com.llamacon99.monitor.CallerIdNotifier
+import com.llamacon99.monitor.CallerIdOverlay
 import com.llamacon99.monitor.CallMonitorService
 import com.llamacon99.ui.theme.AppThemeCatalog
 import com.llamacon99.ui.theme.AppThemeDefinition
@@ -43,6 +45,8 @@ class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository,
     private val simRepository: SimRepository,
+    private val callerIdNotifier: CallerIdNotifier,
+    private val callerIdOverlay: CallerIdOverlay,
 ) : ViewModel() {
 
     private val permissionsRefreshTrigger = MutableStateFlow(0)
@@ -123,6 +127,17 @@ class SettingsViewModel @Inject constructor(
 
     fun setMonitorFromBootEnabled(enabled: Boolean) {
         viewModelScope.launch { settingsRepository.setMonitorFromBootEnabled(enabled) }
+    }
+
+    fun testCallerId() {
+        val name = context.getString(R.string.caller_id_test_name)
+        val number = "55123456"
+        callerIdNotifier.ensureChannels()
+        if (callerIdOverlay.canShow()) {
+            callerIdOverlay.show(name, number)
+        } else {
+            callerIdNotifier.showIncomingCallBanner(name, number)
+        }
     }
 
     private suspend fun monitorStartFailed(error: Exception) {

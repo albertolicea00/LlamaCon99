@@ -152,9 +152,13 @@ class CallMonitorService : Service() {
             Log.d(TAG, "Contact lookup complete: matched=${contactName != null}")
             val name = contactName ?: getString(R.string.caller_id_unknown_contact)
             if (hasRequiredPermissions(this@CallMonitorService)) {
-                notifier.showIncomingCallBanner(name, localNumber)
-                Log.i(TAG, "Caller ID notification posted")
-                overlay.show(name, localNumber)
+                if (overlay.canShow()) {
+                    overlay.show(name, localNumber)
+                    Log.i(TAG, "Caller ID overlay shown")
+                } else {
+                    notifier.showIncomingCallBanner(name, localNumber)
+                    Log.i(TAG, "Caller ID notification posted (overlay unavailable)")
+                }
             } else {
                 Log.w(TAG, "Caller ID display skipped: required permissions missing")
             }

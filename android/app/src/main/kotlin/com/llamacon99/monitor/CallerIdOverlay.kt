@@ -33,9 +33,11 @@ class CallerIdOverlay @Inject constructor(
     private var card: View? = null
     private val timeout = Runnable { dismiss() }
 
+    fun canShow(): Boolean = Settings.canDrawOverlays(context)
+
     fun show(name: String, localNumber: String) {
         dismiss()
-        if (!Settings.canDrawOverlays(context)) {
+        if (!canShow()) {
             Log.i("CallerIdOverlay", "Floating card skipped: display-over-other-apps permission missing")
             return
         }

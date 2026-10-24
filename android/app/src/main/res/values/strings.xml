@@ -89,6 +89,10 @@
     <string name="settings_monitor_from_boot_subtitle">Reinicia el monitoreo automáticamente después de apagar y encender el teléfono</string>
     <string name="settings_section_about">Acerca de</string>
     <string name="settings_check_updates">Buscar actualizaciones</string>
+    <string name="settings_test_caller_id">Probar identificador de llamadas</string>
+    <string name="settings_test_caller_id_overlay">Muestra la tarjeta flotante</string>
+    <string name="settings_test_caller_id_notification">Muestra una notificación</string>
+    <string name="caller_id_test_name">Contacto de prueba</string>
     <string name="settings_app_version">Versión de la app</string>
     <string name="settings_legal_links">Información legal</string>
     <string name="settings_privacy_policy">Política de privacidad</string>
