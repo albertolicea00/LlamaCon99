@@ -57,6 +57,13 @@ internal fun ContactsScrollControls(
     var showControls by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val view = LocalView.current
+    var previousLetter by remember { mutableStateOf("") }
+    LaunchedEffect(currentLetter) {
+        if (isScrolling && currentLetter.isNotEmpty() && currentLetter != previousLetter) {
+            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+        }
+        previousLetter = currentLetter
+    }
     LaunchedEffect(hasScrolled, isScrolling) {
         showControls = hasScrolled
         if (hasScrolled && !isScrolling) {

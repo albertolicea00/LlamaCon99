@@ -395,6 +395,21 @@ private fun ProfileContactList(
     val theme = LocalAppTheme.current
     val apple = theme.style == ThemeStyle.APPLE
     val indexed = theme.style in setOf(ThemeStyle.APPLE, ThemeStyle.HORIZON, ThemeStyle.HYPER, ThemeStyle.MONO)
+    val view = LocalView.current
+    val sections = remember(state.groups) {
+        var idx = 1
+        state.groups.map { g -> (idx to g.letter).also { idx += g.contacts.size + 1 } }
+    }
+    val currentLetter by remember(listState, sections) {
+        derivedStateOf { sections.lastOrNull { it.first <= listState.firstVisibleItemIndex }?.second.orEmpty() }
+    }
+    var prevLetter by remember { mutableStateOf("") }
+    LaunchedEffect(currentLetter) {
+        if (listState.isScrollInProgress && currentLetter.isNotEmpty() && currentLetter != prevLetter) {
+            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+        }
+        prevLetter = currentLetter
+    }
     Box(modifier) {
         LazyColumn(
             state = listState,
