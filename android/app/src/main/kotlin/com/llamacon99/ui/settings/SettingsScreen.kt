@@ -367,29 +367,20 @@ internal fun ThemePickerSheet(
             contentPadding = PaddingValues(bottom = 24.dp),
         ) {
             item {
-                Text(stringResource(R.string.settings_theme_title), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(horizontal = 24.dp))
-                Text(stringResource(R.string.settings_theme_description), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 6.dp, bottom = 16.dp))
+                SettingsSheetTitle(
+                    title = stringResource(R.string.settings_theme_title),
+                    subtitle = stringResource(R.string.settings_theme_description),
+                )
             }
             items(AppThemeCatalog.themes, key = { it.id }) { theme ->
                 LlamaCon99Theme(darkTheme = dark, appTheme = theme) {
-                    Surface(
-                        onClick = { onSelect(theme) },
+                    SettingsModalOption(
+                        title = stringResource(theme.nameRes),
+                        subtitle = stringResource(theme.inspirationRes),
                         selected = theme.id == selected.id,
-                        shape = MaterialTheme.shapes.medium,
-                        color = MaterialTheme.colorScheme.surfaceContainerLow,
-                        border = BorderStroke(if (theme.id == selected.id) 2.dp else 0.5.dp,
-                            if (theme.id == selected.id) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp).fillMaxWidth(),
-                    ) {
-                        SettingsRow(
-                            headlineContent = { Text(stringResource(theme.nameRes), style = MaterialTheme.typography.titleMedium) },
-                            supportingContent = { Text(stringResource(theme.inspirationRes)) },
-                            trailingContent = {
-                                if (theme.id == selected.id) Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                            },
-                            colors = settingsRowColors(),
-                        )
-                    }
+                        onClick = { onSelect(theme) },
+                        index = AppThemeCatalog.themes.indexOf(theme),
+                    )
                 }
             }
         }
@@ -485,35 +476,21 @@ private fun DialModeSelector(selected: SettingsRepository.DialMode, isDualSim: B
             sheetState = sheetState,
         ) {
             Column(modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp)) {
-                Text(stringResource(R.string.settings_dial_mode_title), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(horizontal = 24.dp))
-                Text(
-                    stringResource(if (isDualSim) R.string.settings_dual_sim_body else R.string.settings_dial_mode_sheet_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (isDualSim) warningTextColor() else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 6.dp, bottom = 16.dp),
+                SettingsSheetTitle(
+                    title = stringResource(R.string.settings_dial_mode_title),
+                    subtitle = stringResource(if (isDualSim) R.string.settings_dual_sim_body else R.string.settings_dial_mode_sheet_description),
+                    subtitleColor = if (isDualSim) warningTextColor() else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 listOf(SettingsRepository.DialMode.PREFILL, SettingsRepository.DialMode.DIRECT).forEachIndexed { index, mode ->
-                    if (index > 0) GroupDivider()
                     val prefill = mode == SettingsRepository.DialMode.PREFILL
                     val enabled = prefill || !isDualSim
-                    SettingsRow(
-                        headlineContent = {
-                            Text(
-                                stringResource(if (prefill) R.string.settings_dial_mode_prefill_short else R.string.settings_dial_mode_direct_short),
-                                color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-                            )
-                        },
-                        supportingContent = {
-                            Text(
-                                stringResource(if (prefill) R.string.settings_dial_mode_prefill else R.string.settings_dial_mode_direct),
-                                color = if (enabled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-                            )
-                        },
-                        trailingContent = {
-                            if (mode == selected) Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                        },
-                        colors = settingsRowColors(),
-                        modifier = Modifier.fillMaxWidth().clickable(enabled = enabled) {
+                    SettingsModalOption(
+                        title = stringResource(if (prefill) R.string.settings_dial_mode_prefill_short else R.string.settings_dial_mode_direct_short),
+                        subtitle = stringResource(if (prefill) R.string.settings_dial_mode_prefill else R.string.settings_dial_mode_direct),
+                        selected = mode == selected,
+                        index = index,
+                        enabled = enabled,
+                        onClick = {
                             scope.launch {
                                 sheetState.hide()
                                 showSheet = false
@@ -589,40 +566,23 @@ private fun LegalLinksSheet(onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
         sheetState = sheetState,
     ) {
-        Text(
-            text = stringResource(R.string.settings_legal_links),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-        )
-        SettingsRow(
-            headlineContent = { Text(stringResource(R.string.settings_privacy_policy)) },
-            trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-            modifier = Modifier.clickable {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://llama99.vercel.app/privacy")))
-                onDismiss()
-            },
-        )
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
-        SettingsRow(
-            headlineContent = { Text(stringResource(R.string.settings_terms)) },
-            trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-            modifier = Modifier.clickable {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://llama99.vercel.app/terms")))
-                onDismiss()
-            },
-        )
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
-        SettingsRow(
-            headlineContent = { Text(stringResource(R.string.settings_eula)) },
-            trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-            modifier = Modifier.clickable {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://llama99.vercel.app/eula")))
-                onDismiss()
-            },
-        )
+        SettingsSheetTitle(title = stringResource(R.string.settings_legal_links))
+        listOf(
+            R.string.settings_privacy_policy to "https://llama99.vercel.app/privacy",
+            R.string.settings_terms to "https://llama99.vercel.app/terms",
+            R.string.settings_eula to "https://llama99.vercel.app/eula",
+        ).forEachIndexed { index, (label, url) ->
+            SettingsModalOption(
+                title = stringResource(label),
+                selected = false,
+                onClick = {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    onDismiss()
+                },
+                index = index,
+                chevron = true,
+            )
+        }
         Spacer(modifier = Modifier.navigationBarsPadding())
     }
 }

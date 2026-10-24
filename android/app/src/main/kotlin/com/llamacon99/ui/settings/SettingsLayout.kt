@@ -151,7 +151,11 @@ internal fun SettingsLayout(onBack: () -> Unit, overlays: @Composable () -> Unit
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.settings_back))
                             }
                             AnimatedVisibility(collapsed) {
-                                Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.titleLarge)
+                                if (style == ThemeStyle.MONO) {
+                                    DotMatrixHeading(stringResource(R.string.settings_title), Modifier.padding(start = 8.dp))
+                                } else {
+                                    Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.titleLarge)
+                                }
                             }
                         }
                     }
