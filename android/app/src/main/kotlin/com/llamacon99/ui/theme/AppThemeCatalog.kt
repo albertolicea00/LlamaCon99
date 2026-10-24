@@ -62,8 +62,8 @@ object AppThemeCatalog {
             contacts = ContactComponents(groupCorner = 36.dp, groupInset = 24.dp, contentInset = 16.dp, rowMinHeight = 64.dp, avatarSize = 38.dp, avatarGap = 12.dp),
             search = SearchComponent(Alignment.BottomCenter, PaddingValues(horizontal = 24.dp, vertical = 4.dp), 8.dp, 104.dp, 50.dp, 56.dp, 8.dp),
             scrollbar = ScrollbarComponent(12.dp, 6.dp, true, PaddingValues(top = 64.dp, end = 6.dp, bottom = 80.dp), 32.dp),
-            titleTopInset = 64.dp,
-            titleBottomInset = 32.dp,
+            titleTopInset = 12.dp,
+            titleBottomInset = 20.dp,
         ),
         AppThemeDefinition(
             id = "manzana", nameRes = R.string.settings_theme_manzana, inspirationRes = R.string.settings_theme_inspired_apple,
