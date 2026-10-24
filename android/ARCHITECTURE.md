@@ -117,8 +117,8 @@ CallMonitorService (foreground)
   -> listens for ringing state and incoming number
   -> CallerIdMatcher.unwrap()
   -> CallerIdLookup.nameFor() queries live Contacts, then the cached CallerIdStore
-  -> CallerIdNotifier.showIncomingCallBanner(contact name or unsaved label, real number)
   -> CallerIdOverlay.show() if display-over-other-apps permission is granted
+  -> CallerIdNotifier.showIncomingCallBanner() otherwise (overlay and notification are mutually exclusive)
 ```
 
 Unlike iOS, Android has no separate Call Directory Extension or App Group boundary here: the
@@ -134,17 +134,17 @@ no matching contact still shows its real number. For `99535370241399`, remove on
 prefix and `99` suffix: the local number is `53702413` (international `+53 53702413`). Do not strip
 another `53` from a local number that happens to begin with those digits.
 
-Heads-up notification display depends on Android and channel settings; posting a notification
-does not guarantee that it appears over the system dialer. Settings > Show over the call opens
-the optional `SYSTEM_ALERT_WINDOW` permission screen. When granted, `CallerIdOverlay` shows a
-small dismissible name/number card while ringing. It does not change the system dialer's number
-or cover the answer/hang-up controls. Secure system screens may suppress overlays. Both the
-notification and overlay are cleared when ringing ends or the service stops; the card also has
-a two-minute safety timeout. Duplicate updates for the same ringing number do not repost it.
+The overlay and notification are mutually exclusive: when `SYSTEM_ALERT_WINDOW` is granted,
+`CallerIdOverlay` shows a dismissible name/number card while ringing and no notification is
+posted. Without the overlay permission, a heads-up notification is shown instead. Settings
+exposes the overlay permission row so users can grant or check it. The overlay has a two-minute
+safety timeout for real calls; the test button in Settings uses a 22-second auto-dismiss.
+Both are cleared when ringing ends or the service stops. Duplicate updates for the same
+ringing number do not repost. The overlay does not change the system dialer's number or cover
+the answer/hang-up controls. Secure system screens may suppress overlays.
 
-`BootCompletedReceiver` receives boot events and checks both saved opt-ins (“monitor calls” and
-“monitor from boot”) and the required permissions before restarting the
-service. If the service cannot start, the ViewModel/service logs the failure, clears the enabled
+`BootCompletedReceiver` receives boot events and checks the saved caller-ID opt-in
+and the required permissions before restarting the service. If the service cannot start, the ViewModel/service logs the failure, clears the enabled
 setting, and reports the problem to the user.
 
 ## Screens, preferences, and themes
@@ -152,7 +152,7 @@ setting, and reports the problem to the user.
 `NavGraph.kt` has two destinations: `contacts` and `settings`. The welcome reminder is a bottom sheet
 over the contacts destination; it appears on first launch and weekly while monitoring remains off.
 Settings includes dialing behavior, anonymous swipe, caller-ID monitoring and its permissions,
-monitor-on-boot, appearance, update checking, app version, and legal links. Theme and dial-mode
+a test-caller-ID button, appearance, update checking, app version, and legal links. Theme and dial-mode
 choices use bottom sheets implemented in `SettingsScreen.kt`.
 
 `AppThemeCatalog` is the registry for appearance profiles. Each profile defines a stable ID,
