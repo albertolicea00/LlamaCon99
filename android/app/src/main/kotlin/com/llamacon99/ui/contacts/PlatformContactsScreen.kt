@@ -75,7 +75,7 @@ internal fun PlatformContactsScreen(
         ThemeStyle.APPLE -> AppleContactsLayout(listState, uiState.groups, search, list, onOpenSettings, scrollToTop)
         ThemeStyle.MATERIAL -> PixelContactsLayout(listState, search, list, onOpenSettings, scrollToTop)
         ThemeStyle.HORIZON -> HorizonContactsLayout(search, list, onOpenSettings, scrollToTop)
-        ThemeStyle.HYPER -> HyperContactsLayout(search, list, onOpenSettings, scrollToTop)
+        ThemeStyle.HYPER -> HyperContactsLayout(listState, search, list, onOpenSettings, scrollToTop)
         ThemeStyle.MONO -> MonoContactsLayout(search, list, onOpenSettings, scrollToTop)
         ThemeStyle.FLUENT -> FluentContactsLayout(listState, search, list, onOpenSettings, scrollToTop)
         ThemeStyle.BRAND -> error("SamUI uses its one-handed contacts layout")
@@ -159,6 +159,7 @@ private fun HorizonContactsLayout(
 
 @Composable
 private fun HyperContactsLayout(
+    listState: LazyListState,
     search: @Composable (Modifier) -> Unit,
     list: @Composable (Modifier) -> Unit,
     onSettings: () -> Unit,
@@ -167,7 +168,10 @@ private fun HyperContactsLayout(
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
         ScreenHeading(onSettings = onSettings, overflow = true, onTitleClick = scrollToTop)
         search(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp))
-        list(Modifier.weight(1f).fillMaxWidth())
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            list(Modifier.fillMaxSize())
+            PlatformGoTopButton(listState, scrollToTop, Modifier.align(Alignment.BottomCenter).padding(16.dp))
+        }
     }
 }
 
@@ -280,6 +284,16 @@ private fun PlatformGoTopButton(listState: LazyListState, scrollToTop: () -> Uni
                 Spacer(Modifier.width(8.dp))
                 Text(stringResource(R.string.contacts_list_go_top))
             }
+        } else if (style == ThemeStyle.HYPER) {
+            ExtendedFloatingActionButton(
+                onClick = scrollToTop,
+                icon = { Icon(painterResource(R.drawable.ic_md_keyboard_double_arrow_up), null) },
+                text = { Text(stringResource(R.string.contacts_list_go_top)) },
+                shape = RoundedCornerShape(18.dp),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.68f),
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 3.dp, pressedElevation = 5.dp),
+            )
         } else {
             ExtendedFloatingActionButton(
                 onClick = scrollToTop,
