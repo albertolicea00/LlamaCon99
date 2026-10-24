@@ -50,9 +50,11 @@ fun ContactAvatar(
 ) {
     val palette = LocalAppTheme.current.style
     val monochrome = palette == ThemeStyle.MONO
+    val material = palette == ThemeStyle.MATERIAL
     val colors = MaterialTheme.colorScheme
     val avatarColors = when {
         monochrome -> listOf(colors.onSurface, colors.onSurface)
+        material -> listOf(Color(0xFFD5F5D9), Color(0xFFB9EFC0))
         palette == ThemeStyle.BRAND -> listOf(colorForName(name).copy(alpha = 0.65f), colorForName(name))
         else -> listOf(colors.primaryContainer, colors.secondaryContainer)
     }
@@ -77,9 +79,10 @@ fun ContactAvatar(
             )
         } else {
             Text(
-                text = initialsForName(name),
+                text = if (material) name.trim().firstOrNull()?.uppercaseChar()?.toString().orEmpty() else initialsForName(name),
                 color = when {
                     monochrome -> colors.surface
+                    material -> Color(0xFF17451F)
                     palette == ThemeStyle.BRAND -> Color.White
                     else -> colors.onPrimaryContainer
                 },

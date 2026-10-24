@@ -1,11 +1,13 @@
 package com.llamacon99.ui.settings
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,9 +25,33 @@ internal fun SettingsRow(
     colors: ListItemColors = ListItemDefaults.colors(containerColor = androidx.compose.ui.graphics.Color.Transparent),
 ) {
     val style = LocalAppTheme.current.style
-    if (style == ThemeStyle.MATERIAL || style == ThemeStyle.HORIZON) {
-        ListItem(headlineContent = headlineContent, supportingContent = supportingContent,
-            leadingContent = leadingContent, trailingContent = trailingContent, colors = colors, modifier = modifier)
+    if (style == ThemeStyle.MATERIAL) {
+        val cardShape = RoundedCornerShape(12.dp)
+        Surface(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp).clip(cardShape).then(modifier),
+            shape = cardShape,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) {
+            ListItem(
+                headlineContent = headlineContent,
+                supportingContent = supportingContent,
+                leadingContent = leadingContent,
+                trailingContent = trailingContent,
+                colors = colors,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        return
+    }
+    if (style == ThemeStyle.HORIZON) {
+        ListItem(
+            headlineContent = headlineContent,
+            supportingContent = supportingContent,
+            leadingContent = leadingContent,
+            trailingContent = trailingContent,
+            colors = colors,
+            modifier = modifier,
+        )
         return
     }
     val compact = style == ThemeStyle.APPLE || style == ThemeStyle.FLUENT || style == ThemeStyle.HYPER

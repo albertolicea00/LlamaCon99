@@ -394,25 +394,38 @@ private fun ProfileContactList(
                         MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.background)
                         .padding(start = if (apple) 20.dp else 24.dp, end = 36.dp, top = if (apple) 4.dp else 12.dp, bottom = 4.dp),
                         verticalAlignment = Alignment.CenterVertically) {
-                        Text(group.letter, style = MaterialTheme.typography.labelLarge,
+                        Text(group.letter, style = if (theme.style == ThemeStyle.MATERIAL)
+                            MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.semantics { heading() })
                         if (apple || theme.style == ThemeStyle.FLUENT) HorizontalDivider(
                             Modifier.weight(1f).padding(start = 8.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
                     }
                 }
                 itemsIndexed(group.contacts, key = { _, row -> row.id }) { index, entry ->
-                    val materialRows = theme.style == ThemeStyle.MATERIAL || theme.style == ThemeStyle.HORIZON
-                    val shape = RoundedCornerShape(0.dp)
-                    val cardInset = 0.dp
-                    val background = if (theme.style == ThemeStyle.FLUENT) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.background
+                    val materialRows = theme.style == ThemeStyle.MATERIAL
+                    val horizon = theme.style == ThemeStyle.HORIZON
+                    val shape = RoundedCornerShape(if (materialRows) 6.dp else 0.dp)
+                    val cardInset = if (materialRows) 14.dp else 0.dp
+                    val rowBackground = when {
+                        materialRows -> MaterialTheme.colorScheme.surfaceContainerLow
+                        theme.style == ThemeStyle.FLUENT -> MaterialTheme.colorScheme.surfaceContainerLow
+                        else -> MaterialTheme.colorScheme.background
+                    }
                     SwipeableContactRow(
                         state.anonymousSwipeEnabled, { onAnonymous(entry.phoneNumber.number) },
-                        Modifier.padding(start = cardInset, end = if (indexed) 28.dp else cardInset).fillMaxWidth().clip(shape).background(background),
+                        Modifier.padding(start = cardInset, end = if (indexed) 28.dp else cardInset)
+                            .padding(vertical = if (materialRows) 2.dp else 0.dp)
+                            .fillMaxWidth().clip(shape).background(rowBackground),
                     ) {
-                        Column(Modifier.background(background)) {
+                        Column(Modifier.background(rowBackground)) {
                             PlatformContactRow(entry, { onDial(entry.phoneNumber.number) })
-                            if (index != group.contacts.lastIndex && !materialRows && theme.style != ThemeStyle.MONO) {
-                                HorizontalDivider(Modifier.padding(start = if (apple) 20.dp else 72.dp, end = 12.dp),
+                            if (index != group.contacts.lastIndex && (horizon || (!materialRows && theme.style != ThemeStyle.MONO))) {
+                                val dividerStart = when {
+                                    apple -> 20.dp
+                                    horizon -> 60.dp
+                                    else -> 72.dp
+                                }
+                                HorizontalDivider(Modifier.padding(start = dividerStart, end = 12.dp),
                                     thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
                             }
                         }

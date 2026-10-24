@@ -77,8 +77,8 @@ object AppThemeCatalog {
         AppThemeDefinition(
             id = "material", nameRes = R.string.settings_theme_material, inspirationRes = R.string.settings_theme_inspired_google,
             shapes = themeShapes(24),
-            contacts = ContactComponents(0.dp, 0.dp, 16.dp, 72.dp, 40.dp, 16.dp),
-            search = topSearch(inset = 16, corner = 32, height = 56),
+            contacts = ContactComponents(0.dp, 0.dp, 12.dp, 56.dp, 36.dp, 12.dp),
+            search = topSearch(inset = 16, corner = 6, height = 56),
             scrollbar = compactScrollbar(),
             style = ThemeStyle.MATERIAL, typography = MaterialTypography,
             titleTopInset = 32.dp, titleBottomInset = 28.dp, settingsInset = 16.dp,
