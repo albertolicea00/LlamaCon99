@@ -56,7 +56,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -75,7 +74,6 @@ import com.llamacon99.service.UpdateInfo
 import com.llamacon99.ui.theme.AppThemeCatalog
 import com.llamacon99.ui.theme.AppThemeDefinition
 import com.llamacon99.ui.theme.LocalAppTheme
-import com.llamacon99.ui.theme.LlamaCon99Theme
 import com.llamacon99.ui.theme.warningTextColor
 import com.llamacon99.ui.theme.ThemeStyle
 import com.llamacon99.ui.components.UpdateAvailableDialog
@@ -360,7 +358,6 @@ internal fun ThemePickerSheet(
     onSelect: (AppThemeDefinition) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     SettingsSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth().heightIn(max = 640.dp).navigationBarsPadding(),
@@ -373,15 +370,13 @@ internal fun ThemePickerSheet(
                 )
             }
             items(AppThemeCatalog.themes, key = { it.id }) { theme ->
-                LlamaCon99Theme(darkTheme = dark, appTheme = theme) {
-                    SettingsModalOption(
-                        title = stringResource(theme.nameRes),
-                        subtitle = stringResource(theme.inspirationRes),
-                        selected = theme.id == selected.id,
-                        onClick = { onSelect(theme) },
-                        index = AppThemeCatalog.themes.indexOf(theme),
-                    )
-                }
+                SettingsModalOption(
+                    title = stringResource(theme.nameRes),
+                    subtitle = stringResource(theme.inspirationRes),
+                    selected = theme.id == selected.id,
+                    onClick = { onSelect(theme) },
+                    index = AppThemeCatalog.themes.indexOf(theme),
+                )
             }
         }
     }
