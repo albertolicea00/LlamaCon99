@@ -90,7 +90,7 @@ object AppThemeCatalog {
             search = topSearch(inset = 16, corner = 24),
             scrollbar = compactScrollbar(),
             style = ThemeStyle.HORIZON, typography = HorizonTypography,
-            titleTopInset = 24.dp, settingsInset = 20.dp,
+            titleTopInset = 24.dp, settingsInset = 16.dp,
         ),
         AppThemeDefinition(
             id = "hyper", nameRes = R.string.settings_theme_hyper, inspirationRes = R.string.settings_theme_inspired_xiaomi,

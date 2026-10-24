@@ -23,7 +23,7 @@ internal fun SettingsRow(
     colors: ListItemColors = ListItemDefaults.colors(containerColor = androidx.compose.ui.graphics.Color.Transparent),
 ) {
     val style = LocalAppTheme.current.style
-    if (style == ThemeStyle.MATERIAL) {
+    if (style == ThemeStyle.MATERIAL || style == ThemeStyle.HORIZON) {
         ListItem(headlineContent = headlineContent, supportingContent = supportingContent,
             leadingContent = leadingContent, trailingContent = trailingContent, colors = colors, modifier = modifier)
         return

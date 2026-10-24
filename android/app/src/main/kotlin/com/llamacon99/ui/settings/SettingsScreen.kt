@@ -209,6 +209,7 @@ internal fun SettingsContent(
     updateStatus: String? = null,
     overlays: @Composable () -> Unit = {},
 ) {
+    val renderSettings: @Composable () -> Unit = {
     SettingsLayout(onBack = onBack, overlays = overlays) {
         item { SectionHeader(stringResource(R.string.settings_section_preferences)) }
         item {
@@ -337,12 +338,22 @@ internal fun SettingsContent(
             }
         }
     }
+    }
+    if (appTheme.style == ThemeStyle.HORIZON) {
+        val materialProfile = AppThemeCatalog.find("material")
+        val colors = MaterialTheme.colorScheme
+        MaterialTheme(colorScheme = colors, typography = materialProfile.typography, shapes = materialProfile.shapes) {
+            renderSettings()
+        }
+    } else {
+        renderSettings()
+    }
 }
 
 
 @Composable
 private fun ThemeSelector(selected: AppThemeDefinition, onClick: () -> Unit) {
-    val inlineValue = LocalAppTheme.current.style in setOf(ThemeStyle.APPLE, ThemeStyle.HORIZON, ThemeStyle.HYPER, ThemeStyle.FLUENT)
+    val inlineValue = LocalAppTheme.current.style in setOf(ThemeStyle.APPLE, ThemeStyle.HYPER, ThemeStyle.FLUENT)
     SettingsRow(
         headlineContent = { Text(stringResource(R.string.settings_theme_title)) },
         supportingContent = if (inlineValue) null else { { Text(stringResource(selected.nameRes), color = MaterialTheme.colorScheme.primary) } },
@@ -393,7 +404,7 @@ private fun SettingsGroup(content: @Composable ColumnScope.() -> Unit) {
         }
         return
     }
-    if (theme.style == ThemeStyle.MATERIAL) {
+    if (theme.style == ThemeStyle.MATERIAL || theme.style == ThemeStyle.HORIZON) {
         Column(groupModifier.padding(vertical = 4.dp), content = content)
         return
     }
@@ -419,24 +430,16 @@ private fun SettingsGroup(content: @Composable ColumnScope.() -> Unit) {
 private fun SectionHeader(text: String) {
     val style = LocalAppTheme.current.style
     val apple = style == ThemeStyle.APPLE
-    if (style == ThemeStyle.MATERIAL) {
-        Surface(
-            modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth().padding(top = 24.dp, bottom = 8.dp),
-            shape = MaterialTheme.shapes.small,
-            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.48f),
-        ) {
-            Row(
-                Modifier.fillMaxWidth().heightIn(min = 44.dp).padding(horizontal = 14.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(Modifier.width(4.dp).height(20.dp).background(MaterialTheme.colorScheme.primary, RoundedCornerShape(2.dp)))
-                Spacer(Modifier.width(12.dp))
-                Text(
-                    text.uppercase(),
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            }
+    if (style == ThemeStyle.MATERIAL || style == ThemeStyle.HORIZON) {
+        Column(Modifier.widthIn(max = 560.dp).fillMaxWidth().padding(top = 24.dp, bottom = 8.dp)) {
+            Text(
+                text,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+            Spacer(Modifier.height(12.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.75f))
         }
         return
     }
@@ -457,7 +460,7 @@ private fun SectionHeader(text: String) {
 @Composable
 private fun GroupDivider() {
     val style = LocalAppTheme.current.style
-    if (style == ThemeStyle.MATERIAL) return
+    if (style == ThemeStyle.MATERIAL || style == ThemeStyle.HORIZON) return
     HorizontalDivider(
         modifier = Modifier.padding(horizontal = 16.dp),
         thickness = if (style == ThemeStyle.MONO) 1.dp else 0.5.dp,
@@ -479,7 +482,7 @@ private fun DialModeSelector(selected: SettingsRepository.DialMode, isDualSim: B
     } else {
         R.string.settings_dial_mode_direct_short
     }
-    val inlineValue = LocalAppTheme.current.style in setOf(ThemeStyle.APPLE, ThemeStyle.HORIZON, ThemeStyle.HYPER, ThemeStyle.FLUENT)
+    val inlineValue = LocalAppTheme.current.style in setOf(ThemeStyle.APPLE, ThemeStyle.HYPER, ThemeStyle.FLUENT)
     SettingsRow(
         headlineContent = { Text(stringResource(R.string.settings_dial_mode_title)) },
         supportingContent = if (inlineValue) null else { { Text(stringResource(selectedLabel), color = MaterialTheme.colorScheme.primary) } },
@@ -534,7 +537,7 @@ private fun ToggleRow(title: String, subtitle: String, checked: Boolean, onCheck
 
 @Composable
 private fun SelectionAccessory() {
-    Icon(if (LocalAppTheme.current.style in setOf(ThemeStyle.APPLE, ThemeStyle.HORIZON, ThemeStyle.HYPER)) Icons.AutoMirrored.Filled.KeyboardArrowRight else Icons.Filled.KeyboardArrowDown,
+    Icon(if (LocalAppTheme.current.style in setOf(ThemeStyle.APPLE, ThemeStyle.HYPER)) Icons.AutoMirrored.Filled.KeyboardArrowRight else Icons.Filled.KeyboardArrowDown,
         contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
@@ -552,7 +555,7 @@ private fun PreferenceValue(value: String) {
 @Composable
 private fun ProfileToggle(checked: Boolean) {
     val style = LocalAppTheme.current.style
-    if (style == ThemeStyle.MATERIAL) {
+    if (style == ThemeStyle.MATERIAL || style == ThemeStyle.HORIZON) {
         Switch(checked = checked, onCheckedChange = null)
         return
     }

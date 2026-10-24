@@ -35,7 +35,6 @@ internal fun SettingsSheet(
         ThemeStyle.MONO -> 0.dp
         ThemeStyle.FLUENT -> 8.dp
         ThemeStyle.APPLE -> 32.dp
-        ThemeStyle.HORIZON -> 24.dp
         ThemeStyle.HYPER -> 20.dp
         else -> 28.dp
     }
@@ -63,7 +62,7 @@ internal fun SettingsSheet(
             Column(
                 Modifier.fillMaxWidth()
                     .background(background, shape)
-                    .then(if (style == ThemeStyle.MONO || style == ThemeStyle.FLUENT || style == ThemeStyle.HORIZON)
+                        .then(if (style == ThemeStyle.MONO || style == ThemeStyle.FLUENT)
                         Modifier.border(
                             BorderStroke(if (style == ThemeStyle.MONO) 1.dp else 0.7.dp, borderColor.copy(alpha = 0.8f)), shape,
                         ) else Modifier),
@@ -113,7 +112,6 @@ internal fun SettingsSheetTitle(
                 title,
                 style = when (style) {
                     ThemeStyle.APPLE -> MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold)
-                    ThemeStyle.HORIZON -> MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold)
                     ThemeStyle.HYPER -> MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                     else -> MaterialTheme.typography.headlineSmall
                 },
@@ -146,14 +144,14 @@ internal fun SettingsModalOption(
         ThemeStyle.MONO -> RoundedCornerShape(0.dp)
         ThemeStyle.FLUENT -> RoundedCornerShape(4.dp)
         ThemeStyle.APPLE -> RoundedCornerShape(12.dp)
-        ThemeStyle.HORIZON -> RoundedCornerShape(20.dp)
+        ThemeStyle.HORIZON -> RoundedCornerShape(24.dp)
         ThemeStyle.HYPER -> RoundedCornerShape(18.dp)
         else -> RoundedCornerShape(24.dp)
     }
     val selectedBackground = when (style) {
         ThemeStyle.APPLE -> MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.62f)
         ThemeStyle.MATERIAL -> MaterialTheme.colorScheme.secondaryContainer
-        ThemeStyle.HORIZON -> MaterialTheme.colorScheme.surfaceContainerHigh
+        ThemeStyle.HORIZON -> MaterialTheme.colorScheme.secondaryContainer
         ThemeStyle.HYPER -> MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
         ThemeStyle.MONO -> MaterialTheme.colorScheme.onSurface
         ThemeStyle.FLUENT -> MaterialTheme.colorScheme.surfaceContainerLow
@@ -163,7 +161,7 @@ internal fun SettingsModalOption(
     val modifier = when (style) {
         ThemeStyle.APPLE -> Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 2.dp)
         ThemeStyle.MATERIAL -> Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 5.dp)
-        ThemeStyle.HORIZON -> Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 5.dp)
+        ThemeStyle.HORIZON -> Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 5.dp)
         ThemeStyle.HYPER -> Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 5.dp)
         ThemeStyle.MONO -> Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 3.dp)
         ThemeStyle.FLUENT -> Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 3.dp)
@@ -207,15 +205,6 @@ internal fun SettingsModalOption(
                 }
                 ModalOptionAccessory(selected, chevron, foreground)
             }
-            ThemeStyle.HORIZON -> Column(
-                Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 13.dp),
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold), color = foreground, modifier = Modifier.weight(1f))
-                    ModalOptionAccessory(selected, chevron, foreground)
-                }
-                subtitle?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 5.dp, end = 28.dp)) }
-            }
             ThemeStyle.HYPER -> Row(
                 Modifier.fillMaxWidth().heightIn(min = 66.dp).padding(horizontal = 14.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -228,7 +217,7 @@ internal fun SettingsModalOption(
                 }
                 ModalOptionAccessory(selected, chevron, foreground)
             }
-            ThemeStyle.MATERIAL -> ListItem(
+            ThemeStyle.MATERIAL, ThemeStyle.HORIZON -> ListItem(
                 headlineContent = { Text(title, fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal) },
                 supportingContent = subtitle?.let { { Text(it, maxLines = 2, overflow = TextOverflow.Ellipsis) } },
                 trailingContent = {

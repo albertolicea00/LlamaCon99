@@ -120,7 +120,7 @@ internal fun SettingsLayout(onBack: () -> Unit, overlays: @Composable () -> Unit
                             else Text(stringResource(R.string.settings_title),
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontSize = when (style) { ThemeStyle.BRAND -> 38.sp; ThemeStyle.APPLE -> 34.sp; else -> 30.sp },
-                                fontWeight = if (style == ThemeStyle.MATERIAL) FontWeight.Normal else FontWeight.Bold,
+                                fontWeight = if (style == ThemeStyle.MATERIAL || style == ThemeStyle.HORIZON) FontWeight.Normal else FontWeight.Bold,
                                 modifier = headingModifier.semantics { heading() })
                         }
                         content()
