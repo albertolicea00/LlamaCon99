@@ -8,6 +8,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -34,6 +35,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -45,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import com.llamacon99.R
 import com.llamacon99.ui.theme.LocalAppTheme
 import com.llamacon99.ui.theme.ThemeStyle
+import kotlinx.coroutines.launch
 
 /** Separate screen structures, sharing only contact data and actions. */
 @Composable
@@ -90,13 +93,16 @@ private fun AppleContactsLayout(
     scrollToTop: () -> Unit,
 ) {
     val collapsed by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    val titleInteraction = remember { MutableInteractionSource() }
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).imePadding()) {
         // The large title lives in the scrolling list; this compact title takes over after it leaves.
         Row(Modifier.fillMaxWidth().statusBarsPadding().heightIn(min = 48.dp).padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically) {
             AnimatedVisibility(collapsed, enter = fadeIn(), exit = fadeOut(), modifier = Modifier.weight(1f)) {
                 Text(stringResource(R.string.contacts_list_title), fontSize = 17.sp, fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp).clickable(onClick = scrollToTop), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    modifier = Modifier.padding(start = 8.dp).clickable(
+                        interactionSource = titleInteraction, indication = null, onClick = scrollToTop,
+                    ), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             if (!collapsed) Spacer(Modifier.weight(1f))
             IconButton(onClick = onSettings) {
@@ -241,14 +247,19 @@ private fun ScreenHeading(
     horizontalInset: Int = 20,
     onTitleClick: (() -> Unit)? = null,
 ) {
+    val titleInteraction = remember { MutableInteractionSource() }
     Row(Modifier.fillMaxWidth().padding(start = horizontalInset.dp, end = horizontalInset.dp, top = 12.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically) {
         if (LocalAppTheme.current.style == ThemeStyle.MONO) {
-            DotMatrixHeading(stringResource(R.string.contacts_list_title), Modifier.weight(1f).clickable(enabled = onTitleClick != null) { onTitleClick?.invoke() })
+            DotMatrixHeading(stringResource(R.string.contacts_list_title), Modifier.weight(1f).clickable(
+                enabled = onTitleClick != null, interactionSource = titleInteraction, indication = null,
+            ) { onTitleClick?.invoke() })
         } else {
         Text(stringResource(R.string.contacts_list_title), style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.weight(1f).semantics { heading() }
-                .clickable(enabled = onTitleClick != null) { onTitleClick?.invoke() }, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                .clickable(enabled = onTitleClick != null, interactionSource = titleInteraction, indication = null) {
+                    onTitleClick?.invoke()
+                }, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
         IconButton(onClick = onSettings) {
             Icon(if (overflow) Icons.Filled.MoreHoriz else Icons.Outlined.Settings, stringResource(R.string.settings_title))
