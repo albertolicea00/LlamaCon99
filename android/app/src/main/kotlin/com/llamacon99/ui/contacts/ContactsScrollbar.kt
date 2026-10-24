@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -100,6 +101,8 @@ internal fun ContactsScrollbar(
     val markerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
     val activeColor = MaterialTheme.colorScheme.primary
     val theme = LocalAppTheme.current
+    val bubbleColor = if (theme.style == ThemeStyle.MATERIAL) MaterialTheme.colorScheme.primaryContainer else activeColor
+    val bubbleContentColor = if (theme.style == ThemeStyle.MATERIAL) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onPrimary
     val density = LocalDensity.current
 
     Box(modifier) {
@@ -191,12 +194,15 @@ internal fun ContactsScrollbar(
                             )
                         }
                         .size(72.dp)
-                        .background(activeColor, RoundedCornerShape(36.dp, 36.dp, 8.dp, 36.dp)),
+                        .background(
+                            bubbleColor,
+                            if (theme.style == ThemeStyle.MATERIAL) CircleShape else RoundedCornerShape(36.dp, 36.dp, 8.dp, 36.dp),
+                        ),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = selectedLetter,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = bubbleContentColor,
                         fontSize = 36.sp,
                         fontWeight = FontWeight.Medium,
                     )
