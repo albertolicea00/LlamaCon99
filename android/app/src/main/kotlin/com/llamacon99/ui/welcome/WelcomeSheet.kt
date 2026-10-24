@@ -49,7 +49,10 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.compose.material3.ButtonDefaults
 import com.llamacon99.R
+import com.llamacon99.ui.theme.BrandGreen
+import com.llamacon99.ui.theme.OnBrandGreen
 
 private const val INTRO_STEP = 0
 private const val CONTACTS_STEP = 1
@@ -151,7 +154,7 @@ fun WelcomeSheet(
                 Text(
                     text = stringResource(R.string.welcome_setup_progress, step, OVERLAY_STEP),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = BrandGreen,
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                 )
@@ -190,6 +193,10 @@ fun WelcomeSheet(
                         }
                     }
                 },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = BrandGreen,
+                    contentColor = OnBrandGreen,
+                ),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(buttonLabel)
@@ -197,6 +204,7 @@ fun WelcomeSheet(
             if (step == OVERLAY_STEP && !overlayGranted) {
                 TextButton(
                     onClick = { viewModel.skipOverlay() },
+                    colors = ButtonDefaults.textButtonColors(contentColor = BrandGreen),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(stringResource(R.string.welcome_setup_later))
@@ -212,7 +220,7 @@ private fun WelcomeStepIcon(step: Int, modifier: Modifier = Modifier) {
         Icon(
             painter = painterResource(R.drawable.ic_launcher_foreground),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = BrandGreen,
             modifier = modifier.size(56.dp),
         )
         return
@@ -229,7 +237,7 @@ private fun WelcomeStepIcon(step: Int, modifier: Modifier = Modifier) {
     Icon(
         imageVector = image,
         contentDescription = null,
-        tint = MaterialTheme.colorScheme.primary,
+        tint = BrandGreen,
         modifier = modifier.size(30.dp),
     )
 }
