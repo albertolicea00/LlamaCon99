@@ -95,31 +95,32 @@ private fun AppleContactsLayout(
     onSettings: () -> Unit,
     scrollToTop: () -> Unit,
 ) {
-    val collapsed by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     val titleInteraction = remember { MutableInteractionSource() }
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).imePadding()) {
-        // The large title lives in the scrolling list; this compact title takes over after it leaves.
         Row(Modifier.fillMaxWidth().statusBarsPadding().heightIn(min = 48.dp).padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically) {
-            AnimatedVisibility(collapsed, enter = fadeIn(), exit = fadeOut(), modifier = Modifier.weight(1f)) {
-                Text(stringResource(R.string.contacts_list_title), fontSize = 17.sp, fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp).clickable(
-                        interactionSource = titleInteraction, indication = null, onClick = scrollToTop,
-                    ), maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
-            if (!collapsed) Spacer(Modifier.weight(1f))
+            Text(
+                stringResource(R.string.contacts_list_title),
+                fontSize = 34.sp,
+                lineHeight = 40.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f).padding(start = 8.dp).clickable(
+                    interactionSource = titleInteraction, indication = null, onClick = scrollToTop,
+                ).semantics { heading() },
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
             IconButton(onClick = onSettings) {
                 Icon(Icons.Filled.Info, stringResource(R.string.settings_title), tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp))
             }
         }
+        search(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp))
         Box(Modifier.weight(1f).fillMaxWidth()) {
             list(Modifier.fillMaxSize())
             ContactsAlphabetIndex(listState, groups,
                 Modifier.align(Alignment.CenterEnd).padding(vertical = 16.dp).heightIn(max = 360.dp).fillMaxHeight())
         }
-        // iOS 26 Contacts places search in the bottom toolbar, above the home indicator.
-        search(Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 16.dp, vertical = 8.dp))
     }
 }
 
@@ -313,10 +314,9 @@ private fun ProfileSearchField(query: String, onQuery: (String) -> Unit, onVoice
     val focus = LocalFocusManager.current
     val fluent = theme.style == ThemeStyle.FLUENT
     val mono = theme.style == ThemeStyle.MONO
-    val apple = theme.style == ThemeStyle.APPLE
     val horizon = theme.style == ThemeStyle.HORIZON
     var focused by remember { mutableStateOf(false) }
-    val fieldColor = if (apple) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceVariant
+    val fieldColor = MaterialTheme.colorScheme.surfaceVariant
     val underlineColor = if (focused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
     val underlineStroke = if (focused) 2.dp else 1.dp
     BasicTextField(
@@ -377,9 +377,7 @@ private fun ProfileContactList(
         LazyColumn(state = listState, modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 24.dp)) {
             item(key = "contacts_title") {
                 when (theme.style) {
-                    ThemeStyle.APPLE -> Text(stringResource(R.string.contacts_list_title), fontSize = 34.sp,
-                        lineHeight = 40.sp, fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 20.dp, end = 36.dp, top = 4.dp, bottom = 16.dp).semantics { heading() })
+                    ThemeStyle.APPLE -> Spacer(Modifier.height(8.dp))
                     ThemeStyle.MATERIAL -> Text(stringResource(R.string.contacts_list_title),
                         style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp))
                     else -> Spacer(Modifier.height(4.dp))
@@ -419,7 +417,7 @@ private fun ProfileContactList(
                     ) {
                         Column(Modifier.background(rowBackground)) {
                             PlatformContactRow(entry, { onDial(entry.phoneNumber.number) })
-                            if (index != group.contacts.lastIndex && (horizon || (!materialRows && theme.style != ThemeStyle.MONO))) {
+                            if (index != group.contacts.lastIndex && !apple && (horizon || (!materialRows && theme.style != ThemeStyle.MONO))) {
                                 val dividerStart = when {
                                     apple -> 20.dp
                                     horizon -> 60.dp
@@ -449,8 +447,8 @@ private fun PlatformContactRow(entry: ContactNumberEntry, onDial: () -> Unit) {
     Row(Modifier.fillMaxWidth().heightIn(min = components.rowMinHeight).clickable(onClick = onDial)
         .padding(horizontal = components.contentInset, vertical = if (apple) 10.dp else 8.dp),
         verticalAlignment = Alignment.CenterVertically) {
-        if (!apple) ContactAvatar(entry.contact.name, entry.contact.photoUri, size = components.avatarSize)
-        Column(Modifier.weight(1f).padding(start = if (apple) 0.dp else components.avatarGap)) {
+        if (components.avatarSize > 0.dp) ContactAvatar(entry.contact.name, entry.contact.photoUri, size = components.avatarSize)
+        Column(Modifier.weight(1f).padding(start = if (components.avatarSize > 0.dp) components.avatarGap else 0.dp)) {
             Text(entry.contact.name, style = MaterialTheme.typography.titleMedium,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
             Text(

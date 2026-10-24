@@ -68,8 +68,8 @@ object AppThemeCatalog {
         AppThemeDefinition(
             id = "manzana", nameRes = R.string.settings_theme_manzana, inspirationRes = R.string.settings_theme_inspired_apple,
             shapes = themeShapes(12),
-            contacts = ContactComponents(0.dp, 0.dp, 20.dp, 48.dp, 0.dp, 0.dp),
-            search = bottomSearch(inset = 16, corner = 28, elevation = 0),
+            contacts = ContactComponents(0.dp, 0.dp, 16.dp, 64.dp, 40.dp, 12.dp),
+            search = bottomSearch(inset = 16, corner = 14, height = 48, elevation = 0),
             scrollbar = compactScrollbar(),
             style = ThemeStyle.APPLE, typography = ManzanaTypography,
             titleTopInset = 24.dp, settingsInset = 16.dp,
