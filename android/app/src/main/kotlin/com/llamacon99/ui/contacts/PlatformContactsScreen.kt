@@ -31,10 +31,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -45,6 +47,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.llamacon99.R
+import com.llamacon99.ui.theme.AppThemeCatalog
 import com.llamacon99.ui.theme.LocalAppTheme
 import com.llamacon99.ui.theme.ThemeStyle
 import kotlinx.coroutines.launch
@@ -311,7 +314,11 @@ private fun ProfileSearchField(query: String, onQuery: (String) -> Unit, onVoice
     val fluent = theme.style == ThemeStyle.FLUENT
     val mono = theme.style == ThemeStyle.MONO
     val apple = theme.style == ThemeStyle.APPLE
+    val horizon = theme.style == ThemeStyle.HORIZON
+    var focused by remember { mutableStateOf(false) }
     val fieldColor = if (apple) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceVariant
+    val underlineColor = if (focused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+    val underlineStroke = if (focused) 2.dp else 1.dp
     BasicTextField(
         value = query, onValueChange = onQuery, singleLine = true,
         textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
@@ -319,8 +326,19 @@ private fun ProfileSearchField(query: String, onQuery: (String) -> Unit, onVoice
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { focus.clearFocus() }),
         modifier = modifier.heightIn(min = theme.search.minHeight)
-            .clip(RoundedCornerShape(theme.search.corner)).background(fieldColor)
-            .then(if (fluent || mono) Modifier.border(
+            .then(if (horizon) {
+                Modifier.onFocusChanged { focused = it.isFocused }
+                    .drawBehind {
+                        val stroke = underlineStroke.toPx()
+                        drawLine(
+                            color = underlineColor,
+                            start = Offset(0f, size.height - stroke / 2f),
+                            end = Offset(size.width, size.height - stroke / 2f),
+                            strokeWidth = stroke,
+                        )
+                    }
+            } else Modifier.clip(RoundedCornerShape(theme.search.corner)).background(fieldColor))
+            .then(if ((fluent || mono) && !horizon) Modifier.border(
                 if (mono) 1.dp else 0.5.dp,
                 MaterialTheme.colorScheme.outline,
                 RoundedCornerShape(theme.search.corner),
@@ -383,21 +401,17 @@ private fun ProfileContactList(
                     }
                 }
                 itemsIndexed(group.contacts, key = { _, row -> row.id }) { index, entry ->
-                    val horizon = theme.style == ThemeStyle.HORIZON
-                    val shape = if (horizon) RoundedCornerShape(
-                        topStart = if (index == 0) 24.dp else 0.dp, topEnd = if (index == 0) 24.dp else 0.dp,
-                        bottomStart = if (index == group.contacts.lastIndex) 24.dp else 0.dp,
-                        bottomEnd = if (index == group.contacts.lastIndex) 24.dp else 0.dp,
-                    ) else RoundedCornerShape(0.dp)
-                    val cardInset = if (horizon) 16.dp else 0.dp
-                    val background = if (horizon || theme.style == ThemeStyle.FLUENT) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.background
+                    val materialRows = theme.style == ThemeStyle.MATERIAL || theme.style == ThemeStyle.HORIZON
+                    val shape = RoundedCornerShape(0.dp)
+                    val cardInset = 0.dp
+                    val background = if (theme.style == ThemeStyle.FLUENT) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.background
                     SwipeableContactRow(
                         state.anonymousSwipeEnabled, { onAnonymous(entry.phoneNumber.number) },
                         Modifier.padding(start = cardInset, end = if (indexed) 28.dp else cardInset).fillMaxWidth().clip(shape).background(background),
                     ) {
                         Column(Modifier.background(background)) {
                             PlatformContactRow(entry, { onDial(entry.phoneNumber.number) })
-                            if (index != group.contacts.lastIndex && theme.style != ThemeStyle.MATERIAL && theme.style != ThemeStyle.MONO) {
+                            if (index != group.contacts.lastIndex && !materialRows && theme.style != ThemeStyle.MONO) {
                                 HorizontalDivider(Modifier.padding(start = if (apple) 20.dp else 72.dp, end = 12.dp),
                                     thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
                             }
@@ -418,11 +432,12 @@ private fun ProfileContactList(
 private fun PlatformContactRow(entry: ContactNumberEntry, onDial: () -> Unit) {
     val theme = LocalAppTheme.current
     val apple = theme.style == ThemeStyle.APPLE
-    Row(Modifier.fillMaxWidth().heightIn(min = theme.contacts.rowMinHeight).clickable(onClick = onDial)
-        .padding(horizontal = theme.contacts.contentInset, vertical = if (apple) 10.dp else 8.dp),
+    val components = if (theme.style == ThemeStyle.HORIZON) AppThemeCatalog.find("material").contacts else theme.contacts
+    Row(Modifier.fillMaxWidth().heightIn(min = components.rowMinHeight).clickable(onClick = onDial)
+        .padding(horizontal = components.contentInset, vertical = if (apple) 10.dp else 8.dp),
         verticalAlignment = Alignment.CenterVertically) {
-        if (!apple) ContactAvatar(entry.contact.name, entry.contact.photoUri, size = theme.contacts.avatarSize)
-        Column(Modifier.weight(1f).padding(start = if (apple) 0.dp else theme.contacts.avatarGap)) {
+        if (!apple) ContactAvatar(entry.contact.name, entry.contact.photoUri, size = components.avatarSize)
+        Column(Modifier.weight(1f).padding(start = if (apple) 0.dp else components.avatarGap)) {
             Text(entry.contact.name, style = MaterialTheme.typography.titleMedium,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
             Text(
