@@ -42,6 +42,7 @@
     <string name="welcome_grant_permission">Allow and continue</string>
     <string name="welcome_grant_overlay">Open Android permission</string>
     <string name="welcome_continue">Continue</string>
+    <string name="welcome_setup_later">Setup later</string>
     <string name="welcome_enable_caller_id">Turn on caller ID</string>
 
     <!-- settings -->

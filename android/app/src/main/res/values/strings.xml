@@ -42,6 +42,7 @@
     <string name="welcome_grant_permission">Conceder y continuar</string>
     <string name="welcome_grant_overlay">Abrir permiso de Android</string>
     <string name="welcome_continue">Continuar</string>
+    <string name="welcome_setup_later">Configurar después</string>
     <string name="welcome_enable_caller_id">Activar identificación</string>
 
     <!-- settings -->

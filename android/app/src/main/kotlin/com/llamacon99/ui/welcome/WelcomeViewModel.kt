@@ -63,9 +63,12 @@ class WelcomeViewModel @Inject constructor(
         permissionRefreshTrigger.value += 1
     }
 
+    fun skipOverlay() {
+        _setupStep.value = 6
+    }
+
     fun completeSetup() {
         viewModelScope.launch {
-            settingsRepository.setMonitorFromBootEnabled(true)
             settingsRepository.setCallMonitorEnabled(true)
             settingsRepository.setWelcomeSetupStarted(false)
             settingsRepository.setWelcomeSetupCompleted(true)
@@ -76,8 +79,7 @@ class WelcomeViewModel @Inject constructor(
 
     private fun hasAllSetupPermissions(): Boolean =
         ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
-            CallMonitorService.hasRequiredPermissions(context) &&
-            Settings.canDrawOverlays(context)
+            CallMonitorService.hasRequiredPermissions(context)
 
     private fun firstIncompleteStep(): Int {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
