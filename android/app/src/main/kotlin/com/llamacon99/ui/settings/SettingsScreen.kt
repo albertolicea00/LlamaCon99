@@ -33,6 +33,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
@@ -610,6 +611,7 @@ private fun LegalLinksSheet(onDismiss: () -> Unit) {
                 },
                 index = index,
                 chevron = true,
+                leadingIcon = Icons.Filled.Language,
             )
         }
         Spacer(modifier = Modifier.navigationBarsPadding())

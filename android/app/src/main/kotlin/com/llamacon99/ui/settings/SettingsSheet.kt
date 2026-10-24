@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
@@ -138,6 +139,7 @@ internal fun SettingsModalOption(
     index: Int = 0,
     enabled: Boolean = true,
     chevron: Boolean = false,
+    leadingIcon: ImageVector? = null,
 ) {
     val style = LocalAppTheme.current.style
     val shape = when (style) {
@@ -185,8 +187,13 @@ internal fun SettingsModalOption(
                 Modifier.fillMaxWidth().heightIn(min = 64.dp).padding(horizontal = 14.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("%02d".format(index + 1), style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold), color = foreground)
-                Spacer(Modifier.width(14.dp))
+                leadingIcon?.let {
+                    Icon(it, contentDescription = null, tint = foreground, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(10.dp))
+                } ?: run {
+                    Text("%02d".format(index + 1), style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold), color = foreground)
+                    Spacer(Modifier.width(14.dp))
+                }
                 Column(Modifier.weight(1f)) {
                     Text(title.uppercase(), style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp), color = foreground)
                     subtitle?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = foreground.copy(alpha = 0.72f)) }
@@ -199,6 +206,10 @@ internal fun SettingsModalOption(
             ) {
                 Box(Modifier.width(3.dp).height(32.dp).background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent))
                 Spacer(Modifier.width(12.dp))
+                leadingIcon?.let {
+                    Icon(it, contentDescription = null, tint = foreground, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(10.dp))
+                }
                 Column(Modifier.weight(1f)) {
                     Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal), color = foreground)
                     subtitle?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
@@ -211,6 +222,10 @@ internal fun SettingsModalOption(
             ) {
                 Box(Modifier.width(4.dp).height(38.dp).background(if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp)))
                 Spacer(Modifier.width(12.dp))
+                leadingIcon?.let {
+                    Icon(it, contentDescription = null, tint = foreground, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(10.dp))
+                }
                 Column(Modifier.weight(1f)) {
                     Text(title, style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold), color = foreground)
                     subtitle?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
@@ -220,6 +235,9 @@ internal fun SettingsModalOption(
             ThemeStyle.MATERIAL, ThemeStyle.HORIZON -> ListItem(
                 headlineContent = { Text(title, fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal) },
                 supportingContent = subtitle?.let { { Text(it, maxLines = 2, overflow = TextOverflow.Ellipsis) } },
+                leadingContent = leadingIcon?.let { icon -> {
+                    Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
+                } },
                 trailingContent = {
                     if (chevron) ModalOptionAccessory(false, true, MaterialTheme.colorScheme.primary)
                     else RadioButton(selected = selected, onClick = null)
@@ -231,6 +249,10 @@ internal fun SettingsModalOption(
                 Modifier.fillMaxWidth().heightIn(min = 58.dp).padding(horizontal = 16.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                leadingIcon?.let {
+                    Icon(it, contentDescription = null, tint = foreground, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(10.dp))
+                }
                 Column(Modifier.weight(1f)) {
                     Text(title, style = MaterialTheme.typography.bodyLarge, color = foreground)
                     subtitle?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 3.dp)) }
@@ -241,6 +263,10 @@ internal fun SettingsModalOption(
                 Modifier.fillMaxWidth().heightIn(min = 68.dp).padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                leadingIcon?.let {
+                    Icon(it, contentDescription = null, tint = foreground, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(10.dp))
+                }
                 Column(Modifier.weight(1f)) {
                     Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium), color = foreground)
                     subtitle?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 3.dp)) }
