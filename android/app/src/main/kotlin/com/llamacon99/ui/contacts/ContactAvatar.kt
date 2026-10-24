@@ -53,6 +53,7 @@ fun ContactAvatar(
     val material = palette == ThemeStyle.MATERIAL
     val apple = palette == ThemeStyle.APPLE
     val hyper = palette == ThemeStyle.HYPER
+    val horizon = palette == ThemeStyle.HORIZON
     val colors = MaterialTheme.colorScheme
     val avatarColors = when {
         monochrome -> listOf(colors.onSurface, colors.onSurface)
@@ -62,6 +63,7 @@ fun ContactAvatar(
             colors.surfaceContainerLow.copy(alpha = 0.96f),
             colors.surfaceContainerHigh.copy(alpha = 0.92f),
         )
+        horizon -> listOf(Color(0xFFDCE8EF), Color(0xFFC9DCE7))
         palette == ThemeStyle.BRAND -> listOf(colorForName(name).copy(alpha = 0.65f), colorForName(name))
         else -> listOf(colors.primaryContainer, colors.secondaryContainer)
     }
@@ -89,9 +91,10 @@ fun ContactAvatar(
                 text = if (material) name.trim().firstOrNull()?.uppercaseChar()?.toString().orEmpty() else initialsForName(name),
                 color = when {
                     monochrome -> colors.surface
-                    material -> Color(0xFF17451F)
+                    material -> Color(0xFF38543C)
                     apple -> Color(0xFFFFF8F0)
                     hyper -> colors.onSurface
+                    horizon -> Color(0xFF294454)
                     palette == ThemeStyle.BRAND -> Color.White
                     else -> colors.onPrimaryContainer
                 },

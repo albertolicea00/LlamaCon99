@@ -296,15 +296,16 @@ private fun PlatformGoTopButton(listState: LazyListState, scrollToTop: () -> Uni
                 Text(stringResource(R.string.contacts_list_go_top))
             }
         } else if (style == ThemeStyle.HYPER) {
-            ExtendedFloatingActionButton(
+            FloatingActionButton(
                 onClick = scrollToTop,
-                icon = { Icon(painterResource(R.drawable.ic_md_keyboard_double_arrow_up), null) },
-                text = { Text(stringResource(R.string.contacts_list_go_top)) },
+                modifier = Modifier.size(52.dp),
                 shape = RoundedCornerShape(18.dp),
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.88f),
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 3.dp, pressedElevation = 5.dp),
-            )
+            ) {
+                Icon(painterResource(R.drawable.ic_md_keyboard_double_arrow_up), stringResource(R.string.contacts_list_go_top))
+            }
         } else {
             ExtendedFloatingActionButton(
                 onClick = scrollToTop,

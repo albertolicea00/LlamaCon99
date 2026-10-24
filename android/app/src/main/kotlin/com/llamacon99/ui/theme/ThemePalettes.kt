@@ -3,9 +3,9 @@ package com.llamacon99.ui.theme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 
-/** The accent is always BrandGreen. Profiles only change neutral surfaces and structure. */
+/** Keep the brand profile green while giving every visual profile its own accent palette. */
 internal fun profileColors(style: ThemeStyle, dark: Boolean, brand: ColorScheme): ColorScheme {
-    return when (style) {
+    val surfaces = when (style) {
         ThemeStyle.APPLE -> {
             val page = if (dark) Color.Black else Color.White
             brand.copy(
@@ -36,4 +36,31 @@ internal fun profileColors(style: ThemeStyle, dark: Boolean, brand: ColorScheme)
         }
         else -> brand
     }
+
+    val (accent, onAccent, accentContainer, onAccentContainer) = when (style) {
+        ThemeStyle.BRAND -> listOf(Color(0xFF1A73E8), Color.White, if (dark) Color(0xFF174A83) else Color(0xFFD7E7FF), if (dark) Color(0xFFD7E7FF) else Color(0xFF0B3D91))
+        ThemeStyle.APPLE -> listOf(Color(0xFF0A84FF), Color.White, if (dark) Color(0xFF183A5E) else Color(0xFFD9EBFF), if (dark) Color(0xFFD9EBFF) else Color(0xFF003D7A))
+        ThemeStyle.MATERIAL -> listOf(Color(0xFF188038), Color.White, if (dark) Color(0xFF174D2A) else Color(0xFFDCEBDD), if (dark) Color(0xFFDCEBDD) else Color(0xFF254A2E))
+        ThemeStyle.HORIZON -> listOf(Color(0xFF168C9B), Color.White, if (dark) Color(0xFF17454D) else Color(0xFFD2F1F3), if (dark) Color(0xFFC7F2F5) else Color(0xFF073B42))
+        ThemeStyle.HYPER -> listOf(if (dark) Color(0xFFB8D5E2) else Color(0xFF668A9B), if (dark) Color(0xFF152027) else Color.White, if (dark) Color(0xFF344751) else Color(0xFFDCEAF0), if (dark) Color(0xFFE1F2F8) else Color(0xFF263D48))
+        ThemeStyle.MONO -> if (dark) listOf(Color.White, Color.Black, Color(0xFF3A3A3A), Color.White) else listOf(Color(0xFF171717), Color.White, Color(0xFFD8D8D8), Color(0xFF171717))
+        ThemeStyle.FLUENT -> listOf(Color(0xFF0078D4), Color.White, if (dark) Color(0xFF164A70) else Color(0xFFD9EDFF), if (dark) Color(0xFFD6EDFF) else Color(0xFF003A66))
+    }
+
+    return surfaces.copy(
+        primary = accent,
+        onPrimary = onAccent,
+        primaryContainer = accentContainer,
+        onPrimaryContainer = onAccentContainer,
+        secondary = accent,
+        onSecondary = onAccent,
+        secondaryContainer = accentContainer,
+        onSecondaryContainer = onAccentContainer,
+        tertiary = accent,
+        onTertiary = onAccent,
+        tertiaryContainer = accentContainer,
+        onTertiaryContainer = onAccentContainer,
+        inversePrimary = accent,
+        surfaceTint = accent,
+    )
 }
