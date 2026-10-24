@@ -299,8 +299,8 @@ private fun PlatformGoTopButton(listState: LazyListState, scrollToTop: () -> Uni
             FloatingActionButton(
                 onClick = scrollToTop,
                 modifier = Modifier.size(52.dp),
-                shape = RoundedCornerShape(18.dp),
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.88f),
+                shape = CircleShape,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.94f),
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 3.dp, pressedElevation = 5.dp),
             ) {
