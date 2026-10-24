@@ -35,7 +35,9 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -285,19 +287,21 @@ private fun ScreenHeading(
 @Composable
 private fun PlatformGoTopButton(listState: LazyListState, scrollToTop: () -> Unit, modifier: Modifier = Modifier) {
     val style = LocalAppTheme.current.style
+    val haptics = LocalHapticFeedback.current
+    val hapticScrollToTop = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); scrollToTop() }
     val visible by remember(listState) {
         derivedStateOf { listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0 }
     }
     AnimatedVisibility(visible = visible, modifier = modifier, enter = fadeIn(), exit = fadeOut()) {
         if (style == ThemeStyle.FLUENT) {
-            OutlinedButton(onClick = scrollToTop, shape = RoundedCornerShape(4.dp)) {
+            OutlinedButton(onClick = hapticScrollToTop, shape = RoundedCornerShape(4.dp)) {
                 Icon(painterResource(R.drawable.ic_md_keyboard_double_arrow_up), null, Modifier.size(20.dp))
                 Spacer(Modifier.width(8.dp))
                 Text(stringResource(R.string.contacts_list_go_top))
             }
         } else if (style == ThemeStyle.HYPER) {
             FloatingActionButton(
-                onClick = scrollToTop,
+                onClick = hapticScrollToTop,
                 modifier = Modifier.size(52.dp),
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.94f),
@@ -308,7 +312,7 @@ private fun PlatformGoTopButton(listState: LazyListState, scrollToTop: () -> Uni
             }
         } else {
             ExtendedFloatingActionButton(
-                onClick = scrollToTop,
+                onClick = hapticScrollToTop,
                 icon = { Icon(painterResource(R.drawable.ic_md_keyboard_double_arrow_up), null) },
                 text = { Text(stringResource(R.string.contacts_list_go_top)) },
             )

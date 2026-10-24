@@ -39,7 +39,9 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -112,6 +114,7 @@ internal fun ContactsScrollbar(
         else -> MaterialTheme.colorScheme.onPrimary
     }
     val density = LocalDensity.current
+    val haptics = LocalHapticFeedback.current
 
     Box(modifier) {
         BoxWithConstraints(Modifier.align(Alignment.CenterEnd).fillMaxWidth().fillMaxHeight(0.72f)) {
@@ -164,12 +167,18 @@ internal fun ContactsScrollbar(
                                 thumbHeight / 2
                             }
                             var scrollJob: Job? = null
+                            var previousLetter = ""
                             fun moveTo(y: Float) {
                                 val progress = ((y - grip) / track).coerceIn(0f, 1f)
                                 val index = (progress * labels.lastIndex).roundToInt()
                                 draggedProgress = progress
                                 bubbleProgress = progress
-                                selectedLetter = labels[index]
+                                val letter = labels[index]
+                                if (letter != previousLetter) {
+                                    previousLetter = letter
+                                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                }
+                                selectedLetter = letter
                                 scrollJob?.cancel()
                                 scrollJob = scope.launch { listState.scrollToItem(index) }
                             }
