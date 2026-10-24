@@ -7,11 +7,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalDensity
@@ -24,6 +26,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.llamacon99.R
 import com.llamacon99.ui.theme.LocalAppTheme
 import com.llamacon99.ui.theme.ThemeStyle
@@ -54,6 +57,7 @@ internal fun ContactsAlphabetIndex(
         val visibleLetters = if (railHeight < 360.dp) targets.map { it.letter } else letters
         Column(
             modifier = Modifier.align(Alignment.CenterEnd).width(32.dp).fillMaxHeight()
+                .padding(vertical = if (style == ThemeStyle.HORIZON) 16.dp else 0.dp)
                 .semantics(mergeDescendants = true) {
                     contentDescription = description
                     customActions = targets.map { target ->
@@ -91,13 +95,48 @@ internal fun ContactsAlphabetIndex(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             visibleLetters.forEach { letter ->
-                Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                val letterDistance = if (style == ThemeStyle.HORIZON && activeLetter != null) {
+                    kotlin.math.abs(visibleLetters.indexOf(letter) - visibleLetters.indexOf(activeLetter))
+                } else Int.MAX_VALUE
+                val horizonZoom by animateFloatAsState(
+                    targetValue = when {
+                        letterDistance == Int.MAX_VALUE || letterDistance > 3 -> 1f
+                        railHeight < 360.dp -> when (letterDistance) {
+                            0 -> 2.8f
+                            1 -> 2f
+                            2 -> 1.4f
+                            else -> 1f
+                        }
+                        else -> when (letterDistance) {
+                            0 -> 3.3f
+                            1 -> 2.4f
+                            2 -> 1.7f
+                            else -> 1.1f
+                        }
+                    },
+                    label = "horizonAlphabetLetterSize",
+                )
+                Box(
+                    Modifier.weight(1f).fillMaxWidth()
+                        .zIndex(if (letterDistance <= 3) (4 - letterDistance).toFloat() else 0f)
+                        .graphicsLayer {
+                            if (style == ThemeStyle.HORIZON) {
+                                scaleX = horizonZoom
+                                scaleY = horizonZoom
+                            }
+                        },
+                    contentAlignment = Alignment.Center,
+                ) {
                     if (mono) {
                         DotMatrixIndexLetter(letter, MaterialTheme.colorScheme.primary, activeLetter == letter)
                     } else {
-                    Text(letter, fontSize = 11.sp, lineHeight = 12.sp,
-                        fontWeight = if (activeLetter == letter) FontWeight.Black else FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary)
+                        Text(
+                            letter,
+                            fontSize = 11.sp,
+                            lineHeight = 12.sp,
+                            fontWeight = if (activeLetter == letter) FontWeight.Black else FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
                     }
                 }
             }
