@@ -123,7 +123,7 @@ class SettingsViewModel @Inject constructor(
         val number = "55123456"
         callerIdNotifier.ensureChannels()
         if (callerIdOverlay.canShow()) {
-            callerIdOverlay.show(name, number)
+            callerIdOverlay.show(name, number, 22_000L)
         } else {
             callerIdNotifier.showIncomingCallBanner(name, number)
         }

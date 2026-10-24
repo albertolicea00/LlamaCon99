@@ -35,7 +35,9 @@ class CallerIdOverlay @Inject constructor(
 
     fun canShow(): Boolean = Settings.canDrawOverlays(context)
 
-    fun show(name: String, localNumber: String) {
+    fun show(name: String, localNumber: String) = show(name, localNumber, 120_000L)
+
+    fun show(name: String, localNumber: String, autoDismissMs: Long) {
         dismiss()
         if (!canShow()) {
             Log.i("CallerIdOverlay", "Floating card skipped: display-over-other-apps permission missing")
@@ -152,7 +154,7 @@ class CallerIdOverlay @Inject constructor(
             }
             Log.i("CallerIdOverlay", "Floating caller ID card shown")
             // Safety net if a device fails to deliver the end-of-ringing callback.
-            handler.postDelayed(timeout, 120_000)
+            handler.postDelayed(timeout, autoDismissMs)
         } catch (error: SecurityException) {
             Log.w("CallerIdOverlay", "Overlay permission unavailable", error)
         } catch (error: WindowManager.BadTokenException) {

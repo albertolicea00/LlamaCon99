@@ -320,7 +320,6 @@ internal fun SettingsContent(
                                 else R.string.settings_test_caller_id_notification,
                             ))
                         },
-                        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
                         colors = settingsRowColors(),
                         modifier = Modifier.clickable { actions.onTestCallerId() },
                     )
