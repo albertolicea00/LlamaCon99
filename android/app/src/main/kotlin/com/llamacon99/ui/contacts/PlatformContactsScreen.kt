@@ -171,10 +171,17 @@ private fun HyperContactsLayout(
 ) {
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
         ScreenHeading(onSettings = onSettings, overflow = true, onTitleClick = scrollToTop)
-        search(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp))
         Box(Modifier.weight(1f).fillMaxWidth()) {
             list(Modifier.fillMaxSize())
-            PlatformGoTopButton(listState, scrollToTop, Modifier.align(Alignment.BottomCenter).padding(16.dp))
+            PlatformGoTopButton(
+                listState,
+                scrollToTop,
+                Modifier.align(Alignment.BottomCenter).padding(bottom = LocalAppTheme.current.search.minHeight + 24.dp),
+            )
+            search(
+                Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            )
         }
     }
 }
@@ -315,8 +322,10 @@ private fun ProfileSearchField(query: String, onQuery: (String) -> Unit, onVoice
     val fluent = theme.style == ThemeStyle.FLUENT
     val mono = theme.style == ThemeStyle.MONO
     val horizon = theme.style == ThemeStyle.HORIZON
+    val hyper = theme.style == ThemeStyle.HYPER
     var focused by remember { mutableStateOf(false) }
-    val fieldColor = MaterialTheme.colorScheme.surfaceVariant
+    val fieldColor = if (hyper) MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.94f)
+        else MaterialTheme.colorScheme.surfaceVariant
     val underlineColor = if (focused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
     val underlineStroke = if (focused) 2.dp else 1.dp
     BasicTextField(
@@ -374,7 +383,11 @@ private fun ProfileContactList(
     val apple = theme.style == ThemeStyle.APPLE
     val indexed = theme.style in setOf(ThemeStyle.APPLE, ThemeStyle.HORIZON, ThemeStyle.HYPER, ThemeStyle.MONO)
     Box(modifier) {
-        LazyColumn(state = listState, modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 24.dp)) {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = if (theme.style == ThemeStyle.HYPER) theme.search.minHeight + 32.dp else 24.dp),
+        ) {
             item(key = "contacts_title") {
                 when (theme.style) {
                     ThemeStyle.APPLE -> Spacer(Modifier.height(8.dp))

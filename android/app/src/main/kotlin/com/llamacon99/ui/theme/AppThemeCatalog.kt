@@ -96,7 +96,7 @@ object AppThemeCatalog {
             id = "hyper", nameRes = R.string.settings_theme_hyper, inspirationRes = R.string.settings_theme_inspired_xiaomi,
             shapes = themeShapes(20),
             contacts = ContactComponents(20.dp, 16.dp, 12.dp, 56.dp, 34.dp, 12.dp),
-            search = topSearch(inset = 16, corner = 14),
+            search = topSearch(inset = 16, corner = 18, height = 56),
             scrollbar = compactScrollbar(),
             style = ThemeStyle.HYPER, typography = HyperTypography,
             titleTopInset = 20.dp, settingsInset = 16.dp,
