@@ -59,6 +59,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.animation.core.animateDpAsState
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -418,6 +419,27 @@ private fun SettingsGroup(content: @Composable ColumnScope.() -> Unit) {
 private fun SectionHeader(text: String) {
     val style = LocalAppTheme.current.style
     val apple = style == ThemeStyle.APPLE
+    if (style == ThemeStyle.MATERIAL) {
+        Surface(
+            modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth().padding(top = 24.dp, bottom = 8.dp),
+            shape = MaterialTheme.shapes.small,
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.48f),
+        ) {
+            Row(
+                Modifier.fillMaxWidth().heightIn(min = 44.dp).padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(Modifier.width(4.dp).height(20.dp).background(MaterialTheme.colorScheme.primary, RoundedCornerShape(2.dp)))
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text.uppercase(),
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            }
+        }
+        return
+    }
     if (style == ThemeStyle.MONO) {
         Text(text.uppercase(), style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurface,
@@ -427,7 +449,7 @@ private fun SectionHeader(text: String) {
     Text(
         text = if (apple) text.uppercase() else text,
         style = if (apple) MaterialTheme.typography.bodySmall else MaterialTheme.typography.labelLarge,
-        color = if (style == ThemeStyle.MATERIAL) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth().padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
     )
 }

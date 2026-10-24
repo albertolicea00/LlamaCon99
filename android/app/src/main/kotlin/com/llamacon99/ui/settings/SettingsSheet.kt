@@ -187,7 +187,7 @@ internal fun SettingsModalOption(
                 Modifier.fillMaxWidth().heightIn(min = 64.dp).padding(horizontal = 14.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("%02d".format(index + 1), style = MaterialTheme.typography.labelLarge, color = foreground.copy(alpha = 0.72f))
+                Text("%02d".format(index + 1), style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold), color = foreground)
                 Spacer(Modifier.width(14.dp))
                 Column(Modifier.weight(1f)) {
                     Text(title.uppercase(), style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp), color = foreground)
