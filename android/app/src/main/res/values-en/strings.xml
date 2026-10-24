@@ -119,8 +119,8 @@
     <string name="notification_channel_foreground_name">Call monitoring</string>
     <string name="notification_channel_incoming_call_name">Incoming call identification</string>
     <string name="notification_foreground_title">Identifying incoming calls</string>
-    <string name="notification_incoming_call_title">%1$s is calling</string>
-    <string name="notification_incoming_call_text">Collect call from %1$s · +53 %2$s</string>
+    <string name="notification_incoming_call_title">%1$s is calling you with 99</string>
+    <string name="notification_incoming_call_text">99 call from %1$s · +53 %2$s</string>
     <string name="caller_id_unknown_contact">Unsaved number</string>
     <string name="caller_id_overlay_label">Collect call · Llama con 99</string>
     <string name="caller_id_overlay_dismiss">Hide caller identification</string>

@@ -119,8 +119,8 @@
     <string name="notification_channel_foreground_name">Monitoreo de llamadas</string>
     <string name="notification_channel_incoming_call_name">Identificación de llamadas entrantes</string>
     <string name="notification_foreground_title">Identificando llamadas entrantes</string>
-    <string name="notification_incoming_call_title">Te está llamando %1$s</string>
-    <string name="notification_incoming_call_text">Llamada por cobrar de %1$s · +53 %2$s</string>
+    <string name="notification_incoming_call_title">%1$s te está llamando por 99</string>
+    <string name="notification_incoming_call_text">Llamada 99 de %1$s · +53 %2$s</string>
     <string name="caller_id_unknown_contact">Número no guardado</string>
     <string name="caller_id_overlay_label">Llamada por cobrar · Llama con 99</string>
     <string name="caller_id_overlay_dismiss">Ocultar identificación</string>
