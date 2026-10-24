@@ -43,7 +43,7 @@ class ThemePreviewActivity : ComponentActivity() {
             var showThemePicker by remember { mutableStateOf(false) }
             var preferenceState by remember { mutableStateOf(SettingsUiState(
                 hasCallMonitorPermissions = true, callMonitorEnabled = true,
-                canShowCallerIdOverlay = true, monitorFromBootEnabled = true,
+                canShowCallerIdOverlay = true,
             )) }
             val groups = contacts.filter { it.contact.name.contains(query, ignoreCase = true) }
                 .groupBy { it.contact.name.take(1) }.map { AlphabetGroup(it.key, it.value) }
@@ -56,7 +56,6 @@ class ThemePreviewActivity : ComponentActivity() {
                                 onSelectDialMode = { preferenceState = preferenceState.copy(dialMode = it) },
                                 onAnonymousSwipe = { preferenceState = preferenceState.copy(anonymousSwipeEnabled = it) },
                                 onCallMonitor = { preferenceState = preferenceState.copy(callMonitorEnabled = it) },
-                                onMonitorFromBoot = { preferenceState = preferenceState.copy(monitorFromBootEnabled = it) },
                                 onMonitorPermissions = {}, onOverlayPermissions = {}, onCheckUpdate = {}, onTestCallerId = {}, onLegalLinks = {},
                             ),
                             overlays = {

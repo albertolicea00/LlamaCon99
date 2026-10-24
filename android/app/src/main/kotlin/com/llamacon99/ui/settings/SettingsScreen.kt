@@ -156,7 +156,6 @@ fun SettingsScreen(
             },
             onAnonymousSwipe = viewModel::setAnonymousSwipeEnabled,
             onCallMonitor = viewModel::setCallMonitorEnabled,
-            onMonitorFromBoot = viewModel::setMonitorFromBootEnabled,
             onMonitorPermissions = { permissionLauncher.launch(CallMonitorService.requiredPermissions()) },
             onOverlayPermissions = { overlayPermissionLauncher.launch(Intent(
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${context.packageName}"),
@@ -193,7 +192,6 @@ internal data class SettingsActions(
     val onSelectDialMode: (SettingsRepository.DialMode) -> Unit,
     val onAnonymousSwipe: (Boolean) -> Unit,
     val onCallMonitor: (Boolean) -> Unit,
-    val onMonitorFromBoot: (Boolean) -> Unit,
     val onMonitorPermissions: () -> Unit,
     val onOverlayPermissions: () -> Unit,
     val onCheckUpdate: () -> Unit,
@@ -255,13 +253,6 @@ internal fun SettingsContent(
                         onCheckedChange = actions.onCallMonitor,
                     )
                     if (uiState.callMonitorEnabled) {
-                        GroupDivider()
-                        ToggleRow(
-                            title = stringResource(R.string.settings_monitor_from_boot_title),
-                            subtitle = stringResource(R.string.settings_monitor_from_boot_subtitle),
-                            checked = uiState.monitorFromBootEnabled,
-                            onCheckedChange = actions.onMonitorFromBoot,
-                        )
                         GroupDivider()
                         SettingsRow(
                             headlineContent = { Text(stringResource(R.string.settings_caller_id_overlay_title)) },

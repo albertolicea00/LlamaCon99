@@ -28,8 +28,7 @@ class BootCompletedReceiver : BroadcastReceiver() {
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.Default).launch {
             try {
-                val shouldStart = settingsRepository.callMonitorEnabled.first() &&
-                    settingsRepository.monitorFromBootEnabled.first()
+                val shouldStart = settingsRepository.callMonitorEnabled.first()
                 if (shouldStart && CallMonitorService.hasRequiredPermissions(context)) {
                     ContextCompat.startForegroundService(context, Intent(context, CallMonitorService::class.java))
                 }

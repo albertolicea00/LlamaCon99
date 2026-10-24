@@ -35,7 +35,6 @@ data class SettingsUiState(
     val isDualSim: Boolean = false,
     val anonymousSwipeEnabled: Boolean = false,
     val callMonitorEnabled: Boolean = false,
-    val monitorFromBootEnabled: Boolean = false,
     val hasCallMonitorPermissions: Boolean = false,
     val canShowCallerIdOverlay: Boolean = false,
 )
@@ -55,15 +54,13 @@ class SettingsViewModel @Inject constructor(
         settingsRepository.dialMode,
         settingsRepository.anonymousSwipeEnabled,
         settingsRepository.callMonitorEnabled,
-        settingsRepository.monitorFromBootEnabled,
         combine(permissionsRefreshTrigger, simRepository.activeSimCount) { _, count -> count },
-    ) { dialMode, anonymousSwipeEnabled, callMonitorEnabled, monitorFromBootEnabled, activeSimCount ->
+    ) { dialMode, anonymousSwipeEnabled, callMonitorEnabled, activeSimCount ->
         SettingsUiState(
             dialMode = dialMode,
             isDualSim = (activeSimCount ?: 0) > 1,
             anonymousSwipeEnabled = anonymousSwipeEnabled,
             callMonitorEnabled = callMonitorEnabled,
-            monitorFromBootEnabled = monitorFromBootEnabled,
             hasCallMonitorPermissions = hasCallMonitorPermissions(),
             canShowCallerIdOverlay = Settings.canDrawOverlays(context),
         )
@@ -102,18 +99,14 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             if (!enabled) {
                 settingsRepository.setCallMonitorEnabled(false)
-                settingsRepository.setMonitorFromBootEnabled(false)
                 context.stopService(Intent(context, CallMonitorService::class.java))
                 return@launch
             }
             if (!hasCallMonitorPermissions()) {
                 settingsRepository.setCallMonitorEnabled(false)
-                settingsRepository.setMonitorFromBootEnabled(false)
                 refreshPermissionStatus()
                 return@launch
             }
-            // Boot monitoring starts on with caller ID; users can turn it off separately.
-            settingsRepository.setMonitorFromBootEnabled(true)
             settingsRepository.setCallMonitorEnabled(true)
             try {
                 ContextCompat.startForegroundService(context, Intent(context, CallMonitorService::class.java))
@@ -123,10 +116,6 @@ class SettingsViewModel @Inject constructor(
                 monitorStartFailed(error)
             }
         }
-    }
-
-    fun setMonitorFromBootEnabled(enabled: Boolean) {
-        viewModelScope.launch { settingsRepository.setMonitorFromBootEnabled(enabled) }
     }
 
     fun testCallerId() {
