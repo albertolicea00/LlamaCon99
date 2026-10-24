@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalLayoutApi::class)
+
 package com.llamacon99.ui.contacts
 
 import androidx.compose.animation.AnimatedVisibility
@@ -9,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -35,9 +38,9 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import android.view.HapticFeedbackConstants
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -120,8 +123,13 @@ private fun AppleContactsLayout(
         search(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp))
         Box(Modifier.weight(1f).fillMaxWidth()) {
             list(Modifier.fillMaxSize())
-            ContactsAlphabetIndex(listState, groups,
-                Modifier.align(Alignment.CenterEnd).padding(vertical = 16.dp).heightIn(max = 360.dp).fillMaxHeight())
+            val imeVisible = WindowInsets.isImeVisible
+            androidx.compose.animation.AnimatedVisibility(!imeVisible,
+                modifier = Modifier.align(Alignment.CenterEnd),
+                enter = fadeIn(), exit = fadeOut()) {
+                ContactsAlphabetIndex(listState, groups,
+                    Modifier.padding(vertical = 16.dp).heightIn(max = 360.dp).fillMaxHeight())
+            }
         }
     }
 }
@@ -287,8 +295,8 @@ private fun ScreenHeading(
 @Composable
 private fun PlatformGoTopButton(listState: LazyListState, scrollToTop: () -> Unit, modifier: Modifier = Modifier) {
     val style = LocalAppTheme.current.style
-    val haptics = LocalHapticFeedback.current
-    val hapticScrollToTop = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); scrollToTop() }
+    val view = LocalView.current
+    val hapticScrollToTop = { view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK); scrollToTop() }
     val visible by remember(listState) {
         derivedStateOf { listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0 }
     }
@@ -449,8 +457,13 @@ private fun ProfileContactList(
                 }
             }
         }
+        val imeVisible = WindowInsets.isImeVisible
         if (indexed && !apple) {
-            ContactsAlphabetIndex(listState, state.groups, Modifier.align(Alignment.CenterEnd).padding(vertical = 12.dp).fillMaxHeight(0.88f))
+            androidx.compose.animation.AnimatedVisibility(!imeVisible,
+                modifier = Modifier.align(Alignment.CenterEnd),
+                enter = fadeIn(), exit = fadeOut()) {
+                ContactsAlphabetIndex(listState, state.groups, Modifier.padding(vertical = 12.dp).fillMaxHeight(0.88f))
+            }
         } else if (!indexed) {
             ContactsScrollbar(listState, state.groups, Modifier.matchParentSize().padding(end = 4.dp, top = 48.dp, bottom = 16.dp))
         }

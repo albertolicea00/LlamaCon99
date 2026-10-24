@@ -15,9 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalHapticFeedback
+import android.view.HapticFeedbackConstants
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
@@ -44,7 +44,7 @@ internal fun ContactsAlphabetIndex(
     val letters = remember { ('A'..'Z').map(Char::toString) + "#" }
     val targets = remember(groups) { contactSectionTargets(groups) }
     val scope = rememberCoroutineScope()
-    val haptics = LocalHapticFeedback.current
+    val view = LocalView.current
     var activeLetter by remember { mutableStateOf<String?>(null) }
     var activeLetterY by remember { mutableFloatStateOf(0f) }
     val description = stringResource(R.string.contacts_alphabet_index)
@@ -79,7 +79,7 @@ internal fun ContactsAlphabetIndex(
                             val letter = visibleLetters[index]
                             if (activeLetter == letter) return
                             activeLetter = letter
-                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
                             val target = sectionTargetForLetter(letter, targets) ?: return
                             job?.cancel()
                             job = scope.launch { listState.scrollToItem(target) }

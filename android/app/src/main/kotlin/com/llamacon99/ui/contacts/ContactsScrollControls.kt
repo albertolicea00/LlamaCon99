@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
+import android.view.HapticFeedbackConstants
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import com.llamacon99.R
 import kotlinx.coroutines.delay
@@ -56,7 +56,7 @@ internal fun ContactsScrollControls(
     val isScrolling = listState.isScrollInProgress
     var showControls by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val haptics = LocalHapticFeedback.current
+    val view = LocalView.current
     LaunchedEffect(hasScrolled, isScrolling) {
         showControls = hasScrolled
         if (hasScrolled && !isScrolling) {
@@ -89,7 +89,7 @@ internal fun ContactsScrollControls(
         exit = fadeOut(),
     ) {
         IconButton(
-            onClick = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); scope.launch { listState.animateScrollToItem(0) } },
+            onClick = { view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK); scope.launch { listState.animateScrollToItem(0) } },
             modifier = Modifier.size(48.dp).background(background, MaterialTheme.shapes.large),
         ) {
             Icon(
