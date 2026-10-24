@@ -101,8 +101,16 @@ internal fun ContactsScrollbar(
     val markerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
     val activeColor = MaterialTheme.colorScheme.primary
     val theme = LocalAppTheme.current
-    val bubbleColor = if (theme.style == ThemeStyle.MATERIAL) MaterialTheme.colorScheme.primaryContainer else activeColor
-    val bubbleContentColor = if (theme.style == ThemeStyle.MATERIAL) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onPrimary
+    val bubbleColor = when (theme.style) {
+        ThemeStyle.MATERIAL -> MaterialTheme.colorScheme.primaryContainer
+        ThemeStyle.HYPER -> MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.68f)
+        else -> activeColor
+    }
+    val bubbleContentColor = when (theme.style) {
+        ThemeStyle.MATERIAL -> MaterialTheme.colorScheme.onPrimaryContainer
+        ThemeStyle.HYPER -> MaterialTheme.colorScheme.onSurface
+        else -> MaterialTheme.colorScheme.onPrimary
+    }
     val density = LocalDensity.current
 
     Box(modifier) {
@@ -196,7 +204,8 @@ internal fun ContactsScrollbar(
                         .size(72.dp)
                         .background(
                             bubbleColor,
-                            if (theme.style == ThemeStyle.MATERIAL) CircleShape else RoundedCornerShape(36.dp, 36.dp, 8.dp, 36.dp),
+                            if (theme.style == ThemeStyle.MATERIAL || theme.style == ThemeStyle.HYPER) CircleShape
+                            else RoundedCornerShape(36.dp, 36.dp, 8.dp, 36.dp),
                         ),
                     contentAlignment = Alignment.Center,
                 ) {

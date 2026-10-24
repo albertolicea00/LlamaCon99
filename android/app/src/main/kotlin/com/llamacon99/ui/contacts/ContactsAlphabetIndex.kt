@@ -3,8 +3,10 @@ package com.llamacon99.ui.contacts
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.drag
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -12,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
@@ -40,13 +43,17 @@ internal fun ContactsAlphabetIndex(
     val scope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
     var activeLetter by remember { mutableStateOf<String?>(null) }
+    var activeLetterY by remember { mutableFloatStateOf(0f) }
     val description = stringResource(R.string.contacts_alphabet_index)
-    val mono = LocalAppTheme.current.style == ThemeStyle.MONO
-    BoxWithConstraints(modifier.width(32.dp)) {
+    val style = LocalAppTheme.current.style
+    val mono = style == ThemeStyle.MONO
+    val hyper = style == ThemeStyle.HYPER
+    val density = LocalDensity.current
+    BoxWithConstraints(modifier.width(if (hyper) 104.dp else 32.dp)) {
         val railHeight = maxHeight
         val visibleLetters = if (railHeight < 360.dp) targets.map { it.letter } else letters
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.align(Alignment.CenterEnd).width(32.dp).fillMaxHeight()
                 .semantics(mergeDescendants = true) {
                     contentDescription = description
                     customActions = targets.map { target ->
@@ -62,6 +69,7 @@ internal fun ContactsAlphabetIndex(
                         down.consume()
                         var job: Job? = null
                         fun jump(y: Float) {
+                            activeLetterY = y
                             val index = (y / size.height.coerceAtLeast(1) * visibleLetters.size).toInt()
                                 .coerceIn(visibleLetters.indices)
                             val letter = visibleLetters[index]
@@ -91,6 +99,20 @@ internal fun ContactsAlphabetIndex(
                         fontWeight = if (activeLetter == letter) FontWeight.Black else FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary)
                     }
+                }
+            }
+        }
+        if (hyper) {
+            activeLetter?.let { letter ->
+                val bubbleY = with(density) {
+                    (activeLetterY - 36.dp.toPx()).coerceIn(0f, (railHeight - 72.dp).toPx().coerceAtLeast(0f)).toDp()
+                }
+                Box(
+                    Modifier.align(Alignment.TopStart).offset(y = bubbleY).size(72.dp)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.82f), CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(letter, fontSize = 36.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)
                 }
             }
         }
