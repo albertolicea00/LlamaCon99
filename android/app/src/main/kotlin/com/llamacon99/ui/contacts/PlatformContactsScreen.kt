@@ -58,6 +58,8 @@ internal fun PlatformContactsScreen(
     onDialAnonymous: (String) -> Unit,
 ) {
     val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+    val scrollToTop: () -> Unit = { scope.launch { listState.animateScrollToItem(0) } }
     val style = LocalAppTheme.current.style
     val search: @Composable (Modifier) -> Unit = { modifier ->
         ProfileSearchField(query, onQueryChange, onVoiceSearch, modifier)
@@ -67,12 +69,12 @@ internal fun PlatformContactsScreen(
     }
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
     when (style) {
-        ThemeStyle.APPLE -> AppleContactsLayout(listState, uiState.groups, search, list, onOpenSettings)
-        ThemeStyle.MATERIAL -> PixelContactsLayout(search, list, onOpenSettings)
-        ThemeStyle.HORIZON -> HorizonContactsLayout(search, list, onOpenSettings)
-        ThemeStyle.HYPER -> HyperContactsLayout(search, list, onOpenSettings)
-        ThemeStyle.MONO -> MonoContactsLayout(search, list, onOpenSettings)
-        ThemeStyle.FLUENT -> FluentContactsLayout(search, list, onOpenSettings)
+        ThemeStyle.APPLE -> AppleContactsLayout(listState, uiState.groups, search, list, onOpenSettings, scrollToTop)
+        ThemeStyle.MATERIAL -> PixelContactsLayout(listState, search, list, onOpenSettings, scrollToTop)
+        ThemeStyle.HORIZON -> HorizonContactsLayout(search, list, onOpenSettings, scrollToTop)
+        ThemeStyle.HYPER -> HyperContactsLayout(search, list, onOpenSettings, scrollToTop)
+        ThemeStyle.MONO -> MonoContactsLayout(search, list, onOpenSettings, scrollToTop)
+        ThemeStyle.FLUENT -> FluentContactsLayout(listState, search, list, onOpenSettings, scrollToTop)
         ThemeStyle.BRAND -> error("SamUI uses its one-handed contacts layout")
     }
     }
@@ -85,6 +87,7 @@ private fun AppleContactsLayout(
     search: @Composable (Modifier) -> Unit,
     list: @Composable (Modifier) -> Unit,
     onSettings: () -> Unit,
+    scrollToTop: () -> Unit,
 ) {
     val collapsed by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).imePadding()) {
@@ -93,7 +96,7 @@ private fun AppleContactsLayout(
             verticalAlignment = Alignment.CenterVertically) {
             AnimatedVisibility(collapsed, enter = fadeIn(), exit = fadeOut(), modifier = Modifier.weight(1f)) {
                 Text(stringResource(R.string.contacts_list_title), fontSize = 17.sp, fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    modifier = Modifier.padding(start = 8.dp).clickable(onClick = scrollToTop), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             if (!collapsed) Spacer(Modifier.weight(1f))
             IconButton(onClick = onSettings) {
@@ -113,9 +116,11 @@ private fun AppleContactsLayout(
 
 @Composable
 private fun PixelContactsLayout(
+    listState: LazyListState,
     search: @Composable (Modifier) -> Unit,
     list: @Composable (Modifier) -> Unit,
     onSettings: () -> Unit,
+    scrollToTop: () -> Unit,
 ) {
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
         Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
@@ -125,7 +130,10 @@ private fun PixelContactsLayout(
                 Icon(Icons.Outlined.Settings, stringResource(R.string.settings_title))
             }
         }
-        list(Modifier.weight(1f).fillMaxWidth())
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            list(Modifier.fillMaxSize())
+            PlatformGoTopButton(listState, scrollToTop, Modifier.align(Alignment.BottomEnd).padding(16.dp))
+        }
     }
 }
 
@@ -134,9 +142,10 @@ private fun HorizonContactsLayout(
     search: @Composable (Modifier) -> Unit,
     list: @Composable (Modifier) -> Unit,
     onSettings: () -> Unit,
+    scrollToTop: () -> Unit,
 ) {
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
-        ScreenHeading(onSettings = onSettings)
+        ScreenHeading(onSettings = onSettings, onTitleClick = scrollToTop)
         search(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp))
         list(Modifier.weight(1f).fillMaxWidth())
     }
@@ -147,9 +156,10 @@ private fun HyperContactsLayout(
     search: @Composable (Modifier) -> Unit,
     list: @Composable (Modifier) -> Unit,
     onSettings: () -> Unit,
+    scrollToTop: () -> Unit,
 ) {
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
-        ScreenHeading(onSettings = onSettings, overflow = true)
+        ScreenHeading(onSettings = onSettings, overflow = true, onTitleClick = scrollToTop)
         search(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp))
         list(Modifier.weight(1f).fillMaxWidth())
     }
@@ -160,6 +170,7 @@ private fun MonoContactsLayout(
     search: @Composable (Modifier) -> Unit,
     list: @Composable (Modifier) -> Unit,
     onSettings: () -> Unit,
+    scrollToTop: () -> Unit,
 ) {
     val dotColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.14f)
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
@@ -173,7 +184,7 @@ private fun MonoContactsLayout(
                     x += gap
                 }
             }
-            ScreenHeading(onSettings = onSettings)
+            ScreenHeading(onSettings = onSettings, onTitleClick = scrollToTop)
         }
         search(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp))
         HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 12.dp), color = MaterialTheme.colorScheme.onSurface)
@@ -183,9 +194,11 @@ private fun MonoContactsLayout(
 
 @Composable
 private fun FluentContactsLayout(
+    listState: LazyListState,
     search: @Composable (Modifier) -> Unit,
     list: @Composable (Modifier) -> Unit,
     onSettings: () -> Unit,
+    scrollToTop: () -> Unit,
 ) {
     BoxWithConstraints(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
         val wide = maxWidth >= 600.dp
@@ -193,7 +206,8 @@ private fun FluentContactsLayout(
             if (wide) {
                 Column(Modifier.width(216.dp).fillMaxHeight().padding(16.dp)) {
                     Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(vertical = 24.dp))
-                    Surface(shape = RoundedCornerShape(4.dp), color = MaterialTheme.colorScheme.primaryContainer) {
+                    Surface(shape = RoundedCornerShape(4.dp), color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.clickable(onClick = scrollToTop)) {
                         Row(Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                             Box(Modifier.width(3.dp).height(20.dp).background(MaterialTheme.colorScheme.primary, CircleShape))
                             Text(stringResource(R.string.contacts_list_title), modifier = Modifier.padding(start = 12.dp))
@@ -206,11 +220,14 @@ private fun FluentContactsLayout(
                 }
             }
             Column(Modifier.weight(1f).fillMaxHeight().padding(horizontal = 16.dp)) {
-                ScreenHeading(onSettings = onSettings, horizontalInset = 0)
+                ScreenHeading(onSettings = onSettings, horizontalInset = 0, onTitleClick = scrollToTop)
                 search(Modifier.fillMaxWidth().padding(bottom = 16.dp))
-                Surface(Modifier.weight(1f).fillMaxWidth().padding(bottom = 16.dp), shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant), color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                    list(Modifier.fillMaxSize())
+                Box(Modifier.weight(1f).fillMaxWidth().padding(bottom = 16.dp)) {
+                    Surface(Modifier.fillMaxSize(), shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant), color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                        list(Modifier.fillMaxSize())
+                    }
+                    PlatformGoTopButton(listState, scrollToTop, Modifier.align(Alignment.BottomEnd).padding(16.dp))
                 }
             }
         }
@@ -218,17 +235,46 @@ private fun FluentContactsLayout(
 }
 
 @Composable
-private fun ScreenHeading(onSettings: () -> Unit, overflow: Boolean = false, horizontalInset: Int = 20) {
+private fun ScreenHeading(
+    onSettings: () -> Unit,
+    overflow: Boolean = false,
+    horizontalInset: Int = 20,
+    onTitleClick: (() -> Unit)? = null,
+) {
     Row(Modifier.fillMaxWidth().padding(start = horizontalInset.dp, end = horizontalInset.dp, top = 12.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically) {
         if (LocalAppTheme.current.style == ThemeStyle.MONO) {
-            DotMatrixHeading(stringResource(R.string.contacts_list_title), Modifier.weight(1f))
+            DotMatrixHeading(stringResource(R.string.contacts_list_title), Modifier.weight(1f).clickable(enabled = onTitleClick != null) { onTitleClick?.invoke() })
         } else {
         Text(stringResource(R.string.contacts_list_title), style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.weight(1f).semantics { heading() }, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            modifier = Modifier.weight(1f).semantics { heading() }
+                .clickable(enabled = onTitleClick != null) { onTitleClick?.invoke() }, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
         IconButton(onClick = onSettings) {
             Icon(if (overflow) Icons.Filled.MoreHoriz else Icons.Outlined.Settings, stringResource(R.string.settings_title))
+        }
+    }
+}
+
+@Composable
+private fun PlatformGoTopButton(listState: LazyListState, scrollToTop: () -> Unit, modifier: Modifier = Modifier) {
+    val style = LocalAppTheme.current.style
+    val visible by remember(listState) {
+        derivedStateOf { listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0 }
+    }
+    AnimatedVisibility(visible = visible, modifier = modifier, enter = fadeIn(), exit = fadeOut()) {
+        if (style == ThemeStyle.FLUENT) {
+            OutlinedButton(onClick = scrollToTop, shape = RoundedCornerShape(4.dp)) {
+                Icon(painterResource(R.drawable.ic_md_keyboard_double_arrow_up), null, Modifier.size(20.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.contacts_list_go_top))
+            }
+        } else {
+            ExtendedFloatingActionButton(
+                onClick = scrollToTop,
+                icon = { Icon(painterResource(R.drawable.ic_md_keyboard_double_arrow_up), null) },
+                text = { Text(stringResource(R.string.contacts_list_go_top)) },
+            )
         }
     }
 }
