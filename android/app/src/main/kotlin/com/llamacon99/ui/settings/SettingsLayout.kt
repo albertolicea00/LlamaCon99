@@ -1,6 +1,8 @@
 package com.llamacon99.ui.settings
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -58,14 +60,14 @@ internal fun SettingsLayout(onBack: () -> Unit, overlays: @Composable () -> Unit
             backdropLayer.record { this@drawWithContent.drawContent() }
             drawLayer(backdropLayer)
         }) {
-            drawRect(if (glass) { if (dark) Color(0xFF111114) else Color(0xFFE5E5EA) } else background)
-            if (glass || style == ThemeStyle.FLUENT) {
+            drawRect(if (glass) { if (dark) Color.Black else Color(0xFFE5E5EA) } else background)
+            if (style == ThemeStyle.FLUENT) {
                 drawRect(Brush.linearGradient(listOf(
-                    if (dark) Color(0xFF2C2C32) else Color(0xFFF9F9FD),
-                    if (dark) Color(0xFF141416) else Color(0xFFDADAE2),
-                    if (dark) Color(0xFF242428) else Color(0xFFF0F0F5),
+                    if (dark) Color(0xFF1C1C1E) else Color(0xFFF9F9FD),
+                    if (dark) Color(0xFF000000) else Color(0xFFDADAE2),
+                    if (dark) Color(0xFF1C1C1E) else Color(0xFFF0F0F5),
                 )))
-                drawCircle(if (dark) Color.White.copy(alpha = 0.025f) else Color.White.copy(alpha = 0.12f),
+                drawCircle(if (dark) Color.White.copy(alpha = 0.015f) else Color.White.copy(alpha = 0.12f),
                     radius = size.width * 0.62f, center = Offset(size.width * 0.08f, size.height * 0.35f))
             }
         }
@@ -132,15 +134,11 @@ internal fun SettingsLayout(onBack: () -> Unit, overlays: @Composable () -> Unit
                             backdrop = SettingsGlassBackdrop(scrollingLayer, listOrigin),
                             modifier = Modifier.align(Alignment.TopStart).statusBarsPadding()
                                 .padding(horizontal = 16.dp, vertical = 8.dp)) {
-                            Row(Modifier.heightIn(min = 52.dp).padding(horizontal = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically) {
+                            Box(contentAlignment = Alignment.Center) {
                                 IconButton(onClick = onBack) {
                                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, stringResource(R.string.settings_back),
-                                        tint = MaterialTheme.colorScheme.primary)
+                                        tint = MaterialTheme.colorScheme.onSurface)
                                 }
-                                Text(stringResource(if (collapsed) R.string.settings_title else R.string.contacts_list_title),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    modifier = Modifier.clickable(enabled = !collapsed, onClick = onBack).padding(end = 20.dp))
                             }
                         }
                     } else {

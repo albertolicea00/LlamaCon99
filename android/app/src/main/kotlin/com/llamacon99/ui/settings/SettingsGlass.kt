@@ -40,7 +40,7 @@ internal fun SettingsGlass(
     var position by remember { mutableStateOf(Offset.Zero) }
     val dark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     val supported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && backdrop != null
-    val tint = if (dark) Color(0xFF242426) else Color.White
+    val tint = if (dark) Color(0xFF1C1C1E) else Color.White
     val highlight = Brush.linearGradient(listOf(
         Color.White.copy(alpha = if (dark) 0.35f else 0.90f),
         Color.White.copy(alpha = if (dark) 0.07f else 0.22f),
