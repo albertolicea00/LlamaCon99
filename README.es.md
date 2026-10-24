@@ -31,7 +31,7 @@ Puedes elegir el estilo visual desde **Ajustes → Personalización**. Todos los
 | Tema | Inspirado en | Estilo |
 | --- | --- | --- |
 | SamUI | Samsung One UI | Títulos grandes, grupos redondeados y controles al alcance del pulgar. |
-| ManzanaUI | Apple iOS | Lista continua, cabecera que se recoge al desplazar, buscador inferior e índice A–Z lateral. |
+| CupertinoUI | Apple iOS | Lista continua, cabecera que se recoge al desplazar, buscador inferior e índice A–Z lateral. |
 | MaterialUI | Google Pixel / Material You (Material 3) | Buscador superior en forma de pastilla y filas abiertas con avatares. |
 | HorizonUI | Huawei HarmonyOS | Buscador superior y contactos agrupados en módulos. |
 | HyperUI | Xiaomi HyperOS | Cabecera grande, búsqueda superior y lista compacta con índice lateral. |

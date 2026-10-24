@@ -31,7 +31,7 @@ Choose a visual style from **Settings → Customization**. All themes support li
 | Theme | Inspired by | Style |
 | --- | --- | --- |
 | SamUI | Samsung One UI | Large titles, rounded groups, and thumb-friendly controls. |
-| ManzanaUI | Apple iOS | Continuous list, collapsing header, bottom search, and a side A–Z index. |
+| CupertinoUI | Apple iOS | Continuous list, collapsing header, bottom search, and a side A–Z index. |
 | MaterialUI | Google Pixel / Material You (Material 3) | Top pill-shaped search and open contact rows with avatars. |
 | HorizonUI | Huawei HarmonyOS | Top search and modular contact groups. |
 | HyperUI | Xiaomi HyperOS | Large header, top search, and a compact list with a side index. |

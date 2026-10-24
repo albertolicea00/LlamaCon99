@@ -60,7 +60,7 @@
     <string name="settings_theme_description">Elige el estilo visual de tu app.</string>
     <string name="settings_theme_llama">SamUI</string>
     <string name="settings_theme_inspired_samsung">Inspirado en Samsung One UI</string>
-    <string name="settings_theme_manzana">ManzanaUI</string>
+    <string name="settings_theme_manzana">CupertinoUI</string>
     <string name="settings_theme_material">MaterialUI</string>
     <string name="settings_theme_horizon">HorizonUI</string>
     <string name="settings_theme_hyper">HyperUI</string>
